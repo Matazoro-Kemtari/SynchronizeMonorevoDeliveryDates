@@ -1,0 +1,2 @@
+# SynchronizeMono-revoDeliveryDates
+ものレボの納期を同期させる
