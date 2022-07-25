@@ -12,4 +12,17 @@
 *.out
 
 # Dependency directories (remove the comment below to include it)
-# vendor/
+vendor/
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+### VS Code ###
+# .vscode/
+
+.env
+main
+*.log
+*.zip
+*.pdf
