@@ -26,3 +26,4 @@ main
 *.log
 *.zip
 *.pdf
+app_log.json
