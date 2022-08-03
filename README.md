@@ -4,6 +4,10 @@
 ## 技術資料
 <img src="images/sudoDiagram.png" alt="sudo図"/>
 
+## 規約
+[他言語プログラマが最低限、気にすべきGoのネーミングルール](https://zenn.dev/keitakn/articles/go-naming-rules)
+[Go の命名規則](https://micnncim.com/posts/ja/go-naming-convention)
+
 ## 開発環境インストール
 vscodeは入っている前提で説明する。
 
@@ -64,4 +68,18 @@ $ go get -u github.com/joho/godotenv
 [golangの高速な構造化ログライブラリ「zap」の使い方](https://qiita.com/emonuh/items/28dbee9bf2fe51d28153)
 ```
 $ go get -u go.uber.org/zap
+```
+chromium driver
+[Go×agoutiで病院の予約戦争に勝利する](https://tanabebe.hatenablog.com/entry/2019/12/24/180000)
+frame対策:[阿部寛をWebDriverでいじくる](https://qiita.com/h-hiroki/items/04d8c6636968c07a438e)
+[Goではじめてみたブラウザの自動操作](https://qiita.com/0829/items/c1e494bb128ade5f0872)
+[Python Webスクレイピング テクニック集「取得できない値は無い」JavaScript対応@追記あり6/12](https://qiita.com/Azunyan1111/items/b161b998790b1db2ff7a)
+```
+$ go get -u github.com/sclevine/agouti
+```
+testify
+標準パッケージのtestingにはassert関数はありません。
+testifyライブラリーを使用することで、assert関数を使うことができます。
+```
+$ go get -u -v github.com/stretchr/testify
 ```

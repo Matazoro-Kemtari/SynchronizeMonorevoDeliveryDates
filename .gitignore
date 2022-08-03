@@ -27,3 +27,6 @@ main
 *.zip
 *.pdf
 app_log.json
+
+# ものレボからダウンロードしたcsv
+output_*.csv
