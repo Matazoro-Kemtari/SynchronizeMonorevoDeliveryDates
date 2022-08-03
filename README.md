@@ -75,5 +75,11 @@ frame対策:[阿部寛をWebDriverでいじくる](https://qiita.com/h-hiroki/it
 [Goではじめてみたブラウザの自動操作](https://qiita.com/0829/items/c1e494bb128ade5f0872)
 [Python Webスクレイピング テクニック集「取得できない値は無い」JavaScript対応@追記あり6/12](https://qiita.com/Azunyan1111/items/b161b998790b1db2ff7a)
 ```
-go get -u github.com/sclevine/agouti
+$ go get -u github.com/sclevine/agouti
+```
+testify
+標準パッケージのtestingにはassert関数はありません。
+testifyライブラリーを使用することで、assert関数を使うことができます。
+```
+$ go get -u -v github.com/stretchr/testify
 ```

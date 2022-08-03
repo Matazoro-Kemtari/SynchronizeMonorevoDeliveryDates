@@ -1,12 +1,12 @@
 package monorevo
 
 import (
-	"SynchronizeMonorevoDeliveryDates/domain/monorevo"
 	"os"
-	"reflect"
+	"regexp"
 	"testing"
 
 	"github.com/joho/godotenv"
+	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
 )
 
@@ -21,18 +21,18 @@ func TestPropositionTable_FetchAll(t *testing.T) {
 	tests := []struct {
 		name    string
 		p       *PropositionTable
-		want    [][]monorevo.Proposition
+		want    string
 		wantErr bool
 	}{
 		{
-			name: "正常系_ブラウザが起動すること",
+			name: "正常系_ものレボから案件を取得できること",
 			p: NewPropositionTable(
 				logger.Sugar(),
 				os.Getenv("MONOREVO_COMPANY_ID"),
 				os.Getenv("MONOREVO_USER_ID"),
 				os.Getenv("MONOREVO_USER_PASSWORD"),
 			),
-			want:    [][]monorevo.Proposition{},
+			want:    `X?[0-9]{2}[A-Z]-[0-9]{1,4}`,
 			wantErr: false,
 		},
 	}
@@ -43,9 +43,14 @@ func TestPropositionTable_FetchAll(t *testing.T) {
 				t.Errorf("PropositionTable.FetchAll() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("PropositionTable.FetchAll() = %v, want %v", got, tt.want)
-			}
+			assert.True(
+				t,
+				regexp.MustCompile(tt.want).
+					Match(
+						[]byte(got[0].WorkedNumber),
+					),
+			)
+			assert.NotEmpty(t, got[0].DeliveryDate)
 		})
 	}
 }

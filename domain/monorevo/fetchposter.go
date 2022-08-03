@@ -14,3 +14,10 @@ type Proposition struct {
 	WorkedNumber string
 	DeliveryDate time.Time
 }
+
+func NewProposition(w string, d time.Time) *Proposition {
+	return &Proposition{
+		WorkedNumber: w,
+		DeliveryDate: d,
+	}
+}
