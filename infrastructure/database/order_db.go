@@ -1,0 +1,82 @@
+package database
+
+import (
+	"SynchronizeMonorevoDeliveryDates/domain/database"
+	"fmt"
+	"time"
+
+	"go.uber.org/zap"
+	"gorm.io/driver/sqlserver"
+	"gorm.io/gorm"
+)
+
+type OrderDbPram struct {
+	server   string
+	database string
+	user     string
+	password string
+}
+
+type JobBookRepository struct {
+	sugar       *zap.SugaredLogger
+	orderDbPram OrderDbPram
+}
+
+type JobBookModel struct {
+	WorkedNumber string    `gorm:"column:作業NO;unique;not null"`
+	DeliveryDate time.Time `gorm:"column:納期"`
+}
+
+// JobBookのテーブル名を定義する
+func (JobBookModel) TableName() string {
+	return "M作業台帳"
+}
+
+func NewJobBookRepository(
+	sugar *zap.SugaredLogger,
+	orderDbPram OrderDbPram,
+) *JobBookRepository {
+	return &JobBookRepository{
+		sugar:       sugar,
+		orderDbPram: orderDbPram,
+	}
+}
+
+func (r *JobBookRepository) FetchAll() []database.JobBook {
+	db, err := open(r.orderDbPram)
+	if err != nil {
+		r.sugar.Fatal("データベースに接続できませんでした", err)
+	}
+
+	jobBookModels := []JobBookModel{}
+	result := db.Find(&jobBookModels, "納期 is not null AND 状態 = '受注'")
+	if result.Error != nil {
+		r.sugar.Fatal("M作業台帳を取得できませんでした", result.Error)
+	}
+	fmt.Println("jobBook:", jobBookModels)
+
+	// domain.modelに詰め替え
+	jobBooks := []database.JobBook{}
+	for _, v := range jobBookModels {
+		jobBooks = append(
+			jobBooks,
+			database.JobBook{
+				WorkedNumber: v.WorkedNumber,
+				DeliveryDate: v.DeliveryDate,
+			},
+		)
+	}
+
+	return jobBooks
+}
+
+func open(orderDbPram OrderDbPram) (*gorm.DB, error) {
+	dsn := fmt.Sprintf(
+		"sqlserver://%v:%v@%v?database=%v",
+		orderDbPram.user,
+		orderDbPram.password,
+		orderDbPram.server,
+		orderDbPram.database,
+	)
+	return gorm.Open(sqlserver.Open(dsn), &gorm.Config{})
+}

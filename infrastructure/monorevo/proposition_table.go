@@ -17,13 +17,12 @@ import (
 
 // ものレボ案件一覧Repository
 type PropositionTable struct {
-	Propositions []monorevo.Proposition
-	sugar        *zap.SugaredLogger
-	comId        string
-	userId       string
-	userPass     string
-	downloadDir  string
-	tempDir      string
+	sugar       *zap.SugaredLogger
+	comId       string
+	userId      string
+	userPass    string
+	downloadDir string
+	tempDir     string
 }
 
 func NewPropositionTable(

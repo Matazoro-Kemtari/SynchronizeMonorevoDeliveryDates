@@ -7,8 +7,11 @@
 	"settings": {
 		"cSpell.words": [
 			"fropositions",
+			"gorm",
 			"monorevo",
-			"sclevine"
+			"sclevine",
+			"sqlserver",
+			"stretchr"
 		]
 	}
 }
