@@ -1,4 +1,4 @@
-package database
+package jobbook
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func TestJobBookRepository_FetchAll(t *testing.T) {
+func TestRepository_FetchAll(t *testing.T) {
 	err_read := godotenv.Load(`../../.env`)
 	if err_read != nil {
 		os.Exit(1)
@@ -21,7 +21,7 @@ func TestJobBookRepository_FetchAll(t *testing.T) {
 
 	tests := []struct {
 		name string
-		r    *JobBookRepository
+		r    *Repository
 		want struct {
 			workNumRex           string
 			canEmptyDeliveryDate bool
@@ -29,7 +29,7 @@ func TestJobBookRepository_FetchAll(t *testing.T) {
 	}{
 		{
 			name: "正常系_M作業から作業Noと納期が取得できること",
-			r: NewJobBookRepository(
+			r: NewRepository(
 				logger.Sugar(),
 				OrderDbPram{
 					os.Getenv("DB_SERVER"),

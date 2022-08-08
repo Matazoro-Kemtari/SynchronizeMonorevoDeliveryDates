@@ -18,6 +18,5 @@
             "mode": "auto",
             "program": "${fileDirname}"
         }
-
     ]
 }

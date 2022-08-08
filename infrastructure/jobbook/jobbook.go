@@ -1,7 +1,7 @@
-package database
+package jobbook
 
 import (
-	"SynchronizeMonorevoDeliveryDates/domain/database"
+	"SynchronizeMonorevoDeliveryDates/domain/orderdb"
 	"fmt"
 	"time"
 
@@ -17,7 +17,7 @@ type OrderDbPram struct {
 	password string
 }
 
-type JobBookRepository struct {
+type Repository struct {
 	sugar       *zap.SugaredLogger
 	orderDbPram OrderDbPram
 }
@@ -32,17 +32,17 @@ func (JobBookModel) TableName() string {
 	return "M作業台帳"
 }
 
-func NewJobBookRepository(
+func NewRepository(
 	sugar *zap.SugaredLogger,
 	orderDbPram OrderDbPram,
-) *JobBookRepository {
-	return &JobBookRepository{
+) *Repository {
+	return &Repository{
 		sugar:       sugar,
 		orderDbPram: orderDbPram,
 	}
 }
 
-func (r *JobBookRepository) FetchAll() []database.JobBook {
+func (r *Repository) FetchAll() []orderdb.JobBook {
 	db, err := open(r.orderDbPram)
 	if err != nil {
 		r.sugar.Fatal("データベースに接続できませんでした", err)
@@ -56,11 +56,11 @@ func (r *JobBookRepository) FetchAll() []database.JobBook {
 	fmt.Println("jobBook:", jobBookModels)
 
 	// domain.modelに詰め替え
-	jobBooks := []database.JobBook{}
+	jobBooks := []orderdb.JobBook{}
 	for _, v := range jobBookModels {
 		jobBooks = append(
 			jobBooks,
-			database.JobBook{
+			orderdb.JobBook{
 				WorkedNumber: v.WorkedNumber,
 				DeliveryDate: v.DeliveryDate,
 			},
