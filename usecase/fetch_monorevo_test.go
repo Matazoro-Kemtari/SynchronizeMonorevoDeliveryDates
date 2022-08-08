@@ -1,4 +1,4 @@
-package monorevo
+package usecase
 
 import (
 	"SynchronizeMonorevoDeliveryDates/domain/monorevo"
