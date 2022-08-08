@@ -1,4 +1,4 @@
-package monorevo
+package proposition
 
 import (
 	"os"
