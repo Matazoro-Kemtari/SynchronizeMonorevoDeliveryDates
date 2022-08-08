@@ -1,29 +1,29 @@
 package compare
 
 import (
-	"SynchronizeMonorevoDeliveryDates/domain/database"
 	"SynchronizeMonorevoDeliveryDates/domain/monorevo"
+	"SynchronizeMonorevoDeliveryDates/domain/orderdb"
 	"reflect"
 	"testing"
 	"time"
 )
 
-func TestExtract_DifferenceOfDeliveryDate(t *testing.T) {
+func TestDifference_ExtractForDeliveryDate(t *testing.T) {
 	type args struct {
-		j []database.JobBook
+		j []orderdb.JobBook
 		p []monorevo.Proposition
 	}
 	tests := []struct {
 		name string
-		e    *Extract
+		e    *Difference
 		args args
 		want []DifferenceProposition
 	}{
 		{
 			name: "正常系_作業Noが同じ注文の納期に差分が無いときはnilを返すこと",
-			e:    NewExtract(),
+			e:    NewDifference(),
 			args: args{
-				j: []database.JobBook{
+				j: []orderdb.JobBook{
 					{
 						WorkedNumber: "99A-1",
 						DeliveryDate: time.Date(3000, 1, 1, 0, 0, 0, 0, time.UTC),
@@ -64,9 +64,9 @@ func TestExtract_DifferenceOfDeliveryDate(t *testing.T) {
 		},
 		{
 			name: "正常系_作業Noが同じ注文の納期に差がある案件の2つの納期を返すこと",
-			e:    NewExtract(),
+			e:    NewDifference(),
 			args: args{
-				j: []database.JobBook{
+				j: []orderdb.JobBook{
 					{
 						WorkedNumber: "99B-1",
 						DeliveryDate: time.Date(3000, 1, 10, 0, 0, 0, 0, time.UTC),
@@ -118,7 +118,7 @@ func TestExtract_DifferenceOfDeliveryDate(t *testing.T) {
 		},
 		{
 			name: "正常系_受注管理DBがnilのときはnilを返すこと",
-			e:    NewExtract(),
+			e:    NewDifference(),
 			args: args{
 				j: nil,
 				p: []monorevo.Proposition{
@@ -132,9 +132,9 @@ func TestExtract_DifferenceOfDeliveryDate(t *testing.T) {
 		},
 		{
 			name: "正常系_ものレボがnilのときはnilを返すこと",
-			e:    NewExtract(),
+			e:    NewDifference(),
 			args: args{
-				j: []database.JobBook{
+				j: []orderdb.JobBook{
 					{
 						WorkedNumber: "12A-345",
 						DeliveryDate: time.Now(),
@@ -147,7 +147,7 @@ func TestExtract_DifferenceOfDeliveryDate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.e.DifferenceOfDeliveryDate(tt.args.j, tt.args.p); !reflect.DeepEqual(got, tt.want) {
+			if got := tt.e.ExtractForDeliveryDate(tt.args.j, tt.args.p); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Extract.DifferenceOfDeliveryDate() = %v, want %v", got, tt.want)
 			}
 		})
