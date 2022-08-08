@@ -1,7 +1,7 @@
 package jobbook
 
 import (
-	"SynchronizeMonorevoDeliveryDates/domain/database"
+	"SynchronizeMonorevoDeliveryDates/domain/orderdb"
 	"fmt"
 	"time"
 
@@ -42,7 +42,7 @@ func NewRepository(
 	}
 }
 
-func (r *Repository) FetchAll() []database.JobBook {
+func (r *Repository) FetchAll() []orderdb.JobBook {
 	db, err := open(r.orderDbPram)
 	if err != nil {
 		r.sugar.Fatal("データベースに接続できませんでした", err)
@@ -56,11 +56,11 @@ func (r *Repository) FetchAll() []database.JobBook {
 	fmt.Println("jobBook:", jobBookModels)
 
 	// domain.modelに詰め替え
-	jobBooks := []database.JobBook{}
+	jobBooks := []orderdb.JobBook{}
 	for _, v := range jobBookModels {
 		jobBooks = append(
 			jobBooks,
-			database.JobBook{
+			orderdb.JobBook{
 				WorkedNumber: v.WorkedNumber,
 				DeliveryDate: v.DeliveryDate,
 			},

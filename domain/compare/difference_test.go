@@ -17,7 +17,7 @@ func TestDifference_ExtractForDeliveryDate(t *testing.T) {
 		name string
 		e    *Difference
 		args args
-		want []DifferenceProposition
+		want []DifferentProposition
 	}{
 		{
 			name: "正常系_作業Noが同じ注文の納期に差分が無いときはnilを返すこと",
@@ -103,7 +103,7 @@ func TestDifference_ExtractForDeliveryDate(t *testing.T) {
 					},
 				},
 			},
-			want: []DifferenceProposition{
+			want: []DifferentProposition{
 				{
 					WorkedNumber:        "99B-2",
 					DeliveryDate:        time.Date(3000, 2, 10, 0, 0, 0, 0, time.UTC),

@@ -44,7 +44,7 @@ func TestFetchPropositionTable_Execute(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "正常系_UseCaseを実行するとFetcherが実行されること",
+			name: "正常系_UseCaseを実行するとモックが実行されること",
 			m: NewFetchPropositionTable(
 				logger.Sugar(),
 				mock_fetcher,

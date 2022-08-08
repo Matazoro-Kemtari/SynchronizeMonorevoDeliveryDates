@@ -38,15 +38,15 @@ func (m *FetchPropositionTable) Execute() ([]PropositionDto, error) {
 	}
 
 	// DTOに詰め替え
-	dif := []PropositionDto{}
+	cnv := []PropositionDto{}
 	for _, v := range propositions {
-		dif = append(
-			dif,
+		cnv = append(
+			cnv,
 			PropositionDto{
 				WorkedNumber: v.WorkedNumber,
 				DeliveryDate: v.DeliveryDate,
 			},
 		)
 	}
-	return dif, nil
+	return cnv, nil
 }

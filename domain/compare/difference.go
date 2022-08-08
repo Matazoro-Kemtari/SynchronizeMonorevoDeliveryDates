@@ -6,20 +6,27 @@ import (
 	"time"
 )
 
+type DifferentProposition struct {
+	WorkedNumber        string
+	DeliveryDate        time.Time
+	UpdatedDeliveryDate time.Time
+}
+
+type Extractor interface {
+	ExtractForDeliveryDate(
+		j []orderdb.JobBook,
+		p []monorevo.Proposition,
+	) []DifferentProposition
+}
+
 type Difference struct{}
 
 func NewDifference() *Difference {
 	return &Difference{}
 }
 
-type DifferenceProposition struct {
-	WorkedNumber        string
-	DeliveryDate        time.Time
-	UpdatedDeliveryDate time.Time
-}
-
-func NewDifferenceProposition(workNumber string, deliveryDate time.Time, updatedDeliveryDate time.Time) *DifferenceProposition {
-	return &DifferenceProposition{
+func NewDifferenceProposition(workNumber string, deliveryDate time.Time, updatedDeliveryDate time.Time) *DifferentProposition {
+	return &DifferentProposition{
 		WorkedNumber:        workNumber,
 		DeliveryDate:        deliveryDate,
 		UpdatedDeliveryDate: updatedDeliveryDate,
@@ -27,8 +34,8 @@ func NewDifferenceProposition(workNumber string, deliveryDate time.Time, updated
 }
 
 // ものレボの納期と受注管理DBの納期を比較して 差分を返す
-func (e Difference) ExtractForDeliveryDate(j []orderdb.JobBook, p []monorevo.Proposition) []DifferenceProposition {
-	var diff []DifferenceProposition
+func (e Difference) ExtractForDeliveryDate(j []orderdb.JobBook, p []monorevo.Proposition) []DifferentProposition {
+	var diff []DifferentProposition
 	for _, job := range j {
 		for _, pp := range p {
 			if job.WorkedNumber == pp.WorkedNumber {
