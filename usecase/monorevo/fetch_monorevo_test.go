@@ -1,4 +1,4 @@
-package usecase
+package monorevo
 
 import (
 	"SynchronizeMonorevoDeliveryDates/domain/monorevo"
@@ -10,7 +10,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func TestFetchMonoRevoPropositionTable_Execute(t *testing.T) {
+func TestFetchPropositionTable_Execute(t *testing.T) {
 	// logger生成
 	logger, _ := zap.NewDevelopment()
 
@@ -39,13 +39,13 @@ func TestFetchMonoRevoPropositionTable_Execute(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		m       *FetchMonoRevoPropositionTable
+		m       *FetchPropositionTable
 		want    []PropositionDto
 		wantErr bool
 	}{
 		{
 			name: "正常系_UseCaseを実行するとFetcherが実行されること",
-			m: NewFetchMonoRevoPropositionTable(
+			m: NewFetchPropositionTable(
 				logger.Sugar(),
 				mock_fetcher,
 			),
@@ -57,11 +57,11 @@ func TestFetchMonoRevoPropositionTable_Execute(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.m.Execute()
 			if (err != nil) != tt.wantErr {
-				t.Errorf("FetchMonoRevoPropositionTable.Execute() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("FetchPropositionTable.Execute() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FetchMonoRevoPropositionTable.Execute() = %v, want %v", got, tt.want)
+				t.Errorf("FetchPropositionTable.Execute() = %v, want %v", got, tt.want)
 			}
 		})
 	}

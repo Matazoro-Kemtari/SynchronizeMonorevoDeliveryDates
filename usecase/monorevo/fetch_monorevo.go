@@ -1,4 +1,4 @@
-package usecase
+package monorevo
 
 import (
 	"SynchronizeMonorevoDeliveryDates/domain/monorevo"
@@ -16,22 +16,22 @@ type Executer interface {
 	Execute() ([]PropositionDto, error)
 }
 
-type FetchMonoRevoPropositionTable struct {
+type FetchPropositionTable struct {
 	sugar   *zap.SugaredLogger
 	fetcher monorevo.Fetcher
 }
 
-func NewFetchMonoRevoPropositionTable(
+func NewFetchPropositionTable(
 	sugar *zap.SugaredLogger,
 	fetcher monorevo.Fetcher,
-) *FetchMonoRevoPropositionTable {
-	return &FetchMonoRevoPropositionTable{
+) *FetchPropositionTable {
+	return &FetchPropositionTable{
 		sugar:   sugar,
 		fetcher: fetcher,
 	}
 }
 
-func (m *FetchMonoRevoPropositionTable) Execute() ([]PropositionDto, error) {
+func (m *FetchPropositionTable) Execute() ([]PropositionDto, error) {
 	propositions, err := m.fetcher.FetchAll()
 	if err != nil {
 		m.sugar.Fatal("ものレボから案件一覧の取得に失敗しました", err)
