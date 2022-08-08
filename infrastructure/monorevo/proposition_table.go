@@ -22,7 +22,7 @@ type PropositionTable struct {
 	userId      string
 	userPass    string
 	downloadDir string
-	tempDir     string
+	workDir     string
 }
 
 func NewPropositionTable(
@@ -40,7 +40,7 @@ func NewPropositionTable(
 		userId:      userId,
 		userPass:    userPass,
 		downloadDir: filepath.Join(exePath, "download"),
-		tempDir:     filepath.Join(exePath, "temp"),
+		workDir:     filepath.Join(exePath, "work"),
 	}
 }
 
@@ -196,12 +196,12 @@ func (p *PropositionTable) initializeDownloadDir() error {
 
 func (p *PropositionTable) openCsvFile() ([]monorevo.Proposition, error) {
 	// テンポラリフォルダの作成
-	if err := p.initializeTempDir(); err != nil {
+	if err := p.initializeWorkDir(); err != nil {
 		p.sugar.Fatal("テンポラリフォルダの作成で失敗しました", err)
 	}
 
 	// ファイル移動
-	n, err := p.moveDownloadToTemp()
+	n, err := p.moveDownloadToWork()
 	if err != nil {
 		p.sugar.Fatal("ファイル移動で失敗しました", err)
 	}
@@ -214,19 +214,19 @@ func (p *PropositionTable) openCsvFile() ([]monorevo.Proposition, error) {
 	return csv, nil
 }
 
-func (p *PropositionTable) initializeTempDir() error {
-	if f, err := os.Stat(p.tempDir); os.IsNotExist(err) || !f.IsDir() {
-		p.sugar.Info("テンポラリフォルダは存在しません", p.tempDir)
+func (p *PropositionTable) initializeWorkDir() error {
+	if f, err := os.Stat(p.workDir); os.IsNotExist(err) || !f.IsDir() {
+		p.sugar.Info("テンポラリフォルダは存在しません", p.workDir)
 	} else {
-		p.sugar.Info("テンポラリフォルダの削除を実行", p.tempDir)
-		if err := os.RemoveAll(p.tempDir); err != nil {
+		p.sugar.Info("テンポラリフォルダの削除を実行", p.workDir)
+		if err := os.RemoveAll(p.workDir); err != nil {
 			p.sugar.Fatal("テンポラリフォルダの削除に失敗", err)
 		}
 	}
-	return os.Mkdir(p.tempDir, 0755)
+	return os.Mkdir(p.workDir, 0755)
 }
 
-func (p *PropositionTable) moveDownloadToTemp() (string, error) {
+func (p *PropositionTable) moveDownloadToWork() (string, error) {
 	files, err := ioutil.ReadDir(p.downloadDir)
 	if err != nil {
 		p.sugar.Fatal("ダウンロードフォルダのファイル一覧の取得失敗", err)
@@ -241,12 +241,12 @@ func (p *PropositionTable) moveDownloadToTemp() (string, error) {
 	return f.Name(),
 		os.Rename(
 			filepath.Join(p.downloadDir, f.Name()),
-			filepath.Join(p.tempDir, f.Name()),
+			filepath.Join(p.workDir, f.Name()),
 		)
 }
 
 func (p *PropositionTable) deserializeCsv(name string) ([]monorevo.Proposition, error) {
-	file, err := os.Open(filepath.Join(p.tempDir, name))
+	file, err := os.Open(filepath.Join(p.workDir, name))
 	if err != nil {
 		p.sugar.Fatal("ファイルが開けませんでした", err)
 	}
