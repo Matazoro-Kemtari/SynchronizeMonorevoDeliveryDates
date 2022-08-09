@@ -74,8 +74,35 @@ func (p *PropositionTable) FetchAll() ([]monorevo.Proposition, error) {
 	return csv, nil
 }
 
-func (p *PropositionTable) PostRange([]monorevo.Proposition) error {
-	panic(0)
+func (p *PropositionTable) PostRange(postableProposition []monorevo.Proposition) error {
+	// webdriverを初期化する
+	driver := p.getWebDriver()
+	defer driver.Stop()
+	driver.Start()
+
+	// ログインする
+	page, err := p.loginToMonorevo(driver)
+	if err != nil {
+		p.sugar.Fatal("ものレボにログインできなかった", err)
+	}
+
+	// 案件一覧一覧画面に移動する
+	if err := p.movePropositionTablePage(page); err != nil {
+		p.sugar.Fatal("案件一覧一覧画面に移動できなかった", err)
+	}
+
+	// 案件検索をする
+	for _, v := range postableProposition {
+		if r, err := p.searchPropositionTable(page, v.WorkedNumber); err != nil {
+			p.sugar.Fatal("案件検索ができなかった", err)
+		} else if !r {
+			p.sugar.Infof("作業No(%v)の該当がなかった", v.WorkedNumber)
+			continue
+		}
+
+		// 納期を更新する
+	}
+
 	return nil
 }
 
@@ -152,6 +179,11 @@ func (p *PropositionTable) movePropositionTablePage(page *agouti.Page) error {
 		time.Sleep(time.Second)
 		i++
 	}
+
+	if i >= 60 {
+		p.sugar.Fatal("ダウンロードタイムアウト", i)
+	}
+
 	return err
 }
 
@@ -278,4 +310,44 @@ func (p *PropositionTable) deserializeCsv(name string) ([]monorevo.Proposition, 
 		)
 	}
 	return fropositions, nil
+}
+
+type hasRecord bool
+
+func (p *PropositionTable) searchPropositionTable(page *agouti.Page, workNum string) (hasRecord, error) {
+	// 検索条件を開く
+	openBtn := page.FindByXPath(`//*[@id="accordionDrawing-down"]`)
+	openBtn.Click()
+
+	// 検索条件の作業Noを入力する
+	workNoFld := page.FindByXPath(`//*[@id="searchContent"]/div[2]/div[1]/input`)
+	workNoFld.Fill(workNum)
+	time.Sleep(time.Millisecond * 100)
+	searchBtn := page.FindByXPath(`//*[@id="searchButton"]/div/button`)
+	searchBtn.Click()
+
+	// データ準備まで待つ
+	i := 0
+	for i < 60 {
+		// くるくる回るエフェクトのxpath
+		selector := page.FindByXPath(`//*[@id="app"]/div/div[2]/div[2]/div/div[2]`)
+		// 処理中の子要素(DIV)が存在する間はクリックしてもエラーにならない
+		if err := selector.Click(); err != nil {
+			break
+		}
+		time.Sleep(time.Second)
+		i++
+	}
+
+	if i >= 60 {
+		p.sugar.Fatal("ダウンロードタイムアウト", i)
+	}
+
+	// 該当あるか確認
+	td := page.FindByXPath(`//*[@id="app"]/div/div[2]/div[2]/div/div/div/form/table/tbody/tr/td`)
+	if _, err := td.Elements(); err == nil {
+		// エラーなしは該当なし
+		return false, nil
+	}
+	return true, nil
 }

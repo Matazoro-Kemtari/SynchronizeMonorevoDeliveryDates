@@ -6,14 +6,19 @@
 	],
 	"settings": {
 		"cSpell.words": [
+			"divs",
 			"fropositions",
 			"gorm",
 			"jobbook",
 			"monorevo",
 			"orderdb",
+			"postable",
+			"prefs",
 			"sclevine",
 			"sqlserver",
-			"stretchr"
-		]
+			"stretchr",
+			"tbody"
+		],
+		"go.testTimeout": "60s"
 	}
 }
