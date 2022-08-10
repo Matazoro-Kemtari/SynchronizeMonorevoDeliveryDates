@@ -8,6 +8,7 @@ import (
 
 type DifferentProposition struct {
 	WorkedNumber        string
+	Det                 string
 	DeliveryDate        time.Time
 	UpdatedDeliveryDate time.Time
 }
@@ -25,9 +26,10 @@ func NewDifference() *Difference {
 	return &Difference{}
 }
 
-func NewDifferenceProposition(workNumber string, deliveryDate time.Time, updatedDeliveryDate time.Time) *DifferentProposition {
+func NewDifferenceProposition(workNumber string, det string, deliveryDate time.Time, updatedDeliveryDate time.Time) *DifferentProposition {
 	return &DifferentProposition{
 		WorkedNumber:        workNumber,
+		Det:                 det,
 		DeliveryDate:        deliveryDate,
 		UpdatedDeliveryDate: updatedDeliveryDate,
 	}
@@ -42,6 +44,7 @@ func (e Difference) ExtractForDeliveryDate(j []orderdb.JobBook, p []monorevo.Pro
 				if !job.DeliveryDate.Equal(pp.DeliveryDate) {
 					diff = append(diff, *NewDifferenceProposition(
 						job.WorkedNumber,
+						pp.Det,
 						pp.DeliveryDate,
 						job.DeliveryDate,
 					))
