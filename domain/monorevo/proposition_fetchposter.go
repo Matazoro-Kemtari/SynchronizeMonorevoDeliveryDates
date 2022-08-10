@@ -27,6 +27,30 @@ func NewProposition(warkNumber string, det string, deliveryDate time.Time) *Prop
 	}
 }
 
+type EditedProposition struct {
+	WorkedNumber        string
+	Det                 string
+	Successful          bool
+	DeliveryDate        time.Time
+	UpdatedDeliveryDate time.Time
+}
+
+func NewEditedProposition(
+	workedNumber string,
+	det string,
+	successful bool,
+	deliveryDate time.Time,
+	updatedDeliveryDate time.Time,
+) *EditedProposition {
+	return &EditedProposition{
+		WorkedNumber:        workedNumber,
+		Det:                 det,
+		Successful:          successful,
+		DeliveryDate:        deliveryDate,
+		UpdatedDeliveryDate: updatedDeliveryDate,
+	}
+}
+
 // テスト用Factoryメソッド
 // 参考: https://shiimanblog.com/engineering/functional-options-pattern/
 type Options struct {
