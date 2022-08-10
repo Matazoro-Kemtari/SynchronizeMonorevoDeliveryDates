@@ -63,6 +63,12 @@ $ go get -u github.com/joho/godotenv
 ```
 $ go get -u go.uber.org/zap
 ```
+#### スクレイピング
+[golangでagoutiとgoqueryを使ってスクレイピングする](https://qiita.com/york_____nishi/items/b76ff9163afaaad13de2)
+goquery
+```
+$ go get -u github.com/PuerkitoBio/goquery
+```
 #### ブラウザ自動操作
 chromium driver
 [Go×agoutiで病院の予約戦争に勝利する](https://tanabebe.hatenablog.com/entry/2019/12/24/180000)
