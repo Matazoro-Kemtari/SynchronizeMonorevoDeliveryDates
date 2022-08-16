@@ -3,6 +3,7 @@ package proposition
 import (
 	"SynchronizeMonorevoDeliveryDates/domain/monorevo"
 	"encoding/csv"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -22,78 +23,92 @@ func (p *PropositionTable) FetchAll() ([]monorevo.Proposition, error) {
 	// ログインする
 	page, err := p.loginToMonorevo(driver)
 	if err != nil {
-		p.sugar.Fatal("ものレボにログインできなかった", err)
+		p.sugar.Error("ものレボにログインできなかった", err)
+		return nil, fmt.Errorf("ものレボにログインできなかった error: %v", err)
 	}
 
 	// 案件一覧一覧画面に移動する
 	if err := p.movePropositionTablePage(page); err != nil {
-		p.sugar.Fatal("案件一覧一覧画面に移動できなかった", err)
+		p.sugar.Error("案件一覧一覧画面に移動できなかった", err)
+		return nil, fmt.Errorf("案件一覧一覧画面に移動できなかった error: %v", err)
 	}
 
 	// ダウンロードする
-	p.downloadPropositionTable(page)
+	if err := p.downloadPropositionTable(page); err != nil {
+		p.sugar.Error("案件一覧をダウンロードできなかった", err)
+		return nil, fmt.Errorf("案件一覧をダウンロードできなかった error: %v", err)
+	}
+
+	// テンポラリフォルダの作成
+	if err := p.initializeWorkDir(); err != nil {
+		p.sugar.Error("作業フォルダの作成で失敗しました", err)
+		return nil, fmt.Errorf("作業フォルダの作成で失敗しました error: %v", err)
+	}
+
+	// ファイル移動
+	f, err := p.moveDownloadToWork()
+	if err != nil {
+		p.sugar.Error("ファイル移動で失敗しました", err)
+		return nil, fmt.Errorf("ファイル移動で失敗しました error: %v", err)
+	}
 
 	// csvを開く
-	csv, err := p.openCsvFile()
+	csv, err := p.openCsvFile(f)
 	if err != nil {
-		p.sugar.Fatal("csvファイルを開く処理で失敗しました", err)
+		p.sugar.Error("csvファイルを開く処理で失敗しました", err)
+		return nil, fmt.Errorf("csvファイルを開く処理で失敗しました error: %v", err)
 	}
 
 	return csv, nil
 }
 
-func (p *PropositionTable) downloadPropositionTable(page *agouti.Page) {
+func (p *PropositionTable) downloadPropositionTable(page *agouti.Page) error {
 	// ダウンロードボタンを押す
 	page.FindByXPath(`//*[@id="app"]/div/div[2]/div[2]/div/div/div/div[1]/div[2]/div/div/button`).Click()
 	page.FindByXPath(`//*[@id="app"]/div/div[2]/div[2]/div/div/div/div[1]/div[2]/div/div/div/div[1]`).Click()
 
 	// データ準備まで待つ
-	i := 0
-	for i < 60 {
-		selector := page.FindByXPath(`/html/body/div[3]/div[2]/div`)
+	selector := page.FindByXPath(`/html/body/div[3]/div[2]/div`)
+	for i := 0; i < 600; i++ {
 		if v, _ := selector.Visible(); v {
 			break
 		}
-		time.Sleep(time.Second)
-		i++
-	}
+		time.Sleep(time.Millisecond * 100)
 
-	if i >= 60 {
-		p.sugar.Fatal("ダウンロードタイムアウト", i)
+		if i >= 600 {
+			p.sugar.Error("ダウンロードタイムアウト", i)
+			return fmt.Errorf("ダウンロードタイムアウト count: %v", i)
+		} else {
+			// 実行ボタン押下
+			if err := page.FindByXPath(`/html/body/div[3]/div[2]/div/div[3]/button[2]`).
+				Click(); err == nil {
+				break
+			}
+		}
 	}
-
-	// 実行ボタン押下
-	page.FindByXPath(`/html/body/div[3]/div[2]/div/div[3]/button[2]`).Click()
 	time.Sleep(time.Second)
+
+	return nil
 }
 
-func (p *PropositionTable) openCsvFile() ([]monorevo.Proposition, error) {
-	// テンポラリフォルダの作成
-	if err := p.initializeWorkDir(); err != nil {
-		p.sugar.Fatal("テンポラリフォルダの作成で失敗しました", err)
-	}
-
-	// ファイル移動
-	n, err := p.moveDownloadToWork()
-	if err != nil {
-		p.sugar.Fatal("ファイル移動で失敗しました", err)
-	}
-
+func (p *PropositionTable) openCsvFile(f string) ([]monorevo.Proposition, error) {
 	// csvをパースする
-	csv, err := p.deserializeCsv(n)
+	csv, err := p.deserializeCsv(f)
 	if err != nil {
-		p.sugar.Fatal("csvのパースに失敗しました", err)
+		p.sugar.Error("csvのパースに失敗しました", err)
+		return nil, fmt.Errorf("csvのパースに失敗しました error: %v", err)
 	}
 	return csv, nil
 }
 
 func (p *PropositionTable) initializeWorkDir() error {
 	if f, err := os.Stat(p.workDir); os.IsNotExist(err) || !f.IsDir() {
-		p.sugar.Info("テンポラリフォルダは存在しません", p.workDir)
+		p.sugar.Info("作業フォルダは存在しないため、削除しません", p.workDir)
 	} else {
-		p.sugar.Info("テンポラリフォルダの削除を実行", p.workDir)
+		p.sugar.Info("作業フォルダの削除を実行", p.workDir)
 		if err := os.RemoveAll(p.workDir); err != nil {
-			p.sugar.Fatal("テンポラリフォルダの削除に失敗", err)
+			p.sugar.Error("作業フォルダの削除に失敗しました", err)
+			return fmt.Errorf("作業フォルダの削除に失敗しました error: %v", err)
 		}
 	}
 	return os.Mkdir(p.workDir, 0755)
@@ -102,13 +117,16 @@ func (p *PropositionTable) initializeWorkDir() error {
 func (p *PropositionTable) moveDownloadToWork() (string, error) {
 	files, err := ioutil.ReadDir(p.downloadDir)
 	if err != nil {
-		p.sugar.Fatal("ダウンロードフォルダのファイル一覧の取得失敗", err)
+		p.sugar.Error("ダウンロードフォルダのファイル一覧の取得失敗", err)
+		return "", fmt.Errorf("ダウンロードフォルダの削除に失敗しました error: %v", err)
 	}
 
 	if len(files) == 0 {
-		p.sugar.Fatal("ダウンロードフォルダにファイルが存在しない")
+		p.sugar.Error("ダウンロードフォルダにファイルが存在しない", p.downloadDir)
+		return "", fmt.Errorf("ダウンロードフォルダ(%v)にファイルが存在しない error: %v", p.downloadDir, err)
 	}
 
+	// 始めの1つをダウンロードしたファイルと推定
 	f := files[0]
 
 	return f.Name(),
@@ -121,22 +139,28 @@ func (p *PropositionTable) moveDownloadToWork() (string, error) {
 func (p *PropositionTable) deserializeCsv(name string) ([]monorevo.Proposition, error) {
 	file, err := os.Open(filepath.Join(p.workDir, name))
 	if err != nil {
-		p.sugar.Fatal("ファイルが開けませんでした", err)
+		p.sugar.Error("csvファイルが開けませんでした", err)
+		return nil, fmt.Errorf("csvファイルが開けませんでした error: %v", err)
 	}
 	defer file.Close()
 
 	// csv.NewReaderを使ってcsvを読み込む
 	r := csv.NewReader(file)
 	var fropositions []monorevo.Proposition
-	for {
+	for i := 1; ; i++ {
 		row, err := r.Read()
 		if err == io.EOF {
 			break
+		}
+		if i == 1 {
+			// 1行目(ヘッダ)は無視する
+			continue
 		}
 
 		// 納期を日付形式に変換
 		d, err := time.Parse("2006/01/02", row[8])
 		if err != nil {
+			// 日付変換に失敗したレコードはパスする
 			p.sugar.Error("csvファイルの納期の日付形式変換でエラー発生", row[8], err)
 			continue
 		}

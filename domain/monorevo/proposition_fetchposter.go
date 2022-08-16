@@ -27,7 +27,25 @@ func NewProposition(warkNumber string, det string, deliveryDate time.Time) *Prop
 	}
 }
 
-type EditedProposition struct {
+// ものレボ案件差分
+type DifferentProposition struct {
+	WorkedNumber        string
+	Det                 string
+	DeliveryDate        time.Time
+	UpdatedDeliveryDate time.Time
+}
+
+func NewDifferenceProposition(workNumber string, det string, deliveryDate time.Time, updatedDeliveryDate time.Time) *DifferentProposition {
+	return &DifferentProposition{
+		WorkedNumber:        workNumber,
+		Det:                 det,
+		DeliveryDate:        deliveryDate,
+		UpdatedDeliveryDate: updatedDeliveryDate,
+	}
+}
+
+// ものレボ案件編集結果
+type UpdatedProposition struct {
 	WorkedNumber        string
 	Det                 string
 	Successful          bool
@@ -35,14 +53,14 @@ type EditedProposition struct {
 	UpdatedDeliveryDate time.Time
 }
 
-func NewEditedProposition(
+func NewUpdatedProposition(
 	workedNumber string,
 	det string,
 	successful bool,
 	deliveryDate time.Time,
 	updatedDeliveryDate time.Time,
-) *EditedProposition {
-	return &EditedProposition{
+) *UpdatedProposition {
+	return &UpdatedProposition{
 		WorkedNumber:        workedNumber,
 		Det:                 det,
 		Successful:          successful,

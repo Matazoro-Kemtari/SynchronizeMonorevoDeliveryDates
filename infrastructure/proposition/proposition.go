@@ -3,6 +3,7 @@ package proposition
 // https://qiita.com/0829/items/c1e494bb128ade5f0872
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"time"
@@ -72,7 +73,8 @@ func (p *PropositionTable) getWebDriver() *agouti.WebDriver {
 func (p *PropositionTable) loginToMonorevo(driver *agouti.WebDriver) (*agouti.Page, error) {
 	page, err := driver.NewPage()
 	if err != nil {
-		p.sugar.Fatal("driver.NewPage", err)
+		p.sugar.Error("driver.NewPage", err)
+		return nil, fmt.Errorf("driver.NewPage error: %v", err)
 	}
 
 	// loginページを開く
@@ -92,17 +94,17 @@ func (p *PropositionTable) loginToMonorevo(driver *agouti.WebDriver) (*agouti.Pa
 	page.FindByXPath(`//*[@id="inputPassword"]`).Fill(p.userPass)
 	page.FindByXPath(`//*[@id="app"]/div/div[3]/form/div/div[2]/div[5]/button`).Click()
 
-	i := 0
-	for i < 60 {
-		check := page.FindByXPath(`/html/body/div[1]/div[2]/div[2]/div[1]/div[2]/div[1]/div/div[2]/div/div/div[2]/div[1]/div[1]/div[1]/div[1]/input`)
+	check := page.FindByXPath(`/html/body/div[1]/div[2]/div[2]/div[1]/div[2]/div[1]/div/div[2]/div/div/div[2]/div[1]/div[1]/div[1]/div[1]/input`)
+	for i := 0; i < 60; i++ {
 		if err := check.Click(); err == nil {
 			break
 		}
-		time.Sleep(time.Second)
-		i++
-	}
-	if i >= 60 {
-		p.sugar.Fatal("ログインタイムアウト", i)
+		time.Sleep(time.Millisecond * 100)
+
+		if i >= 60 {
+			p.sugar.Error("ログインタイムアウト", i)
+			return nil, fmt.Errorf("ログインタイムアウト count: %v", i)
+		}
 	}
 
 	return page, nil
@@ -113,18 +115,17 @@ func (p *PropositionTable) movePropositionTablePage(page *agouti.Page) error {
 	const MONOREVO_PROPOSITION_TABLE = "https://app.monorevo.jp/smlot/order/list.html"
 	err := page.Navigate(MONOREVO_PROPOSITION_TABLE)
 
-	i := 0
-	for i < 60 {
-		btn := page.FindByXPath(`//*[@id="app"]/div/div[2]/div[2]/div/div/div/form/table/tbody/tr[1]/td[1]/input`)
+	btn := page.FindByXPath(`//*[@id="app"]/div/div[2]/div[2]/div/div/div/form/table/tbody/tr[1]/td[1]/input`)
+	for i := 0; i < 60; i++ {
 		if err := btn.Click(); err == nil {
 			break
 		}
-		time.Sleep(time.Second)
-		i++
-	}
+		time.Sleep(time.Millisecond * 100)
 
-	if i >= 60 {
-		p.sugar.Fatal("ダウンロードタイムアウト", i)
+		if i >= 60 {
+			p.sugar.Error("案件一覧に移動タイムアウト", i)
+			return fmt.Errorf("案件一覧に移動タイムアウト count: %v", i)
+		}
 	}
 
 	return err
@@ -134,11 +135,12 @@ func (p *PropositionTable) initializeDownloadDir() error {
 	// WebDriverは何をダウンロードしたのかわからない
 	// フォルダは今回ダウンロードしたもののみになる様にしておく必要がある
 	if f, err := os.Stat(p.downloadDir); os.IsNotExist(err) || !f.IsDir() {
-		p.sugar.Info("ダウンロードフォルダは存在しません", p.downloadDir)
+		p.sugar.Info("ダウンロードフォルダは存在しないため、削除しません", p.downloadDir)
 	} else {
 		p.sugar.Info("ダウンロードフォルダの削除を実行", p.downloadDir)
 		if err := os.RemoveAll(p.downloadDir); err != nil {
-			p.sugar.Fatal("ダウンロードフォルダの削除に失敗", err)
+			p.sugar.Error("ダウンロードフォルダの削除に失敗", err)
+			return fmt.Errorf("ダウンロードフォルダの削除に失敗 error: %v", err)
 		}
 	}
 	return os.Mkdir(p.downloadDir, 0755)
