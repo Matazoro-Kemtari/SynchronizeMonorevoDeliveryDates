@@ -87,6 +87,35 @@ func TestPropositionTable_PostRange(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "正常系_納期が更新できること",
+			p: NewPropositionTable(
+				logger.Sugar(),
+				os.Getenv("MONOREVO_COMPANY_ID"),
+				os.Getenv("MONOREVO_USER_ID"),
+				os.Getenv("MONOREVO_USER_PASSWORD"),
+			),
+			args: args{
+				[]monorevo.DifferentProposition{
+					{
+						WorkedNumber:        "99仮-1",
+						Det:                 "1",
+						DeliveryDate:        time.Date(2222, 8, 20, 0, 0, 0, 0, time.UTC),
+						UpdatedDeliveryDate: time.Date(2222, 8, 21, 0, 0, 0, 0, time.UTC),
+					},
+				},
+			},
+			want: []monorevo.UpdatedProposition{
+				{
+					WorkedNumber:        "99仮-1",
+					Det:                 "1",
+					Successful:          true,
+					DeliveryDate:        time.Date(2222, 8, 20, 0, 0, 0, 0, time.UTC),
+					UpdatedDeliveryDate: time.Date(2222, 8, 21, 0, 0, 0, 0, time.UTC),
+				},
+			},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

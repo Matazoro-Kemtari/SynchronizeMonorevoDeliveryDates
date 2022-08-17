@@ -164,7 +164,7 @@ func (p *PropositionTable) updatedDeliveryDate(
 	diff monorevo.DifferentProposition,
 ) (successful, error) {
 	// htmlをパースする
-	contentsDom, err := p.getSearchedPropositionDocument(page)
+	contentsDom, err := p.getWebDocument(page)
 	if err != nil {
 		return unspecified, fmt.Errorf("htmlをパースする error: %v", err)
 	}
@@ -195,10 +195,6 @@ func (p *PropositionTable) updatedDeliveryDate(
 				fmt.Errorf("案件詳細が開けませんでした error: %v", err)
 		}
 
-		// 計画変更ボタンを押す
-		updPlanBtn := page.FindByXPath(`//*[@id="smlot-detail"]/div/div/div/div/div[1]/div[1]/button[1]`)
-		updPlanBtn.Click()
-
 		// 案件編集ウィンドウを開く
 		if err := p.openEditableProposition(page); err != nil {
 			return failure,
@@ -215,6 +211,39 @@ func (p *PropositionTable) updatedDeliveryDate(
 					diff.Det,
 					err,
 				)
+		}
+		time.Sleep(time.Millisecond * 50)
+
+		// エラー表示を確認
+		parent := page.FindByXPath(`/html/body/div[2]`)
+		pid, _ := parent.Attribute("id") // idが動的に変わる
+
+		dlg := page.FindByXPath(`/html/body/div[2]/div`)
+		for i := 0; i < 600; i++ {
+			if v, err := dlg.Visible(); err != nil {
+				p.sugar.Info("ダイアログ消えた")
+				break
+			} else if v {
+				// ダイアログ表示された
+				doc, err := p.getWebDocument(page)
+				if err != nil {
+					return failure, fmt.Errorf("ドキュメントの取得に失敗しました error: %v", err)
+				}
+
+				sel := doc.Find(fmt.Sprintf("#%v > div", pid))
+				msg := sel.Text()
+				if msg != "データの登録が完了しました" {
+					return failure, fmt.Errorf("更新に失敗しました message: %v", msg)
+				}
+				break
+			}
+			p.sugar.Infof("ダイアログ消失待ち %v * 100ミリ秒", i+1)
+			time.Sleep(time.Millisecond * 100)
+
+			if i >= 600 {
+				p.sugar.Error("ダイアログ消失待ち タイムアウト", i)
+				return failure, fmt.Errorf("ダイアログ消失待ちタイムアウト error: %v", i)
+			}
 		}
 	}
 
@@ -248,6 +277,10 @@ func (p *PropositionTable) editProposition(page *agouti.Page, updatedDeliveryDat
 }
 
 func (p *PropositionTable) openEditableProposition(page *agouti.Page) error {
+	// 計画変更ボタンを押す
+	updPlanBtn := page.FindByXPath(`//*[@id="smlot-detail"]/div/div/div/div/div[1]/div[1]/button[1]`)
+	updPlanBtn.Click()
+
 	entBtn := page.FindByXPath(`//*[@id="smlot-detail"]/div/div/div/form/div[4]/div/button[4]`)
 	for i := 0; i < 60; i++ {
 		if _, err := entBtn.Enabled(); err == nil {
@@ -299,7 +332,7 @@ func (p *PropositionTable) getSearchResults(contentsDom *goquery.Document) []*ht
 	return rows
 }
 
-func (p *PropositionTable) getSearchedPropositionDocument(page *agouti.Page) (*goquery.Document, error) {
+func (p *PropositionTable) getWebDocument(page *agouti.Page) (*goquery.Document, error) {
 	curContentsDom, err := page.HTML()
 	if err != nil {
 		p.sugar.Error("DOMの取得に失敗しました", err)
