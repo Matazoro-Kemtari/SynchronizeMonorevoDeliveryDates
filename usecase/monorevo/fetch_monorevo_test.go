@@ -10,7 +10,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func TestFetchPropositionTable_Execute(t *testing.T) {
+func TestPropositionTable_Fetch(t *testing.T) {
 	// logger生成
 	logger, _ := zap.NewDevelopment()
 
@@ -29,25 +29,26 @@ func TestFetchPropositionTable_Execute(t *testing.T) {
 	mock_fetcher.EXPECT().FetchAll().Return(mock_results, nil)
 
 	// UseCase戻り値
-	results := []PropositionDto{}
+	results := []FetchedPropositionDto{}
 	for _, v := range mock_results {
-		results = append(results, PropositionDto{
-			v.WorkedNumber,
-			v.DeliveryDate,
+		results = append(results, FetchedPropositionDto{
+			WorkedNumber: v.WorkedNumber,
+			DeliveryDate: v.DeliveryDate,
 		})
 	}
 
 	tests := []struct {
 		name    string
-		m       *FetchPropositionTable
-		want    []PropositionDto
+		m       *PropositionTable
+		want    []FetchedPropositionDto
 		wantErr bool
 	}{
 		{
 			name: "正常系_UseCaseを実行するとモックが実行されること",
-			m: NewFetchPropositionTable(
+			m: NewPropositionTable(
 				logger.Sugar(),
 				mock_fetcher,
+				nil,
 			),
 			want:    results,
 			wantErr: false,
@@ -55,13 +56,13 @@ func TestFetchPropositionTable_Execute(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.m.Execute()
+			got, err := tt.m.Fetch()
 			if (err != nil) != tt.wantErr {
-				t.Errorf("FetchPropositionTable.Execute() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("PropositionTable.Fetch() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FetchPropositionTable.Execute() = %v, want %v", got, tt.want)
+				t.Errorf("PropositionTable.Fetch() = %v, want %v", got, tt.want)
 			}
 		})
 	}

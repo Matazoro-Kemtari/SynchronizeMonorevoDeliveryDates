@@ -4,12 +4,9 @@ import (
 	"time"
 )
 
-// ものレボから案件を操作する
+// ものレボから案件を取得する
 type Fetcher interface {
 	FetchAll() ([]Proposition, error)
-}
-type Poster interface {
-	PostRange([]Proposition) error
 }
 
 // ものレボ案件のドメインモデル
@@ -25,6 +22,11 @@ func NewProposition(warkNumber string, det string, deliveryDate time.Time) *Prop
 		Det:          det,
 		DeliveryDate: deliveryDate,
 	}
+}
+
+// ものレボに案件を更新する
+type Poster interface {
+	PostRange([]DifferentProposition) ([]UpdatedProposition, error)
 }
 
 // ものレボ案件差分
@@ -71,20 +73,58 @@ func NewUpdatedProposition(
 
 // テスト用Factoryメソッド
 // 参考: https://shiimanblog.com/engineering/functional-options-pattern/
-type Options struct {
+type PropositionOptions struct {
 	WorkedNumber string
 	Det          string
 	DeliveryDate time.Time
 }
 
-type Option func(*Options)
+type PropositionOption func(*PropositionOptions)
 
-func TestPropositionCreate(options ...Option) *Proposition {
+func TestPropositionCreate(options ...PropositionOption) *Proposition {
 	// デフォルト値設定
-	opts := &Options{
+	opts := &PropositionOptions{
 		WorkedNumber: "99A-1234",
 		Det:          "1",
 		DeliveryDate: time.Now(),
 	}
+
+	for _, option := range options {
+		option(opts)
+	}
+
 	return NewProposition(opts.WorkedNumber, opts.Det, opts.DeliveryDate)
+}
+
+type UpdatedPropositionOptions struct {
+	WorkedNumber        string
+	Det                 string
+	Successful          bool
+	DeliveryDate        time.Time
+	UpdatedDeliveryDate time.Time
+}
+
+type UpdatedPropositionOption func(*UpdatedPropositionOptions)
+
+func TestUpdatedPropositionCreate(options ...UpdatedPropositionOption) *UpdatedProposition {
+	// デフォルト値設定
+	opts := &UpdatedPropositionOptions{
+		WorkedNumber:        "99A-1234",
+		Det:                 "1",
+		Successful:          true,
+		DeliveryDate:        time.Now(),
+		UpdatedDeliveryDate: time.Now(),
+	}
+
+	for _, option := range options {
+		option(opts)
+	}
+
+	return NewUpdatedProposition(
+		opts.WorkedNumber,
+		opts.Det,
+		opts.Successful,
+		opts.DeliveryDate,
+		opts.UpdatedDeliveryDate,
+	)
 }
