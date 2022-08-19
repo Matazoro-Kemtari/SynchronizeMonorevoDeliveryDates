@@ -58,8 +58,21 @@ func (p *PropositionTable) PostRange(postablePropositions []monorevo.DifferentPr
 
 		// 案件検索をする
 		if r, err := p.searchPropositionTable(page, v); err != nil {
-			p.sugar.Error("案件検索ができなかった", err)
-			return nil, fmt.Errorf("案件検索ができなかった error: %v", err)
+			editedPropositions = append(
+				editedPropositions,
+				*monorevo.NewUpdatedProposition(
+					v.WorkedNumber,
+					v.Det,
+					false,
+					v.DeliveryDate,
+					v.UpdatedDeliveryDate,
+				))
+			p.sugar.Error(
+				"案件検索ができなかった",
+				v.WorkedNumber,
+				v.Det,
+				err)
+			continue
 		} else if !r {
 			editedPropositions = append(
 				editedPropositions,
@@ -80,8 +93,21 @@ func (p *PropositionTable) PostRange(postablePropositions []monorevo.DifferentPr
 		// 納期を更新する
 		successful, err := p.updatedDeliveryDate(page, v)
 		if successful == unspecified && err != nil {
-			p.sugar.Error("納期の更新ができませんでした", err)
-			return nil, fmt.Errorf("納期の更新ができませんでした error: %v", err)
+			editedPropositions = append(
+				editedPropositions,
+				*monorevo.NewUpdatedProposition(
+					v.WorkedNumber,
+					v.Det,
+					false,
+					v.DeliveryDate,
+					v.UpdatedDeliveryDate,
+				))
+			p.sugar.Error(
+				"納期の更新ができませんでした",
+				v.DeliveryDate,
+				v.Det,
+				err)
+			continue
 		}
 		editedPropositions = append(
 			editedPropositions,
@@ -117,6 +143,7 @@ func (p *PropositionTable) searchPropositionTable(page *agouti.Page, proposition
 		p.sugar.Debug("DET番号の入力に失敗した", err)
 		return false, fmt.Errorf("DET番号の入力に失敗した error: %v", err)
 	}
+	time.Sleep(time.Millisecond * 100)
 	searchBtn := page.FindByXPath(`//*[@id="searchButton"]/div/button`)
 	searchBtn.Click()
 
