@@ -135,11 +135,14 @@ func (p *PropositionTable) searchPropositionTable(page *agouti.Page, proposition
 			return false, fmt.Errorf("検索タイムアウト count: %v", i)
 		}
 	}
+	time.Sleep(time.Millisecond * 100)
 
 	// 該当あるか確認
-	td := page.FindByXPath(`//*[@id="app"]/div/div[2]/div[2]/div/div/div/form/table/tbody/tr/td`)
-	if _, err := td.Elements(); err == nil {
-		// エラーなしは該当なし
+	doc, err := p.getWebDocument(page)
+	tr := doc.Find(`#app > div > div.contents-wrapper > div.main-wrapper > div > div > div > form > table > tbody > tr`)
+	trs := tr.Nodes
+	if err != nil || len(trs) < 2 {
+		// 2行(trが2つより少ない)場合は該当なし
 		msg := fmt.Sprintf(
 			"作業No(%v):DET番号(%v)は該当案件がありません",
 			proposition.WorkedNumber,
@@ -172,6 +175,13 @@ func (p *PropositionTable) updatedDeliveryDate(
 	// tbodySelectionを取得して td要素数を取得する
 	// 1Recordにつき2行なので倍になっている
 	rows := p.getSearchResults(contentsDom)
+	if len(rows) > 2 {
+		return unspecified, fmt.Errorf(
+			"作業No(%v)とDET(%v)で検索した結果が2レコード以上あるため中止する record: %v",
+			diff.WorkedNumber,
+			diff.Det,
+			(len(rows) / 2))
+	}
 
 	// 表をループして納期を更新する
 	// 作業NoとDETで検索しているので 原則1レコードだけど
@@ -251,11 +261,12 @@ func (p *PropositionTable) updatedDeliveryDate(
 }
 
 func (p *PropositionTable) editProposition(page *agouti.Page, updatedDeliveryDateStr string) error {
-	// 登録して案件一覧に移動ボタンを押す
+	// 納期に入力
 	deliveryDateFld := page.FindByXPath(`//*[@id="deliveryDate"]/div[2]/div/input`)
 	deliveryDateFld.Fill(updatedDeliveryDateStr)
 
-	entryNextBtn := page.FindByXPath(`//*[@id="smlot-detail"]/div/div/div/form/div[4]/div/button[3]`)
+	// 登録して案件一覧に移動ボタンを押す
+	entryNextBtn := page.FindByXPath(`//*[@id="smlot-detail"]/div/div/div/form/div[4]/div/button[2]`)
 	entryNextBtn.Click()
 
 	time.Sleep(time.Second * 2)
@@ -328,7 +339,7 @@ func (p *PropositionTable) getSearchResults(contentsDom *goquery.Document) []*ht
 
 	// 1Recordにつき2行なので倍になっている
 	rows := rowSelection.Nodes
-	p.sugar.Debugf("案件一覧テーブル %v行", len(rows))
+	p.sugar.Debugf("案件一覧テーブル %vレコード", (len(rows) / 2))
 	return rows
 }
 
