@@ -5,7 +5,6 @@
 package mock_compare
 
 import (
-	compare "SynchronizeMonorevoDeliveryDates/domain/compare"
 	monorevo "SynchronizeMonorevoDeliveryDates/domain/monorevo"
 	orderdb "SynchronizeMonorevoDeliveryDates/domain/orderdb"
 	reflect "reflect"
@@ -37,10 +36,10 @@ func (m *MockExtractor) EXPECT() *MockExtractorMockRecorder {
 }
 
 // ExtractForDeliveryDate mocks base method.
-func (m *MockExtractor) ExtractForDeliveryDate(j []orderdb.JobBook, p []monorevo.Proposition) []compare.DifferentProposition {
+func (m *MockExtractor) ExtractForDeliveryDate(j []orderdb.JobBook, p []monorevo.Proposition) []monorevo.DifferentProposition {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ExtractForDeliveryDate", j, p)
-	ret0, _ := ret[0].([]compare.DifferentProposition)
+	ret0, _ := ret[0].([]monorevo.DifferentProposition)
 	return ret0
 }
 

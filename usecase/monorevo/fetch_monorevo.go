@@ -1,48 +1,30 @@
 package monorevo
 
 import (
-	"SynchronizeMonorevoDeliveryDates/domain/monorevo"
 	"time"
-
-	"go.uber.org/zap"
 )
 
-type PropositionDto struct {
+type FetchedPropositionDto struct {
 	WorkedNumber string
 	DeliveryDate time.Time
 }
 
-type Executer interface {
-	Execute() ([]PropositionDto, error)
+type Fetcher interface {
+	Fetch() ([]FetchedPropositionDto, error)
 }
 
-type FetchPropositionTable struct {
-	sugar   *zap.SugaredLogger
-	fetcher monorevo.Fetcher
-}
-
-func NewFetchPropositionTable(
-	sugar *zap.SugaredLogger,
-	fetcher monorevo.Fetcher,
-) *FetchPropositionTable {
-	return &FetchPropositionTable{
-		sugar:   sugar,
-		fetcher: fetcher,
-	}
-}
-
-func (m *FetchPropositionTable) Execute() ([]PropositionDto, error) {
+func (m *PropositionTable) Fetch() ([]FetchedPropositionDto, error) {
 	propositions, err := m.fetcher.FetchAll()
 	if err != nil {
-		m.sugar.Fatal("ものレボから案件一覧の取得に失敗しました", err)
+		m.sugar.Fatalf("ものレボから案件一覧の取得に失敗しました error: %v", err)
 	}
 
 	// DTOに詰め替え
-	cnv := []PropositionDto{}
+	cnv := []FetchedPropositionDto{}
 	for _, v := range propositions {
 		cnv = append(
 			cnv,
-			PropositionDto{
+			FetchedPropositionDto{
 				WorkedNumber: v.WorkedNumber,
 				DeliveryDate: v.DeliveryDate,
 			},

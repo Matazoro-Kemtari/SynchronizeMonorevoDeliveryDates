@@ -16,6 +16,7 @@ type JobBookPram struct {
 
 type PropositionPram struct {
 	WorkedNumber string
+	Det          string
 	DeliveryDate time.Time
 }
 
@@ -61,6 +62,7 @@ func (m *ExtractProposition) Execute(s DifferenceSourcePram) []DifferentProposit
 	for _, v := range s.Propositions {
 		p = append(p, *monorevo.NewProposition(
 			v.WorkedNumber,
+			v.Det,
 			v.DeliveryDate,
 		))
 	}
