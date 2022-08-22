@@ -61,35 +61,59 @@ func TestSynchronizingDeliveryDate_Synchronize(t *testing.T) {
 }
 
 func makeMockWebPoster(resWebFetches []monorevo.FetchedPropositionDto, resDbFetches []orderdb.JobBookDto, ctrl *gomock.Controller) *mock_monorevo.MockPoster {
-	resPosts := []monorevo.PostedPropositionDto{
-		{
-			WorkedNumber:        resWebFetches[0].WorkedNumber,
-			Det:                 resWebFetches[0].Det,
-			Successful:          true,
-			DeliveryDate:        resWebFetches[0].DeliveryDate,
-			UpdatedDeliveryDate: resDbFetches[0].DeliveryDate,
-		},
-		{
-			WorkedNumber:        resWebFetches[1].WorkedNumber,
-			Det:                 resWebFetches[1].Det,
-			Successful:          true,
-			DeliveryDate:        resWebFetches[1].DeliveryDate,
-			UpdatedDeliveryDate: resDbFetches[1].DeliveryDate,
-		},
-		{
-			WorkedNumber:        resWebFetches[2].WorkedNumber,
-			Det:                 resWebFetches[2].Det,
-			Successful:          true,
-			DeliveryDate:        resWebFetches[2].DeliveryDate,
-			UpdatedDeliveryDate: resDbFetches[2].DeliveryDate,
-		},
+	postPrams := []monorevo.PostingPropositionPram{}
+	for i := 0; i < len(resWebFetches); i++ {
+		postPrams = append(postPrams,
+			monorevo.PostingPropositionPram{
+				WorkedNumber:        resWebFetches[i].WorkedNumber,
+				Det:                 resWebFetches[i].Det,
+				DeliveryDate:        resWebFetches[i].DeliveryDate,
+				UpdatedDeliveryDate: resDbFetches[i].DeliveryDate,
+			},
+		)
+	}
+	resPosts := []monorevo.PostedPropositionDto{}
+	for i := 0; i < len(resWebFetches); i++ {
+		resPosts = append(resPosts,
+			monorevo.PostedPropositionDto{
+				WorkedNumber:        resWebFetches[i].WorkedNumber,
+				Det:                 resWebFetches[i].Det,
+				Successful:          true,
+				DeliveryDate:        resWebFetches[i].DeliveryDate,
+				UpdatedDeliveryDate: resDbFetches[i].DeliveryDate,
+			},
+		)
 	}
 	mock_post := mock_monorevo.NewMockPoster(ctrl)
-	mock_post.EXPECT().PostRange(gomock.Any()).Return(resPosts, nil)
+	mock_post.EXPECT().PostRange(postPrams).Return(resPosts, nil)
 	return mock_post
 }
 
 func makeMockDifferent(resWebFetches []monorevo.FetchedPropositionDto, resDbFetches []orderdb.JobBookDto, ctrl *gomock.Controller) *mock_difference.MockExtractor {
+	diffPropositions := []difference.PropositionPram{}
+	for _, pro := range resWebFetches {
+		diffPropositions = append(diffPropositions,
+			difference.PropositionPram{
+				WorkedNumber: pro.WorkedNumber,
+				Det:          pro.Det,
+				DeliveryDate: pro.DeliveryDate,
+			},
+		)
+	}
+	diffJobBooks := []difference.JobBookPram{}
+	for _, job := range resDbFetches {
+		diffJobBooks = append(diffJobBooks,
+			difference.JobBookPram{
+				WorkedNumber: job.WorkedNumber,
+				DeliveryDate: job.DeliveryDate,
+			},
+		)
+	}
+
+	diffPram := difference.DifferenceSourcePram{
+		JobBooks:     diffJobBooks,
+		Propositions: diffPropositions,
+	}
 	resDiffs := []difference.DifferentPropositionDto{
 		{
 			WorkedNumber:        resWebFetches[0].WorkedNumber,
@@ -111,7 +135,7 @@ func makeMockDifferent(resWebFetches []monorevo.FetchedPropositionDto, resDbFetc
 		},
 	}
 	mock_diff := mock_difference.NewMockExtractor(ctrl)
-	mock_diff.EXPECT().Extract(gomock.Any()).Return(resDiffs)
+	mock_diff.EXPECT().Extract(diffPram).Return(resDiffs)
 	return mock_diff
 }
 

@@ -48,11 +48,10 @@ func (m *SynchronizingDeliveryDate) Synchronize() error {
 	}
 	m.sugar.Debug("jobBooks", jobBooks)
 
+	// 詰め替え
+	diffPram := m.convertDifferencePram(propositions, jobBooks)
+
 	m.sugar.Info("比較差分を算出する")
-	diffPram := difference.DifferenceSourcePram{
-		JobBooks:     []difference.JobBookPram{},
-		Propositions: []difference.PropositionPram{},
-	}
 	diff := m.extractor.Extract(diffPram)
 	m.sugar.Debug("diff", diff)
 
@@ -74,4 +73,32 @@ func (m *SynchronizingDeliveryDate) Synchronize() error {
 	m.sugar.Debug("posted", posted)
 
 	return nil
+}
+
+// 差分抽出パラメータへ詰め替え
+func (*SynchronizingDeliveryDate) convertDifferencePram(propositions []monorevo.FetchedPropositionDto, jobBooks []orderdb.JobBookDto) difference.DifferenceSourcePram {
+	diffPropositions := []difference.PropositionPram{}
+	for _, pro := range propositions {
+		diffPropositions = append(diffPropositions,
+			difference.PropositionPram{
+				WorkedNumber: pro.WorkedNumber,
+				Det:          pro.Det,
+				DeliveryDate: pro.DeliveryDate,
+			},
+		)
+	}
+	diffJobBooks := []difference.JobBookPram{}
+	for _, job := range jobBooks {
+		diffJobBooks = append(diffJobBooks,
+			difference.JobBookPram{
+				WorkedNumber: job.WorkedNumber,
+				DeliveryDate: job.DeliveryDate,
+			},
+		)
+	}
+	diffPram := difference.DifferenceSourcePram{
+		JobBooks:     diffJobBooks,
+		Propositions: diffPropositions,
+	}
+	return diffPram
 }
