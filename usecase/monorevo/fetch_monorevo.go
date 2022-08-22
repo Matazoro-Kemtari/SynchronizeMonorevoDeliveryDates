@@ -6,6 +6,7 @@ import (
 
 type FetchedPropositionDto struct {
 	WorkedNumber string
+	Det          string
 	DeliveryDate time.Time
 }
 
@@ -26,6 +27,7 @@ func (m *PropositionTable) Fetch() ([]FetchedPropositionDto, error) {
 			cnv,
 			FetchedPropositionDto{
 				WorkedNumber: v.WorkedNumber,
+				Det:          v.Det,
 				DeliveryDate: v.DeliveryDate,
 			},
 		)

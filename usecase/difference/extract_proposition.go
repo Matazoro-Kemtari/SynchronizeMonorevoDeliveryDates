@@ -27,30 +27,31 @@ type DifferenceSourcePram struct {
 
 type DifferentPropositionDto struct {
 	WorkedNumber        string
+	Det                 string
 	DeliveryDate        time.Time
 	UpdatedDeliveryDate time.Time
 }
 
-type Executer interface {
-	Execute() []DifferentPropositionDto
+type Extractor interface {
+	Extract(DifferenceSourcePram) []DifferentPropositionDto
 }
 
-type ExtractProposition struct {
+type ExtractingProposition struct {
 	sugar     *zap.SugaredLogger
 	extractor compare.Extractor
 }
 
-func NewExtractProposition(
+func NewExtractingProposition(
 	sugar *zap.SugaredLogger,
 	extractor compare.Extractor,
-) *ExtractProposition {
-	return &ExtractProposition{
+) *ExtractingProposition {
+	return &ExtractingProposition{
 		sugar:     sugar,
 		extractor: extractor,
 	}
 }
 
-func (m *ExtractProposition) Execute(s DifferenceSourcePram) []DifferentPropositionDto {
+func (m *ExtractingProposition) Extract(s DifferenceSourcePram) []DifferentPropositionDto {
 	j := []orderdb.JobBook{}
 	for _, v := range s.JobBooks {
 		j = append(j, *orderdb.NewJobBook(
@@ -75,6 +76,7 @@ func (m *ExtractProposition) Execute(s DifferenceSourcePram) []DifferentProposit
 			cnv,
 			DifferentPropositionDto{
 				WorkedNumber:        v.WorkedNumber,
+				Det:                 v.Det,
 				DeliveryDate:        v.DeliveryDate,
 				UpdatedDeliveryDate: v.UpdatedDeliveryDate,
 			},
