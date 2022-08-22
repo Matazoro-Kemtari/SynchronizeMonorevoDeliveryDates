@@ -32,14 +32,14 @@ func NewJobBookTable(
 }
 
 func (m *JobBookTable) Fetch() ([]JobBookDto, error) {
-	jb, err := m.jobBookFetcher.FetchAll()
+	job, err := m.jobBookFetcher.FetchAll()
 	if err != nil {
 		m.sugar.Fatal("受注管理DBから作業台帳を取得できませんでした", err)
 	}
 
 	// 詰め替え
 	dto := []JobBookDto{}
-	for _, v := range jb {
+	for _, v := range job {
 		dto = append(
 			dto,
 			JobBookDto{

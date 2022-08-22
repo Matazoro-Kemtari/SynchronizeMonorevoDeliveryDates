@@ -27,12 +27,13 @@ type DifferenceSourcePram struct {
 
 type DifferentPropositionDto struct {
 	WorkedNumber        string
+	Det                 string
 	DeliveryDate        time.Time
 	UpdatedDeliveryDate time.Time
 }
 
 type Extractor interface {
-	Extract() []DifferentPropositionDto
+	Extract(DifferenceSourcePram) []DifferentPropositionDto
 }
 
 type ExtractingProposition struct {
@@ -75,6 +76,7 @@ func (m *ExtractingProposition) Extract(s DifferenceSourcePram) []DifferentPropo
 			cnv,
 			DifferentPropositionDto{
 				WorkedNumber:        v.WorkedNumber,
+				Det:                 v.Det,
 				DeliveryDate:        v.DeliveryDate,
 				UpdatedDeliveryDate: v.UpdatedDeliveryDate,
 			},
