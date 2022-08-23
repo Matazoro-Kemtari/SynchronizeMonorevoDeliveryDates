@@ -42,16 +42,19 @@ func NewRepository(
 	}
 }
 
-func (r *Repository) FetchAll() []orderdb.JobBook {
+func (r *Repository) FetchAll() ([]orderdb.JobBook, error) {
 	db, err := open(r.orderDbPram)
 	if err != nil {
-		r.sugar.Fatal("データベースに接続できませんでした", err)
+		r.sugar.Error("データベースに接続できませんでした", err)
+		return nil, fmt.Errorf("データベースに接続できませんでした error: %v", err)
 	}
 
 	jobBookModels := []JobBookModel{}
 	result := db.Find(&jobBookModels, "納期 is not null AND 状態 = '受注'")
 	if result.Error != nil {
-		r.sugar.Fatal("M作業台帳を取得できませんでした", result.Error)
+		m := fmt.Sprintf("M作業台帳を取得できませんでした error: %v", result.Error)
+		r.sugar.Error(m)
+		return nil, fmt.Errorf(m)
 	}
 	fmt.Println("jobBook:", jobBookModels)
 
@@ -67,7 +70,7 @@ func (r *Repository) FetchAll() []orderdb.JobBook {
 		)
 	}
 
-	return jobBooks
+	return jobBooks, nil
 }
 
 func open(orderDbPram OrderDbPram) (*gorm.DB, error) {

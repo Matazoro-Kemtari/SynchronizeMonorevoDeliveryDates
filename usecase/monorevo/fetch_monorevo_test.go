@@ -33,6 +33,7 @@ func TestPropositionTable_Fetch(t *testing.T) {
 	for _, v := range mock_results {
 		results = append(results, FetchedPropositionDto{
 			WorkedNumber: v.WorkedNumber,
+			Det:          v.Det,
 			DeliveryDate: v.DeliveryDate,
 		})
 	}
@@ -61,8 +62,13 @@ func TestPropositionTable_Fetch(t *testing.T) {
 				t.Errorf("PropositionTable.Fetch() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("PropositionTable.Fetch() = %v, want %v", got, tt.want)
+			if len(got) != len(tt.want) {
+				t.Errorf("len(PropositionTable.Fetch()) = %v, want %v", len(got), len(tt.want))
+			}
+			for i := 0; i < len(got); i++ {
+				if !reflect.DeepEqual(got[i], tt.want[i]) {
+					t.Errorf("PropositionTable.Fetch()[%v] = %v, want %v", i, got[i], tt.want[i])
+				}
 			}
 		})
 	}

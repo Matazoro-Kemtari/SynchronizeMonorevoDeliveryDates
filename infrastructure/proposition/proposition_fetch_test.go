@@ -18,6 +18,12 @@ func TestPropositionTable_FetchAll(t *testing.T) {
 
 	logger, _ := zap.NewDevelopment()
 
+	cnf := &MonorevoUserConfig{
+		ComId:    os.Getenv("MONOREVO_COMPANY_ID"),
+		UserId:   os.Getenv("MONOREVO_USER_ID"),
+		UserPass: os.Getenv("MONOREVO_USER_PASSWORD"),
+	}
+
 	tests := []struct {
 		name    string
 		p       *PropositionTable
@@ -28,9 +34,7 @@ func TestPropositionTable_FetchAll(t *testing.T) {
 			name: "正常系_ものレボから案件を取得できること",
 			p: NewPropositionTable(
 				logger.Sugar(),
-				os.Getenv("MONOREVO_COMPANY_ID"),
-				os.Getenv("MONOREVO_USER_ID"),
-				os.Getenv("MONOREVO_USER_PASSWORD"),
+				cnf,
 			),
 			want:    `X?[0-9]{2}[A-Z]-[0-9]{1,4}`,
 			wantErr: false,

@@ -12,6 +12,20 @@ import (
 	"go.uber.org/zap"
 )
 
+type MonorevoUserConfig struct {
+	ComId    string
+	UserId   string
+	UserPass string
+}
+
+func NewMonorevoUserConfig() *MonorevoUserConfig {
+	return &MonorevoUserConfig{
+		ComId:    os.Getenv("MONOREVO_COMPANY_ID"),
+		UserId:   os.Getenv("MONOREVO_USER_ID"),
+		UserPass: os.Getenv("MONOREVO_USER_PASSWORD"),
+	}
+}
+
 // ものレボ案件一覧Repository
 type PropositionTable struct {
 	sugar       *zap.SugaredLogger
@@ -24,18 +38,16 @@ type PropositionTable struct {
 
 func NewPropositionTable(
 	sugar *zap.SugaredLogger,
-	comId,
-	userId,
-	userPass string,
+	cnf *MonorevoUserConfig,
 ) *PropositionTable {
 	// 実行ディレクトリを取得する cronで実行時のカレントディレクトリ対策
 	exeFile, _ := os.Executable()
 	exePath := filepath.Dir(exeFile)
 	return &PropositionTable{
 		sugar:       sugar,
-		comId:       comId,
-		userId:      userId,
-		userPass:    userPass,
+		comId:       cnf.ComId,
+		userId:      cnf.UserId,
+		userPass:    cnf.UserPass,
 		downloadDir: filepath.Join(exePath, "download"),
 		workDir:     filepath.Join(exePath, "work"),
 	}

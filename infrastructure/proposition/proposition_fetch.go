@@ -68,9 +68,10 @@ func (p *PropositionTable) downloadPropositionTable(page *agouti.Page) error {
 	page.FindByXPath(`//*[@id="app"]/div/div[2]/div[2]/div/div/div/div[1]/div[2]/div/div/div/div[1]`).Click()
 
 	// データ準備まで待つ
-	selector := page.FindByXPath(`/html/body/div[3]/div[2]/div`)
+	// csvダウンロードポップアップ
+	popup := page.FindByXPath(`/html/body/div[3]/div[2]/div`)
 	for i := 0; i < 600; i++ {
-		if v, _ := selector.Visible(); v {
+		if v, _ := popup.Visible(); v {
 			break
 		}
 		time.Sleep(time.Millisecond * 100)
@@ -78,16 +79,35 @@ func (p *PropositionTable) downloadPropositionTable(page *agouti.Page) error {
 		if i >= 600 {
 			p.sugar.Error("ダウンロードタイムアウト", i)
 			return fmt.Errorf("ダウンロードタイムアウト count: %v", i)
-		} else {
-			// 実行ボタン押下
-			if err := page.FindByXPath(`/html/body/div[3]/div[2]/div/div[3]/button[2]`).
-				Click(); err == nil {
-				break
-			}
 		}
 	}
 	time.Sleep(time.Second)
 
+	// 実行ボタン押下
+	for i := 0; ; i++ {
+		spn := page.FindByXPath(`/html/body/div[3]/div[2]/div/div[3]/button[2]/span[2]/span/span`)
+		btn := page.FindByXPath(`/html/body/div[3]/div[2]/div/div[3]/button[2]`)
+		var err error
+		p.sugar.Debugf("ダウンロード実行ボタン押下 counter: %d", i)
+		if err = spn.Click(); err != nil {
+			err = nil
+			// spanをクリックしても反応しないことがあるから保険的
+			err = btn.Check()
+		}
+
+		if i > 3 {
+			p.sugar.Error("ダウンロード実行ボタン押下で失敗しました", err)
+			return fmt.Errorf("ダウンロード実行ボタン押下で失敗しました error: %v", err)
+		} else {
+			time.Sleep(time.Millisecond * 100)
+		}
+
+		if err != nil {
+			continue
+		} else {
+			break
+		}
+	}
 	return nil
 }
 

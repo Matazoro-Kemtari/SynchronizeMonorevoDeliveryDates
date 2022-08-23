@@ -45,6 +45,13 @@ func TestPropositionTable_PostRange(t *testing.T) {
 			UpdatedDeliveryDate: time.Date(2222, 10, 22, 0, 0, 0, 0, time.UTC),
 		},
 	}
+
+	cnf := &MonorevoUserConfig{
+		ComId:    os.Getenv("MONOREVO_COMPANY_ID"),
+		UserId:   os.Getenv("MONOREVO_USER_ID"),
+		UserPass: os.Getenv("MONOREVO_USER_PASSWORD"),
+	}
+
 	type args struct {
 		in0 []monorevo.DifferentProposition
 	}
@@ -59,9 +66,7 @@ func TestPropositionTable_PostRange(t *testing.T) {
 			name: "異常系_存在しない作業Noはものレボ案件を更新するとエラーになること",
 			p: NewPropositionTable(
 				logger.Sugar(),
-				os.Getenv("MONOREVO_COMPANY_ID"),
-				os.Getenv("MONOREVO_USER_ID"),
-				os.Getenv("MONOREVO_USER_PASSWORD"),
+				cnf,
 			),
 			args: args{
 				[]monorevo.DifferentProposition{
@@ -83,9 +88,7 @@ func TestPropositionTable_PostRange(t *testing.T) {
 			name: "異常系_納期を過去日で更新しようとするとエラーになること",
 			p: NewPropositionTable(
 				logger.Sugar(),
-				os.Getenv("MONOREVO_COMPANY_ID"),
-				os.Getenv("MONOREVO_USER_ID"),
-				os.Getenv("MONOREVO_USER_PASSWORD"),
+				cnf,
 			),
 			args: args{
 				[]monorevo.DifferentProposition{
@@ -107,9 +110,7 @@ func TestPropositionTable_PostRange(t *testing.T) {
 			name: "正常系_納期が更新できること",
 			p: NewPropositionTable(
 				logger.Sugar(),
-				os.Getenv("MONOREVO_COMPANY_ID"),
-				os.Getenv("MONOREVO_USER_ID"),
-				os.Getenv("MONOREVO_USER_PASSWORD"),
+				cnf,
 			),
 			args: args{
 				[]monorevo.DifferentProposition{
