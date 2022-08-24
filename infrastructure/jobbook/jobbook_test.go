@@ -30,7 +30,7 @@ func TestRepository_FetchAll(t *testing.T) {
 	}{
 		{
 			name: "正常系_M作業から作業Noと納期が取得できること",
-			r:    NewRepository(logger.Sugar(), OrderDbPram{os.Getenv("DB_SERVER"), os.Getenv("DB_NAME"), os.Getenv("DB_USER"), os.Getenv("DB_PASS")}),
+			r:    NewRepository(logger.Sugar(), OrderDbConfig{os.Getenv("DB_SERVER"), os.Getenv("DB_NAME"), os.Getenv("DB_USER"), os.Getenv("DB_PASS")}),
 			want: struct {
 				workNumRex           string
 				canEmptyDeliveryDate bool

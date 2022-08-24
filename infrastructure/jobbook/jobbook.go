@@ -3,6 +3,7 @@ package jobbook
 import (
 	"SynchronizeMonorevoDeliveryDates/domain/orderdb"
 	"fmt"
+	"os"
 	"time"
 
 	"go.uber.org/zap"
@@ -10,16 +11,25 @@ import (
 	"gorm.io/gorm"
 )
 
-type OrderDbPram struct {
+type OrderDbConfig struct {
 	server   string
 	database string
 	user     string
 	password string
 }
 
+func NewOrderDbConfig() *OrderDbConfig {
+	return &OrderDbConfig{
+		os.Getenv("DB_SERVER"),
+		os.Getenv("DB_NAME"),
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASS"),
+	}
+}
+
 type Repository struct {
-	sugar       *zap.SugaredLogger
-	orderDbPram OrderDbPram
+	sugar         *zap.SugaredLogger
+	orderDbConfig OrderDbConfig
 }
 
 type JobBookModel struct {
@@ -34,16 +44,16 @@ func (JobBookModel) TableName() string {
 
 func NewRepository(
 	sugar *zap.SugaredLogger,
-	orderDbPram OrderDbPram,
+	orderDbConfig OrderDbConfig,
 ) *Repository {
 	return &Repository{
-		sugar:       sugar,
-		orderDbPram: orderDbPram,
+		sugar:         sugar,
+		orderDbConfig: orderDbConfig,
 	}
 }
 
 func (r *Repository) FetchAll() ([]orderdb.JobBook, error) {
-	db, err := open(r.orderDbPram)
+	db, err := open(r.orderDbConfig)
 	if err != nil {
 		r.sugar.Error("データベースに接続できませんでした", err)
 		return nil, fmt.Errorf("データベースに接続できませんでした error: %v", err)
@@ -73,7 +83,7 @@ func (r *Repository) FetchAll() ([]orderdb.JobBook, error) {
 	return jobBooks, nil
 }
 
-func open(orderDbPram OrderDbPram) (*gorm.DB, error) {
+func open(orderDbPram OrderDbConfig) (*gorm.DB, error) {
 	dsn := fmt.Sprintf(
 		"sqlserver://%v:%v@%v?database=%v",
 		orderDbPram.user,
