@@ -3,6 +3,8 @@ package monorevo
 import (
 	"SynchronizeMonorevoDeliveryDates/domain/monorevo"
 	"time"
+
+	"go.uber.org/zap"
 )
 
 type PostingPropositionPram struct {
@@ -20,11 +22,26 @@ type PostedPropositionDto struct {
 	UpdatedDeliveryDate time.Time
 }
 
-type Poster interface {
-	PostRange([]PostingPropositionPram) ([]PostedPropositionDto, error)
+type PostingExecutor interface {
+	Execute([]PostingPropositionPram) ([]PostedPropositionDto, error)
 }
 
-func (m *PropositionTable) PostRange(p []PostingPropositionPram) ([]PostedPropositionDto, error) {
+type PropositionPostingUseCase struct {
+	sugar  *zap.SugaredLogger
+	Poster monorevo.MonorevoPoster
+}
+
+func NewPropositionPostingUseCase(
+	sugar *zap.SugaredLogger,
+	poster monorevo.MonorevoPoster,
+) *PropositionPostingUseCase {
+	return &PropositionPostingUseCase{
+		sugar:  sugar,
+		Poster: poster,
+	}
+}
+
+func (m *PropositionPostingUseCase) Execute(p []PostingPropositionPram) ([]PostedPropositionDto, error) {
 	diffs := []monorevo.DifferentProposition{}
 	for _, v := range p {
 		diffs = append(

@@ -10,7 +10,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func TestPropositionTable_Fetch(t *testing.T) {
+func TestPropositionFetchingUseCase_Execute(t *testing.T) {
 	// logger生成
 	logger, _ := zap.NewDevelopment()
 
@@ -24,7 +24,7 @@ func TestPropositionTable_Fetch(t *testing.T) {
 	defer ctrl.Finish()
 
 	// ものレボDIオブジェクト生成
-	mock_fetcher := mock_monorevo.NewMockFetcher(ctrl)
+	mock_fetcher := mock_monorevo.NewMockMonorevoFetcher(ctrl)
 	// EXPECTはctrl#Finishが呼び出される前に FetchAllを呼び出さなければエラーになる
 	mock_fetcher.EXPECT().FetchAll().Return(mock_results, nil)
 
@@ -33,22 +33,22 @@ func TestPropositionTable_Fetch(t *testing.T) {
 	for _, v := range mock_results {
 		results = append(results, FetchedPropositionDto{
 			WorkedNumber: v.WorkedNumber,
+			Det:          v.Det,
 			DeliveryDate: v.DeliveryDate,
 		})
 	}
 
 	tests := []struct {
 		name    string
-		m       *PropositionTable
+		m       *PropositionFetchingUseCase
 		want    []FetchedPropositionDto
 		wantErr bool
 	}{
 		{
 			name: "正常系_UseCaseを実行するとモックが実行されること",
-			m: NewPropositionTable(
+			m: NewPropositionFetchingUseCase(
 				logger.Sugar(),
 				mock_fetcher,
-				nil,
 			),
 			want:    results,
 			wantErr: false,
@@ -56,13 +56,18 @@ func TestPropositionTable_Fetch(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.m.Fetch()
+			got, err := tt.m.Execute()
 			if (err != nil) != tt.wantErr {
-				t.Errorf("PropositionTable.Fetch() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("PropositionFetchingUseCase.Execute() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("PropositionTable.Fetch() = %v, want %v", got, tt.want)
+			if len(got) != len(tt.want) {
+				t.Errorf("len(PropositionFetchingUseCase.Execute()) = %v, want %v", len(got), len(tt.want))
+			}
+			for i := 0; i < len(got); i++ {
+				if !reflect.DeepEqual(got[i], tt.want[i]) {
+					t.Errorf("PropositionFetchingUseCase.Execute()[%v] = %v, want %v", i, got[i], tt.want[i])
+				}
 			}
 		})
 	}

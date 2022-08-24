@@ -10,7 +10,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func TestJobBookTable_Fetch(t *testing.T) {
+func TestJobBookFetchingUseCase_Execute(t *testing.T) {
 	// logger生成
 	logger, _ := zap.NewDevelopment()
 
@@ -39,13 +39,13 @@ func TestJobBookTable_Fetch(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		m       *JobBookTable
+		m       *JobBookFetchingUseCase
 		want    []JobBookDto
 		wantErr bool
 	}{
 		{
 			name: "正常系_UseCaseを実行するとモックが実行されること",
-			m: NewJobBookTable(
+			m: NewJobBookFetchingUseCase(
 				logger.Sugar(),
 				mock_fetcher,
 			),
@@ -55,13 +55,13 @@ func TestJobBookTable_Fetch(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.m.Fetch()
+			got, err := tt.m.Execute()
 			if (err != nil) != tt.wantErr {
-				t.Errorf("JobBookTable.Fetch() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("JobBookFetchingUseCase.Execute() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("JobBookTable.Fetch() = %v, want %v", got, tt.want)
+				t.Errorf("JobBookFetchingUseCase.Execute() = %v, want %v", got, tt.want)
 			}
 		})
 	}

@@ -11,31 +11,31 @@ import (
 	gomock "github.com/golang/mock/gomock"
 )
 
-// MockFetcher is a mock of Fetcher interface.
-type MockFetcher struct {
+// MockMonorevoFetcher is a mock of MonorevoFetcher interface.
+type MockMonorevoFetcher struct {
 	ctrl     *gomock.Controller
-	recorder *MockFetcherMockRecorder
+	recorder *MockMonorevoFetcherMockRecorder
 }
 
-// MockFetcherMockRecorder is the mock recorder for MockFetcher.
-type MockFetcherMockRecorder struct {
-	mock *MockFetcher
+// MockMonorevoFetcherMockRecorder is the mock recorder for MockMonorevoFetcher.
+type MockMonorevoFetcherMockRecorder struct {
+	mock *MockMonorevoFetcher
 }
 
-// NewMockFetcher creates a new mock instance.
-func NewMockFetcher(ctrl *gomock.Controller) *MockFetcher {
-	mock := &MockFetcher{ctrl: ctrl}
-	mock.recorder = &MockFetcherMockRecorder{mock}
+// NewMockMonorevoFetcher creates a new mock instance.
+func NewMockMonorevoFetcher(ctrl *gomock.Controller) *MockMonorevoFetcher {
+	mock := &MockMonorevoFetcher{ctrl: ctrl}
+	mock.recorder = &MockMonorevoFetcherMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockFetcher) EXPECT() *MockFetcherMockRecorder {
+func (m *MockMonorevoFetcher) EXPECT() *MockMonorevoFetcherMockRecorder {
 	return m.recorder
 }
 
 // FetchAll mocks base method.
-func (m *MockFetcher) FetchAll() ([]monorevo.Proposition, error) {
+func (m *MockMonorevoFetcher) FetchAll() ([]monorevo.Proposition, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FetchAll")
 	ret0, _ := ret[0].([]monorevo.Proposition)
@@ -44,36 +44,36 @@ func (m *MockFetcher) FetchAll() ([]monorevo.Proposition, error) {
 }
 
 // FetchAll indicates an expected call of FetchAll.
-func (mr *MockFetcherMockRecorder) FetchAll() *gomock.Call {
+func (mr *MockMonorevoFetcherMockRecorder) FetchAll() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FetchAll", reflect.TypeOf((*MockFetcher)(nil).FetchAll))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FetchAll", reflect.TypeOf((*MockMonorevoFetcher)(nil).FetchAll))
 }
 
-// MockPoster is a mock of Poster interface.
-type MockPoster struct {
+// MockMonorevoPoster is a mock of MonorevoPoster interface.
+type MockMonorevoPoster struct {
 	ctrl     *gomock.Controller
-	recorder *MockPosterMockRecorder
+	recorder *MockMonorevoPosterMockRecorder
 }
 
-// MockPosterMockRecorder is the mock recorder for MockPoster.
-type MockPosterMockRecorder struct {
-	mock *MockPoster
+// MockMonorevoPosterMockRecorder is the mock recorder for MockMonorevoPoster.
+type MockMonorevoPosterMockRecorder struct {
+	mock *MockMonorevoPoster
 }
 
-// NewMockPoster creates a new mock instance.
-func NewMockPoster(ctrl *gomock.Controller) *MockPoster {
-	mock := &MockPoster{ctrl: ctrl}
-	mock.recorder = &MockPosterMockRecorder{mock}
+// NewMockMonorevoPoster creates a new mock instance.
+func NewMockMonorevoPoster(ctrl *gomock.Controller) *MockMonorevoPoster {
+	mock := &MockMonorevoPoster{ctrl: ctrl}
+	mock.recorder = &MockMonorevoPosterMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockPoster) EXPECT() *MockPosterMockRecorder {
+func (m *MockMonorevoPoster) EXPECT() *MockMonorevoPosterMockRecorder {
 	return m.recorder
 }
 
 // PostRange mocks base method.
-func (m *MockPoster) PostRange(arg0 []monorevo.DifferentProposition) ([]monorevo.UpdatedProposition, error) {
+func (m *MockMonorevoPoster) PostRange(arg0 []monorevo.DifferentProposition) ([]monorevo.UpdatedProposition, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PostRange", arg0)
 	ret0, _ := ret[0].([]monorevo.UpdatedProposition)
@@ -82,7 +82,7 @@ func (m *MockPoster) PostRange(arg0 []monorevo.DifferentProposition) ([]monorevo
 }
 
 // PostRange indicates an expected call of PostRange.
-func (mr *MockPosterMockRecorder) PostRange(arg0 interface{}) *gomock.Call {
+func (mr *MockMonorevoPosterMockRecorder) PostRange(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostRange", reflect.TypeOf((*MockPoster)(nil).PostRange), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostRange", reflect.TypeOf((*MockMonorevoPoster)(nil).PostRange), arg0)
 }

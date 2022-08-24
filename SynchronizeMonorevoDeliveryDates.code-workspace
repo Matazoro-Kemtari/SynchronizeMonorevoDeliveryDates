@@ -11,6 +11,7 @@
 			"goquery",
 			"gorm",
 			"jobbook",
+			"KHTML",
 			"monorevo",
 			"nonexisitent",
 			"orderdb",
@@ -21,7 +22,8 @@
 			"smlot",
 			"sqlserver",
 			"stretchr",
-			"tbody"
+			"tbody",
+			"wireinject"
 		],
 		"go.testTimeout": "120s"
 	}

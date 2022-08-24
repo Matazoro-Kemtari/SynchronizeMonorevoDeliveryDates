@@ -66,11 +66,13 @@ func (p *PropositionTable) downloadPropositionTable(page *agouti.Page) error {
 	// ダウンロードボタンを押す
 	page.FindByXPath(`//*[@id="app"]/div/div[2]/div[2]/div/div/div/div[1]/div[2]/div/div/button`).Click()
 	page.FindByXPath(`//*[@id="app"]/div/div[2]/div[2]/div/div/div/div[1]/div[2]/div/div/div/div[1]`).Click()
+	p.sugar.Info("ダウンロードデータ準備開始")
 
 	// データ準備まで待つ
-	selector := page.FindByXPath(`/html/body/div[3]/div[2]/div`)
-	for i := 0; i < 600; i++ {
-		if v, _ := selector.Visible(); v {
+	// csvダウンロードポップアップ
+	popup := page.FindByXPath(`/html/body/div[3]/div[2]/div`)
+	for i := 0; ; i++ {
+		if v, _ := popup.Visible(); v {
 			break
 		}
 		time.Sleep(time.Millisecond * 100)
@@ -78,22 +80,44 @@ func (p *PropositionTable) downloadPropositionTable(page *agouti.Page) error {
 		if i >= 600 {
 			p.sugar.Error("ダウンロードタイムアウト", i)
 			return fmt.Errorf("ダウンロードタイムアウト count: %v", i)
-		} else {
-			// 実行ボタン押下
-			if err := page.FindByXPath(`/html/body/div[3]/div[2]/div/div[3]/button[2]`).
-				Click(); err == nil {
-				break
-			}
 		}
 	}
+	p.sugar.Info("ダウンロードデータ準備終了")
 	time.Sleep(time.Second)
 
+	// 実行ボタン押下
+	for i := 0; ; i++ {
+		spn := page.FindByXPath(`/html/body/div[3]/div[2]/div/div[3]/button[2]/span[2]/span/span`)
+		btn := page.FindByXPath(`/html/body/div[3]/div[2]/div/div[3]/button[2]`)
+		var err error
+		p.sugar.Infof("ダウンロード開始 counter: %d", i)
+		if err = spn.Click(); err != nil {
+			err = nil
+			// spanをクリックしても反応しないことがあるから保険的
+			err = btn.Check()
+		}
+
+		if i > 3 {
+			p.sugar.Error("ダウンロード実行ボタン押下で失敗しました", err)
+			return fmt.Errorf("ダウンロード実行ボタン押下で失敗しました error: %v", err)
+		} else {
+			time.Sleep(time.Millisecond * 100)
+		}
+
+		if err != nil {
+			continue
+		} else {
+			break
+		}
+	}
+	p.sugar.Info("ダウンロード終了")
 	return nil
 }
 
 func (p *PropositionTable) openCsvFile(f string) ([]monorevo.Proposition, error) {
 	// csvをパースする
 	csv, err := p.deserializeCsv(f)
+	p.sugar.Info("csvファイルをパース完了")
 	if err != nil {
 		p.sugar.Error("csvのパースに失敗しました", err)
 		return nil, fmt.Errorf("csvのパースに失敗しました error: %v", err)
@@ -128,7 +152,9 @@ func (p *PropositionTable) moveDownloadToWork() (string, error) {
 
 	// 始めの1つをダウンロードしたファイルと推定
 	f := files[0]
+	p.sugar.Infof("1つ目のファイルをダウンロードしたファイルと推定: %v", f)
 
+	p.sugar.Infof("ダウンロードしたファイルを移動: %v -> %v", p.downloadDir, p.workDir)
 	return f.Name(),
 		os.Rename(
 			filepath.Join(p.downloadDir, f.Name()),

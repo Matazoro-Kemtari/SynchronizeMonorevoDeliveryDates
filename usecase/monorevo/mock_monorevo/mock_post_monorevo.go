@@ -11,40 +11,40 @@ import (
 	gomock "github.com/golang/mock/gomock"
 )
 
-// MockPoster is a mock of Poster interface.
-type MockPoster struct {
+// MockPostingExecutor is a mock of PostingExecutor interface.
+type MockPostingExecutor struct {
 	ctrl     *gomock.Controller
-	recorder *MockPosterMockRecorder
+	recorder *MockPostingExecutorMockRecorder
 }
 
-// MockPosterMockRecorder is the mock recorder for MockPoster.
-type MockPosterMockRecorder struct {
-	mock *MockPoster
+// MockPostingExecutorMockRecorder is the mock recorder for MockPostingExecutor.
+type MockPostingExecutorMockRecorder struct {
+	mock *MockPostingExecutor
 }
 
-// NewMockPoster creates a new mock instance.
-func NewMockPoster(ctrl *gomock.Controller) *MockPoster {
-	mock := &MockPoster{ctrl: ctrl}
-	mock.recorder = &MockPosterMockRecorder{mock}
+// NewMockPostingExecutor creates a new mock instance.
+func NewMockPostingExecutor(ctrl *gomock.Controller) *MockPostingExecutor {
+	mock := &MockPostingExecutor{ctrl: ctrl}
+	mock.recorder = &MockPostingExecutorMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockPoster) EXPECT() *MockPosterMockRecorder {
+func (m *MockPostingExecutor) EXPECT() *MockPostingExecutorMockRecorder {
 	return m.recorder
 }
 
-// PostRange mocks base method.
-func (m *MockPoster) PostRange(arg0 []monorevo.PostingPropositionPram) ([]monorevo.PostedPropositionDto, error) {
+// Execute mocks base method.
+func (m *MockPostingExecutor) Execute(arg0 []monorevo.PostingPropositionPram) ([]monorevo.PostedPropositionDto, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PostRange", arg0)
+	ret := m.ctrl.Call(m, "Execute", arg0)
 	ret0, _ := ret[0].([]monorevo.PostedPropositionDto)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// PostRange indicates an expected call of PostRange.
-func (mr *MockPosterMockRecorder) PostRange(arg0 interface{}) *gomock.Call {
+// Execute indicates an expected call of Execute.
+func (mr *MockPostingExecutorMockRecorder) Execute(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostRange", reflect.TypeOf((*MockPoster)(nil).PostRange), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockPostingExecutor)(nil).Execute), arg0)
 }

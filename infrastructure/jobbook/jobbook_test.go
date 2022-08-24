@@ -26,30 +26,25 @@ func TestRepository_FetchAll(t *testing.T) {
 			workNumRex           string
 			canEmptyDeliveryDate bool
 		}
+		wantErr bool
 	}{
 		{
 			name: "正常系_M作業から作業Noと納期が取得できること",
-			r: NewRepository(
-				logger.Sugar(),
-				OrderDbPram{
-					os.Getenv("DB_SERVER"),
-					os.Getenv("DB_NAME"),
-					os.Getenv("DB_USER"),
-					os.Getenv("DB_PASS"),
-				},
-			),
+			r:    NewRepository(logger.Sugar(), &OrderDbConfig{os.Getenv("DB_SERVER"), os.Getenv("DB_NAME"), os.Getenv("DB_USER"), os.Getenv("DB_PASS")}),
 			want: struct {
 				workNumRex           string
 				canEmptyDeliveryDate bool
-			}{
-				workNumRex:           `X?[0-9]{2}[A-Z]-[0-9]{1,4}`,
-				canEmptyDeliveryDate: false,
-			},
+			}{workNumRex: `X?[0-9]{2}[A-Z]-[0-9]{1,4}`, canEmptyDeliveryDate: false},
+			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := tt.r.FetchAll()
+			got, err := tt.r.FetchAll()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Repository.FetchAll() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
 			assert.NotEmpty(t, got)
 			assert.NotEqual(t, 0, len(got))
 			for _, v := range got {

@@ -3,6 +3,7 @@ package jobbook
 import (
 	"SynchronizeMonorevoDeliveryDates/domain/orderdb"
 	"fmt"
+	"os"
 	"time"
 
 	"go.uber.org/zap"
@@ -10,16 +11,25 @@ import (
 	"gorm.io/gorm"
 )
 
-type OrderDbPram struct {
+type OrderDbConfig struct {
 	server   string
 	database string
 	user     string
 	password string
 }
 
+func NewOrderDbConfig() *OrderDbConfig {
+	return &OrderDbConfig{
+		os.Getenv("DB_SERVER"),
+		os.Getenv("DB_NAME"),
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASS"),
+	}
+}
+
 type Repository struct {
-	sugar       *zap.SugaredLogger
-	orderDbPram OrderDbPram
+	sugar         *zap.SugaredLogger
+	orderDbConfig *OrderDbConfig
 }
 
 type JobBookModel struct {
@@ -34,26 +44,33 @@ func (JobBookModel) TableName() string {
 
 func NewRepository(
 	sugar *zap.SugaredLogger,
-	orderDbPram OrderDbPram,
+	orderDbConfig *OrderDbConfig,
 ) *Repository {
 	return &Repository{
-		sugar:       sugar,
-		orderDbPram: orderDbPram,
+		sugar:         sugar,
+		orderDbConfig: orderDbConfig,
 	}
 }
 
-func (r *Repository) FetchAll() []orderdb.JobBook {
-	db, err := open(r.orderDbPram)
+func (r *Repository) FetchAll() ([]orderdb.JobBook, error) {
+	db, err := open(r.orderDbConfig)
 	if err != nil {
-		r.sugar.Fatal("データベースに接続できませんでした", err)
+		r.sugar.Error("データベースに接続できませんでした", err)
+		return nil, fmt.Errorf("データベースに接続できませんでした error: %v", err)
 	}
+	r.sugar.Info("データベース接続完了")
 
 	jobBookModels := []JobBookModel{}
-	result := db.Find(&jobBookModels, "納期 is not null AND 状態 = '受注'")
+	parameter := "納期 is not null AND 状態 = '受注'"
+	r.sugar.Infof("M作業情報を検索 parameter: %v", parameter)
+	result := db.Find(&jobBookModels, parameter)
 	if result.Error != nil {
-		r.sugar.Fatal("M作業台帳を取得できませんでした", result.Error)
+		m := fmt.Sprintf("M作業台帳を取得できませんでした error: %v", result.Error)
+		r.sugar.Error(m)
+		return nil, fmt.Errorf(m)
 	}
-	fmt.Println("jobBook:", jobBookModels)
+	r.sugar.Infof("M作業情報を取得 count: %v", len(jobBookModels))
+	r.sugar.Debug("jobBook:", jobBookModels)
 
 	// domain.modelに詰め替え
 	jobBooks := []orderdb.JobBook{}
@@ -67,10 +84,10 @@ func (r *Repository) FetchAll() []orderdb.JobBook {
 		)
 	}
 
-	return jobBooks
+	return jobBooks, nil
 }
 
-func open(orderDbPram OrderDbPram) (*gorm.DB, error) {
+func open(orderDbPram *OrderDbConfig) (*gorm.DB, error) {
 	dsn := fmt.Sprintf(
 		"sqlserver://%v:%v@%v?database=%v",
 		orderDbPram.user,

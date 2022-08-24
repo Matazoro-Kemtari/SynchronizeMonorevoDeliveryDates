@@ -71,4 +71,9 @@ func main() {
 	if err_read != nil {
 		sugar.Fatal(err_read)
 	}
+
+	synchronize := InitializeSynchronize(sugar)
+	if err := synchronize.Synchronize(); err != nil {
+		sugar.Fatal(err)
+	}
 }
