@@ -143,13 +143,14 @@ func (p *PropositionTable) searchPropositionTable(page *agouti.Page, proposition
 		p.sugar.Debug("DET番号の入力に失敗した", err)
 		return false, fmt.Errorf("DET番号の入力に失敗した error: %v", err)
 	}
+	p.sugar.Infof("案件検索: 作業No(%v) DET番号(%v)", proposition.WorkedNumber, proposition.Det)
 	time.Sleep(time.Millisecond * 100)
 	searchBtn := page.FindByXPath(`//*[@id="searchButton"]/div/button`)
 	searchBtn.Click()
 
 	// データ準備まで待つ
 	selector := page.FindByXPath(`//*[@id="app"]/div/div[2]/div[2]/div/div[2]`)
-	for i := 0; i < 60; i++ {
+	for i := 0; ; i++ {
 		// くるくる回るエフェクトのxpath
 		// 処理中の子要素(DIV)が存在する間はクリックしてもエラーにならない
 		if err := selector.Click(); err != nil {
@@ -178,6 +179,7 @@ func (p *PropositionTable) searchPropositionTable(page *agouti.Page, proposition
 		p.sugar.Errorf(msg)
 		return false, errors.New(msg)
 	}
+	p.sugar.Infof("案件該当: 作業No(%v) DET番号(%v) nodes: %v", proposition.WorkedNumber, proposition.Det, len(trs))
 	return true, nil
 }
 
@@ -217,11 +219,11 @@ func (p *PropositionTable) updatedDeliveryDate(
 		wk := contentsDom.Find(fmt.Sprintf("#app > div > div.contents-wrapper > div.main-wrapper > div > div > div > form > table > tbody > tr:nth-child(%d) > td:nth-child(2)", i)).Text()
 		// 表中のDET番号
 		dt := contentsDom.Find(fmt.Sprintf("#app > div > div.contents-wrapper > div.main-wrapper > div > div > div > form > table > tbody > tr:nth-child(%d) > td:nth-child(1)", i+1)).Text()
-		p.sugar.Debugf("表中の作業No(%v) DET番号(%v)", wk, dt)
+		p.sugar.Infof("処理中の案件: 作業No(%v) DET番号(%v)", wk, dt)
 
 		if diff.WorkedNumber != wk && diff.Det != dt {
 			// たまに検索に失敗していることがあったので保険的に比較する
-			msg := fmt.Sprintf("ターゲット作業No(%v) ソース作業No(%v)", diff.WorkedNumber, wk)
+			msg := fmt.Sprintf("検索失敗 期待の作業No(%v) 表示の作業No(%v)が相違している", diff.WorkedNumber, wk)
 			p.sugar.Errorf(msg)
 			return unspecified, errors.New(msg)
 		}
@@ -249,6 +251,13 @@ func (p *PropositionTable) updatedDeliveryDate(
 					err,
 				)
 		}
+		p.sugar.Infof(
+			"更新: 作業No(%v) DET番号(%v): 納期 %v -> %v",
+			diff.WorkedNumber,
+			diff.Det,
+			diff.DeliveryDate,
+			diff.UpdatedDeliveryDate,
+		)
 		time.Sleep(time.Millisecond * 50)
 
 		// エラー表示を確認
@@ -256,9 +265,9 @@ func (p *PropositionTable) updatedDeliveryDate(
 		pid, _ := parent.Attribute("id") // idが動的に変わる
 
 		dlg := page.FindByXPath(`/html/body/div[2]/div`)
-		for i := 0; i < 600; i++ {
+		for i := 0; ; i++ {
 			if v, err := dlg.Visible(); err != nil {
-				p.sugar.Info("ダイアログ消えた")
+				p.sugar.Info("更新結果ダイアログが閉じたのを確認")
 				break
 			} else if v {
 				// ダイアログ表示された
@@ -274,12 +283,12 @@ func (p *PropositionTable) updatedDeliveryDate(
 				}
 				break
 			}
-			p.sugar.Infof("ダイアログ消失待ち %v * 100ミリ秒", i+1)
+			p.sugar.Infof("更新結果ダイアログ消失待ち %v * 100ミリ秒", i+1)
 			time.Sleep(time.Millisecond * 100)
 
 			if i >= 600 {
-				p.sugar.Error("ダイアログ消失待ち タイムアウト", i)
-				return failure, fmt.Errorf("ダイアログ消失待ちタイムアウト error: %v", i)
+				p.sugar.Error("更新結果ダイアログ消失待ち タイムアウト", i)
+				return failure, fmt.Errorf("更新結果ダイアログ消失待ちタイムアウト error: %v", i)
 			}
 		}
 	}
@@ -299,7 +308,7 @@ func (p *PropositionTable) editProposition(page *agouti.Page, updatedDeliveryDat
 	time.Sleep(time.Second * 2)
 	// くるくる回るエフェクトのxpath
 	selector := page.FindByXPath(`//*[@id="app"]/div/div[2]/div[2]/div/div[2]`)
-	for i := 0; i < 60; i++ {
+	for i := 0; ; i++ {
 		// 処理中の子要素(DIV)が存在する間はクリックしてもエラーにならない
 		if err := selector.Click(); err != nil {
 			break
@@ -320,7 +329,7 @@ func (p *PropositionTable) openEditableProposition(page *agouti.Page) error {
 	updPlanBtn.Click()
 
 	entBtn := page.FindByXPath(`//*[@id="smlot-detail"]/div/div/div/form/div[4]/div/button[4]`)
-	for i := 0; i < 60; i++ {
+	for i := 0; ; i++ {
 		if _, err := entBtn.Enabled(); err == nil {
 			break
 		}

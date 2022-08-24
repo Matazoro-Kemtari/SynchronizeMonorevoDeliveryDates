@@ -58,15 +58,19 @@ func (r *Repository) FetchAll() ([]orderdb.JobBook, error) {
 		r.sugar.Error("データベースに接続できませんでした", err)
 		return nil, fmt.Errorf("データベースに接続できませんでした error: %v", err)
 	}
+	r.sugar.Info("データベース接続完了")
 
 	jobBookModels := []JobBookModel{}
-	result := db.Find(&jobBookModels, "納期 is not null AND 状態 = '受注'")
+	parameter := "納期 is not null AND 状態 = '受注'"
+	r.sugar.Infof("M作業情報を検索 parameter: %v", parameter)
+	result := db.Find(&jobBookModels, parameter)
 	if result.Error != nil {
 		m := fmt.Sprintf("M作業台帳を取得できませんでした error: %v", result.Error)
 		r.sugar.Error(m)
 		return nil, fmt.Errorf(m)
 	}
-	fmt.Println("jobBook:", jobBookModels)
+	r.sugar.Infof("M作業情報を取得 count: %v", len(jobBookModels))
+	r.sugar.Debug("jobBook:", jobBookModels)
 
 	// domain.modelに詰め替え
 	jobBooks := []orderdb.JobBook{}

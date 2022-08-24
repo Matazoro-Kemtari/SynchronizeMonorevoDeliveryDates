@@ -90,6 +90,7 @@ func (p *PropositionTable) loginToMonorevo(driver *agouti.WebDriver) (*agouti.Pa
 	}
 
 	// loginページを開く
+	p.sugar.Info("loginページを開く")
 	const MONOREVO_LOGIN_URL string = "https://app.monorevo.jp/base/auth/login.html"
 	page.Navigate(MONOREVO_LOGIN_URL)
 
@@ -107,7 +108,7 @@ func (p *PropositionTable) loginToMonorevo(driver *agouti.WebDriver) (*agouti.Pa
 	page.FindByXPath(`//*[@id="app"]/div/div[3]/form/div/div[2]/div[5]/button`).Click()
 
 	check := page.FindByXPath(`/html/body/div[1]/div[2]/div[2]/div[1]/div[2]/div[1]/div/div[2]/div/div/div[2]/div[1]/div[1]/div[1]/div[1]/input`)
-	for i := 0; i < 60; i++ {
+	for i := 0; ; i++ {
 		if err := check.Click(); err == nil {
 			break
 		}
@@ -118,6 +119,7 @@ func (p *PropositionTable) loginToMonorevo(driver *agouti.WebDriver) (*agouti.Pa
 			return nil, fmt.Errorf("ログインタイムアウト count: %v", i)
 		}
 	}
+	p.sugar.Infof("ログイン成功: 会社ID(%v) ログインID(%v)", p.comId, p.userId)
 
 	return page, nil
 }
@@ -128,7 +130,7 @@ func (p *PropositionTable) movePropositionTablePage(page *agouti.Page) error {
 	err := page.Navigate(MONOREVO_PROPOSITION_TABLE)
 
 	btn := page.FindByXPath(`//*[@id="app"]/div/div[2]/div[2]/div/div/div/form/table/tbody/tr[1]/td[1]/input`)
-	for i := 0; i < 60; i++ {
+	for i := 0; ; i++ {
 		if err := btn.Click(); err == nil {
 			break
 		}
@@ -139,6 +141,7 @@ func (p *PropositionTable) movePropositionTablePage(page *agouti.Page) error {
 			return fmt.Errorf("案件一覧に移動タイムアウト count: %v", i)
 		}
 	}
+	p.sugar.Info("案件一覧ページに移動成功")
 
 	return err
 }
