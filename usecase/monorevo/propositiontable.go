@@ -8,14 +8,14 @@ import (
 
 type PropositionTable struct {
 	sugar   *zap.SugaredLogger
-	fetcher monorevo.Fetcher
-	Poster  monorevo.Poster
+	fetcher monorevo.MonorevoFetcher
+	Poster  monorevo.MonorevoPoster
 }
 
 func NewPropositionTable(
 	sugar *zap.SugaredLogger,
-	fetcher monorevo.Fetcher,
-	poster monorevo.Poster,
+	fetcher monorevo.MonorevoFetcher,
+	poster monorevo.MonorevoPoster,
 ) *PropositionTable {
 	return &PropositionTable{
 		sugar:   sugar,

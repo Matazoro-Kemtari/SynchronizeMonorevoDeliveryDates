@@ -24,7 +24,7 @@ func TestPropositionTable_Fetch(t *testing.T) {
 	defer ctrl.Finish()
 
 	// ものレボDIオブジェクト生成
-	mock_fetcher := mock_monorevo.NewMockFetcher(ctrl)
+	mock_fetcher := mock_monorevo.NewMockMonorevoFetcher(ctrl)
 	// EXPECTはctrl#Finishが呼び出される前に FetchAllを呼び出さなければエラーになる
 	mock_fetcher.EXPECT().FetchAll().Return(mock_results, nil)
 

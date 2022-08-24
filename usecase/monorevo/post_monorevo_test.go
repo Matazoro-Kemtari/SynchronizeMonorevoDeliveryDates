@@ -25,7 +25,7 @@ func TestPropositionTable_PostRange(t *testing.T) {
 	defer ctrl.Finish()
 
 	// ものレボDIオブジェクト生成
-	mock_poster := mock_monorevo.NewMockPoster(ctrl)
+	mock_poster := mock_monorevo.NewMockMonorevoPoster(ctrl)
 	// EXPECTはctrl#Finishが呼び出される前に FetchAllを呼び出さなければエラーになる
 	mock_poster.EXPECT().PostRange(gomock.Any()).Return(mock_results, nil)
 
