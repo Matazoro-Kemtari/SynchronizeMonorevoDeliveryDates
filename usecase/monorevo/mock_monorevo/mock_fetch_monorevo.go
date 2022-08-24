@@ -11,40 +11,40 @@ import (
 	gomock "github.com/golang/mock/gomock"
 )
 
-// MockFetcher is a mock of Fetcher interface.
-type MockFetcher struct {
+// MockFetchingExecutor is a mock of FetchingExecutor interface.
+type MockFetchingExecutor struct {
 	ctrl     *gomock.Controller
-	recorder *MockFetcherMockRecorder
+	recorder *MockFetchingExecutorMockRecorder
 }
 
-// MockFetcherMockRecorder is the mock recorder for MockFetcher.
-type MockFetcherMockRecorder struct {
-	mock *MockFetcher
+// MockFetchingExecutorMockRecorder is the mock recorder for MockFetchingExecutor.
+type MockFetchingExecutorMockRecorder struct {
+	mock *MockFetchingExecutor
 }
 
-// NewMockFetcher creates a new mock instance.
-func NewMockFetcher(ctrl *gomock.Controller) *MockFetcher {
-	mock := &MockFetcher{ctrl: ctrl}
-	mock.recorder = &MockFetcherMockRecorder{mock}
+// NewMockFetchingExecutor creates a new mock instance.
+func NewMockFetchingExecutor(ctrl *gomock.Controller) *MockFetchingExecutor {
+	mock := &MockFetchingExecutor{ctrl: ctrl}
+	mock.recorder = &MockFetchingExecutorMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockFetcher) EXPECT() *MockFetcherMockRecorder {
+func (m *MockFetchingExecutor) EXPECT() *MockFetchingExecutorMockRecorder {
 	return m.recorder
 }
 
-// Fetch mocks base method.
-func (m *MockFetcher) Fetch() ([]monorevo.FetchedPropositionDto, error) {
+// Execute mocks base method.
+func (m *MockFetchingExecutor) Execute() ([]monorevo.FetchedPropositionDto, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Fetch")
+	ret := m.ctrl.Call(m, "Execute")
 	ret0, _ := ret[0].([]monorevo.FetchedPropositionDto)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// Fetch indicates an expected call of Fetch.
-func (mr *MockFetcherMockRecorder) Fetch() *gomock.Call {
+// Execute indicates an expected call of Execute.
+func (mr *MockFetchingExecutorMockRecorder) Execute() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Fetch", reflect.TypeOf((*MockFetcher)(nil).Fetch))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockFetchingExecutor)(nil).Execute))
 }

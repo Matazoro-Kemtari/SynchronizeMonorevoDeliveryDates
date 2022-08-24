@@ -9,7 +9,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func TestExtractingProposition_Extract(t *testing.T) {
+func TestPropositionExtractingUseCase_Execute(t *testing.T) {
 	// logger生成
 	logger, _ := zap.NewDevelopment()
 
@@ -27,21 +27,21 @@ func TestExtractingProposition_Extract(t *testing.T) {
 	}
 	tests := []struct {
 		name string
-		m    *ExtractingProposition
+		m    *PropositionExtractingUseCase
 		args args
 		want []DifferentPropositionDto
 	}{
 		{
 			name: "正常系_UseCaseを実行するとモックが実行されること",
-			m:    NewExtractingProposition(logger.Sugar(), mock_diff),
+			m:    NewExtractingPropositionUseCase(logger.Sugar(), mock_diff),
 			args: args{},
 			want: []DifferentPropositionDto{},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.m.Extract(tt.args.s); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ExtractingProposition.Extract() = %v, want %v", got, tt.want)
+			if got := tt.m.Execute(tt.args.s); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("PropositionExtractingUseCase.Execute() = %v, want %v", got, tt.want)
 			}
 		})
 	}

@@ -10,18 +10,18 @@ import (
 
 type SynchronizingDeliveryDate struct {
 	sugar      *zap.SugaredLogger
-	webFetcher monorevo.Fetcher
-	dbFetcher  orderdb.Fetcher
-	extractor  difference.Extractor
-	webPoster  monorevo.Poster
+	webFetcher monorevo.FetchingExecutor
+	dbFetcher  orderdb.Executor
+	extractor  difference.Executor
+	webPoster  monorevo.PostingExecutor
 }
 
 func NewSynchronizingDeliveryDate(
 	sugar *zap.SugaredLogger,
-	webFetcher monorevo.Fetcher,
-	dbFetcher orderdb.Fetcher,
-	extractor difference.Extractor,
-	webPoster monorevo.Poster,
+	webFetcher monorevo.FetchingExecutor,
+	dbFetcher orderdb.Executor,
+	extractor difference.Executor,
+	webPoster monorevo.PostingExecutor,
 
 ) *SynchronizingDeliveryDate {
 	return &SynchronizingDeliveryDate{
@@ -35,14 +35,14 @@ func NewSynchronizingDeliveryDate(
 
 func (m *SynchronizingDeliveryDate) Synchronize() error {
 	m.sugar.Info("ものレボから案件一覧を取得する")
-	propositions, err := m.webFetcher.Fetch()
+	propositions, err := m.webFetcher.Execute()
 	if err != nil {
 		m.sugar.Fatal("ものレボから案件一覧を取得で失敗しました", err)
 	}
 	m.sugar.Debug("propositions", propositions)
 
 	m.sugar.Info("受注管理DBから作業情報を取得する")
-	jobBooks, err := m.dbFetcher.Fetch()
+	jobBooks, err := m.dbFetcher.Execute()
 	if err != nil {
 		m.sugar.Fatal("受注管理DBから作業情報を取得で失敗しました", err)
 	}
@@ -52,7 +52,7 @@ func (m *SynchronizingDeliveryDate) Synchronize() error {
 	diffPram := m.convertDifferencePram(propositions, jobBooks)
 
 	m.sugar.Info("比較差分を算出する")
-	diff := m.extractor.Extract(diffPram)
+	diff := m.extractor.Execute(diffPram)
 	m.sugar.Debug("diff", diff)
 
 	m.sugar.Info("ものレボへ案件一覧を送信する")
@@ -66,7 +66,7 @@ func (m *SynchronizingDeliveryDate) Synchronize() error {
 				UpdatedDeliveryDate: v.UpdatedDeliveryDate,
 			})
 	}
-	posted, err := m.webPoster.PostRange(posting)
+	posted, err := m.webPoster.Execute(posting)
 	if err != nil {
 		m.sugar.Fatal("ものレボへ案件一覧を送信で失敗しました", err)
 	}

@@ -12,26 +12,26 @@ type JobBookDto struct {
 	DeliveryDate time.Time
 }
 
-type Fetcher interface {
-	Fetch() ([]JobBookDto, error)
+type Executor interface {
+	Execute() ([]JobBookDto, error)
 }
 
-type JobBookTable struct {
+type JobBookFetchingUseCase struct {
 	sugar          *zap.SugaredLogger
 	jobBookFetcher orderdb.JobBookFetcher
 }
 
-func NewJobBookTable(
+func NewJobBookFetchingUseCase(
 	sugar *zap.SugaredLogger,
 	jobBookFetcher orderdb.JobBookFetcher,
-) *JobBookTable {
-	return &JobBookTable{
+) *JobBookFetchingUseCase {
+	return &JobBookFetchingUseCase{
 		sugar:          sugar,
 		jobBookFetcher: jobBookFetcher,
 	}
 }
 
-func (m *JobBookTable) Fetch() ([]JobBookDto, error) {
+func (m *JobBookFetchingUseCase) Execute() ([]JobBookDto, error) {
 	job, err := m.jobBookFetcher.FetchAll()
 	if err != nil {
 		m.sugar.Fatal("受注管理DBから作業台帳を取得できませんでした", err)

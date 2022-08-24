@@ -1,7 +1,10 @@
 package monorevo
 
 import (
+	"SynchronizeMonorevoDeliveryDates/domain/monorevo"
 	"time"
+
+	"go.uber.org/zap"
 )
 
 type FetchedPropositionDto struct {
@@ -10,11 +13,26 @@ type FetchedPropositionDto struct {
 	DeliveryDate time.Time
 }
 
-type Fetcher interface {
-	Fetch() ([]FetchedPropositionDto, error)
+type FetchingExecutor interface {
+	Execute() ([]FetchedPropositionDto, error)
 }
 
-func (m *PropositionTable) Fetch() ([]FetchedPropositionDto, error) {
+type PropositionFetchingUseCase struct {
+	sugar   *zap.SugaredLogger
+	fetcher monorevo.MonorevoFetcher
+}
+
+func NewPropositionFetchingUseCase(
+	sugar *zap.SugaredLogger,
+	fetcher monorevo.MonorevoFetcher,
+) *PropositionFetchingUseCase {
+	return &PropositionFetchingUseCase{
+		sugar:   sugar,
+		fetcher: fetcher,
+	}
+}
+
+func (m *PropositionFetchingUseCase) Execute() ([]FetchedPropositionDto, error) {
 	propositions, err := m.fetcher.FetchAll()
 	if err != nil {
 		m.sugar.Fatalf("ものレボから案件一覧の取得に失敗しました error: %v", err)

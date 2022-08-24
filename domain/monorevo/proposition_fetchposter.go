@@ -5,7 +5,7 @@ import (
 )
 
 // ものレボから案件を取得する
-type Fetcher interface {
+type MonorevoFetcher interface {
 	FetchAll() ([]Proposition, error)
 }
 
@@ -25,7 +25,7 @@ func NewProposition(warkNumber string, det string, deliveryDate time.Time) *Prop
 }
 
 // ものレボに案件を更新する
-type Poster interface {
+type MonorevoPoster interface {
 	PostRange([]DifferentProposition) ([]UpdatedProposition, error)
 }
 

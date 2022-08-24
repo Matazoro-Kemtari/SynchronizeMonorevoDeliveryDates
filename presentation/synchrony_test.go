@@ -60,7 +60,7 @@ func TestSynchronizingDeliveryDate_Synchronize(t *testing.T) {
 	}
 }
 
-func makeMockWebPoster(resWebFetches []monorevo.FetchedPropositionDto, resDbFetches []orderdb.JobBookDto, ctrl *gomock.Controller) *mock_monorevo.MockPoster {
+func makeMockWebPoster(resWebFetches []monorevo.FetchedPropositionDto, resDbFetches []orderdb.JobBookDto, ctrl *gomock.Controller) *mock_monorevo.MockPostingExecutor {
 	postPrams := []monorevo.PostingPropositionPram{}
 	for i := 0; i < len(resWebFetches); i++ {
 		postPrams = append(postPrams,
@@ -84,12 +84,12 @@ func makeMockWebPoster(resWebFetches []monorevo.FetchedPropositionDto, resDbFetc
 			},
 		)
 	}
-	mock_post := mock_monorevo.NewMockPoster(ctrl)
-	mock_post.EXPECT().PostRange(postPrams).Return(resPosts, nil)
+	mock_post := mock_monorevo.NewMockPostingExecutor(ctrl)
+	mock_post.EXPECT().Execute(postPrams).Return(resPosts, nil)
 	return mock_post
 }
 
-func makeMockDifferent(resWebFetches []monorevo.FetchedPropositionDto, resDbFetches []orderdb.JobBookDto, ctrl *gomock.Controller) *mock_difference.MockExtractor {
+func makeMockDifferent(resWebFetches []monorevo.FetchedPropositionDto, resDbFetches []orderdb.JobBookDto, ctrl *gomock.Controller) *mock_difference.MockExecutor {
 	diffPropositions := []difference.PropositionPram{}
 	for _, pro := range resWebFetches {
 		diffPropositions = append(diffPropositions,
@@ -134,12 +134,12 @@ func makeMockDifferent(resWebFetches []monorevo.FetchedPropositionDto, resDbFetc
 			UpdatedDeliveryDate: resDbFetches[2].DeliveryDate,
 		},
 	}
-	mock_diff := mock_difference.NewMockExtractor(ctrl)
-	mock_diff.EXPECT().Extract(diffPram).Return(resDiffs)
+	mock_diff := mock_difference.NewMockExecutor(ctrl)
+	mock_diff.EXPECT().Execute(diffPram).Return(resDiffs)
 	return mock_diff
 }
 
-func makeMockDbFetcher(ctrl *gomock.Controller) ([]orderdb.JobBookDto, *mock_orderdb.MockFetcher) {
+func makeMockDbFetcher(ctrl *gomock.Controller) ([]orderdb.JobBookDto, *mock_orderdb.MockExecutor) {
 	resDbFetches := []orderdb.JobBookDto{
 		{
 			WorkedNumber: "99A-1234",
@@ -158,12 +158,12 @@ func makeMockDbFetcher(ctrl *gomock.Controller) ([]orderdb.JobBookDto, *mock_ord
 			DeliveryDate: time.Now(),
 		},
 	}
-	mock_dbFetcher := mock_orderdb.NewMockFetcher(ctrl)
-	mock_dbFetcher.EXPECT().Fetch().Return(resDbFetches, nil)
+	mock_dbFetcher := mock_orderdb.NewMockExecutor(ctrl)
+	mock_dbFetcher.EXPECT().Execute().Return(resDbFetches, nil)
 	return resDbFetches, mock_dbFetcher
 }
 
-func makeMockWebFetcher(ctrl *gomock.Controller) ([]monorevo.FetchedPropositionDto, *mock_monorevo.MockFetcher) {
+func makeMockWebFetcher(ctrl *gomock.Controller) ([]monorevo.FetchedPropositionDto, *mock_monorevo.MockFetchingExecutor) {
 	resWebFetches := []monorevo.FetchedPropositionDto{
 		{
 			WorkedNumber: "99A-1234",
@@ -181,7 +181,7 @@ func makeMockWebFetcher(ctrl *gomock.Controller) ([]monorevo.FetchedPropositionD
 			DeliveryDate: time.Now().AddDate(0, 0, -5),
 		},
 	}
-	mock_webFetcher := mock_monorevo.NewMockFetcher(ctrl)
-	mock_webFetcher.EXPECT().Fetch().Return(resWebFetches, nil)
+	mock_webFetcher := mock_monorevo.NewMockFetchingExecutor(ctrl)
+	mock_webFetcher.EXPECT().Execute().Return(resWebFetches, nil)
 	return resWebFetches, mock_webFetcher
 }

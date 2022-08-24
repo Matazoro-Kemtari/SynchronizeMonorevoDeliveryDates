@@ -11,7 +11,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func TestPropositionTable_PostRange(t *testing.T) {
+func TestPropositionPostingUseCase_Execute(t *testing.T) {
 	// logger生成
 	logger, _ := zap.NewDevelopment()
 
@@ -48,16 +48,15 @@ func TestPropositionTable_PostRange(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		m       *PropositionTable
+		m       *PropositionPostingUseCase
 		args    args
 		want    []PostedPropositionDto
 		wantErr bool
 	}{
 		{
 			name: "正常系_UseCaseを実行するとモックが実行されること",
-			m: NewPropositionTable(
+			m: NewPropositionPostingUseCase(
 				logger.Sugar(),
-				nil,
 				mock_poster,
 			),
 			args: args{
@@ -76,13 +75,13 @@ func TestPropositionTable_PostRange(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.m.PostRange(tt.args.p)
+			got, err := tt.m.Execute(tt.args.p)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("PropositionTable.PostRange() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("PropositionPostingUseCase.Execute() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("PropositionTable.PostRange() = %v, want %v", got, tt.want)
+				t.Errorf("PropositionPostingUseCase.Execute() = %v, want %v", got, tt.want)
 			}
 		})
 	}
