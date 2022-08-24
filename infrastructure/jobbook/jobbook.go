@@ -27,6 +27,20 @@ func NewOrderDbConfig() *OrderDbConfig {
 	}
 }
 
+func TestOrderDbConfigCreate(
+	server,
+	database,
+	user,
+	password string,
+) *OrderDbConfig {
+	return &OrderDbConfig{
+		server:   server,
+		database: database,
+		user:     user,
+		password: password,
+	}
+}
+
 type Repository struct {
 	sugar         *zap.SugaredLogger
 	orderDbConfig *OrderDbConfig

@@ -13,16 +13,24 @@ import (
 )
 
 type MonorevoUserConfig struct {
-	ComId    string
-	UserId   string
-	UserPass string
+	comId    string
+	userId   string
+	userPass string
 }
 
 func NewMonorevoUserConfig() *MonorevoUserConfig {
 	return &MonorevoUserConfig{
-		ComId:    os.Getenv("MONOREVO_COMPANY_ID"),
-		UserId:   os.Getenv("MONOREVO_USER_ID"),
-		UserPass: os.Getenv("MONOREVO_USER_PASSWORD"),
+		comId:    os.Getenv("MONOREVO_COMPANY_ID"),
+		userId:   os.Getenv("MONOREVO_USER_ID"),
+		userPass: os.Getenv("MONOREVO_USER_PASSWORD"),
+	}
+}
+
+func TestMonorevoUserConfigCreate(comId, userId, userPass string) *MonorevoUserConfig {
+	return &MonorevoUserConfig{
+		comId:    comId,
+		userId:   userId,
+		userPass: userPass,
 	}
 }
 
@@ -45,9 +53,9 @@ func NewPropositionTable(
 	exePath := filepath.Dir(exeFile)
 	return &PropositionTable{
 		sugar:       sugar,
-		comId:       cnf.ComId,
-		userId:      cnf.UserId,
-		userPass:    cnf.UserPass,
+		comId:       cnf.comId,
+		userId:      cnf.userId,
+		userPass:    cnf.userPass,
 		downloadDir: filepath.Join(exePath, "download"),
 		workDir:     filepath.Join(exePath, "work"),
 	}

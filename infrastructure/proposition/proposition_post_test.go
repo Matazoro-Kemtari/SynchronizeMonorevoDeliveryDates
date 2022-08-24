@@ -46,11 +46,11 @@ func TestPropositionTable_PostRange(t *testing.T) {
 		},
 	}
 
-	cnf := &MonorevoUserConfig{
-		ComId:    os.Getenv("MONOREVO_COMPANY_ID"),
-		UserId:   os.Getenv("MONOREVO_USER_ID"),
-		UserPass: os.Getenv("MONOREVO_USER_PASSWORD"),
-	}
+	cnf := TestMonorevoUserConfigCreate(
+		os.Getenv("MONOREVO_COMPANY_ID"),
+		os.Getenv("MONOREVO_USER_ID"),
+		os.Getenv("MONOREVO_USER_PASSWORD"),
+	)
 
 	type args struct {
 		in0 []monorevo.DifferentProposition
