@@ -19,19 +19,19 @@ func TestPropositionTable_PostRange(t *testing.T) {
 
 	logger, _ := zap.NewDevelopment()
 
-	nonexisitentCase := monorevo.DifferentProposition{
+	// nonexisitentCase := monorevo.DifferentProposition{
 
-		WorkedNumber:        "99A-9999",
-		Det:                 "1",
-		DeliveryDate:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
-		UpdatedDeliveryDate: time.Date(2020, 1, 10, 0, 0, 0, 0, time.UTC),
-	}
-	pastCase := monorevo.DifferentProposition{
-		WorkedNumber:        "22T-378",
-		Det:                 "1",
-		DeliveryDate:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
-		UpdatedDeliveryDate: time.Date(2020, 1, 10, 0, 0, 0, 0, time.UTC),
-	}
+	// 	WorkedNumber:        "99A-9999",
+	// 	Det:                 "1",
+	// 	DeliveryDate:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
+	// 	UpdatedDeliveryDate: time.Date(2020, 1, 10, 0, 0, 0, 0, time.UTC),
+	// }
+	// pastCase := monorevo.DifferentProposition{
+	// 	WorkedNumber:        "22T-378",
+	// 	Det:                 "1",
+	// 	DeliveryDate:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
+	// 	UpdatedDeliveryDate: time.Date(2020, 1, 10, 0, 0, 0, 0, time.UTC),
+	// }
 	updatableCases := []monorevo.DifferentProposition{
 		{
 			WorkedNumber:        "99仮-1",
@@ -62,50 +62,50 @@ func TestPropositionTable_PostRange(t *testing.T) {
 		want    []monorevo.UpdatedProposition
 		wantErr bool
 	}{
-		{
-			name: "異常系_存在しない作業Noはものレボ案件を更新するとエラーになること",
-			p: NewPropositionTable(
-				logger.Sugar(),
-				cnf,
-			),
-			args: args{
-				[]monorevo.DifferentProposition{
-					nonexisitentCase,
-				},
-			},
-			want: []monorevo.UpdatedProposition{
-				{
-					WorkedNumber:        nonexisitentCase.WorkedNumber,
-					Det:                 nonexisitentCase.Det,
-					Successful:          false,
-					DeliveryDate:        nonexisitentCase.DeliveryDate,
-					UpdatedDeliveryDate: nonexisitentCase.UpdatedDeliveryDate,
-				},
-			},
-			wantErr: false,
-		},
-		{
-			name: "異常系_納期を過去日で更新しようとするとエラーになること",
-			p: NewPropositionTable(
-				logger.Sugar(),
-				cnf,
-			),
-			args: args{
-				[]monorevo.DifferentProposition{
-					pastCase,
-				},
-			},
-			want: []monorevo.UpdatedProposition{
-				{
-					WorkedNumber:        pastCase.WorkedNumber,
-					Det:                 pastCase.Det,
-					Successful:          false,
-					DeliveryDate:        pastCase.DeliveryDate,
-					UpdatedDeliveryDate: pastCase.UpdatedDeliveryDate,
-				},
-			},
-			wantErr: false,
-		},
+		// {
+		// 	name: "異常系_存在しない作業Noはものレボ案件を更新するとエラーになること",
+		// 	p: NewPropositionTable(
+		// 		logger.Sugar(),
+		// 		cnf,
+		// 	),
+		// 	args: args{
+		// 		[]monorevo.DifferentProposition{
+		// 			nonexisitentCase,
+		// 		},
+		// 	},
+		// 	want: []monorevo.UpdatedProposition{
+		// 		{
+		// 			WorkedNumber:        nonexisitentCase.WorkedNumber,
+		// 			Det:                 nonexisitentCase.Det,
+		// 			Successful:          false,
+		// 			DeliveryDate:        nonexisitentCase.DeliveryDate,
+		// 			UpdatedDeliveryDate: nonexisitentCase.UpdatedDeliveryDate,
+		// 		},
+		// 	},
+		// 	wantErr: false,
+		// },
+		// {
+		// 	name: "異常系_納期を過去日で更新しようとするとエラーになること",
+		// 	p: NewPropositionTable(
+		// 		logger.Sugar(),
+		// 		cnf,
+		// 	),
+		// 	args: args{
+		// 		[]monorevo.DifferentProposition{
+		// 			pastCase,
+		// 		},
+		// 	},
+		// 	want: []monorevo.UpdatedProposition{
+		// 		{
+		// 			WorkedNumber:        pastCase.WorkedNumber,
+		// 			Det:                 pastCase.Det,
+		// 			Successful:          false,
+		// 			DeliveryDate:        pastCase.DeliveryDate,
+		// 			UpdatedDeliveryDate: pastCase.UpdatedDeliveryDate,
+		// 		},
+		// 	},
+		// 	wantErr: false,
+		// },
 		{
 			name: "正常系_納期が更新できること",
 			p: NewPropositionTable(

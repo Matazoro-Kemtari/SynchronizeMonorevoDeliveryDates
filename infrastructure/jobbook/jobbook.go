@@ -29,7 +29,7 @@ func NewOrderDbConfig() *OrderDbConfig {
 
 type Repository struct {
 	sugar         *zap.SugaredLogger
-	orderDbConfig OrderDbConfig
+	orderDbConfig *OrderDbConfig
 }
 
 type JobBookModel struct {
@@ -44,7 +44,7 @@ func (JobBookModel) TableName() string {
 
 func NewRepository(
 	sugar *zap.SugaredLogger,
-	orderDbConfig OrderDbConfig,
+	orderDbConfig *OrderDbConfig,
 ) *Repository {
 	return &Repository{
 		sugar:         sugar,
@@ -83,7 +83,7 @@ func (r *Repository) FetchAll() ([]orderdb.JobBook, error) {
 	return jobBooks, nil
 }
 
-func open(orderDbPram OrderDbConfig) (*gorm.DB, error) {
+func open(orderDbPram *OrderDbConfig) (*gorm.DB, error) {
 	dsn := fmt.Sprintf(
 		"sqlserver://%v:%v@%v?database=%v",
 		orderDbPram.user,
