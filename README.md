@@ -105,3 +105,9 @@ Go言語のORMライブラリ
 $ go get -u gorm.io/gorm
 # go get -u gorm.io/driver/sqlserver
 ```
+#### メール送信
+sendgrid
+[Goでメール送信！Twilio SendGridを使って簡単に実装する方法](https://sendgrid.kke.co.jp/blog/?p=1241)
+```
+$ go get -u github.com/sendgrid/sendgrid-go
+```
