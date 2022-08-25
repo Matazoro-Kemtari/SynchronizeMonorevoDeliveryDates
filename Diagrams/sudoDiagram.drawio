@@ -4,10 +4,10 @@
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
-                <mxCell id="319" value="" style="rounded=0;whiteSpace=wrap;html=1;fontColor=#009900;" vertex="1" parent="1">
-                    <mxGeometry x="660" y="1254" width="190" height="139" as="geometry"/>
+                <mxCell id="319" value="" style="rounded=0;whiteSpace=wrap;html=1;fontColor=#009900;" parent="1" vertex="1">
+                    <mxGeometry x="790" y="1351" width="190" height="139" as="geometry"/>
                 </mxCell>
-                <mxCell id="287" value="&lt;u&gt;DomainService:&lt;/u&gt;&lt;u&gt;差分抽出&lt;br&gt;&lt;/u&gt;" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;dashed=1;" vertex="1" parent="1">
+                <mxCell id="287" value="&lt;u&gt;DomainService:&lt;/u&gt;&lt;u&gt;差分抽出&lt;br&gt;&lt;/u&gt;" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;dashed=1;" parent="1" vertex="1">
                     <mxGeometry x="10" y="1150" width="150" height="140" as="geometry"/>
                 </mxCell>
                 <mxCell id="273" value="&lt;u&gt;作業台帳集約&lt;/u&gt;" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;" parent="1" vertex="1">
@@ -142,12 +142,12 @@
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="291" value="1" style="edgeStyle=none;html=1;endArrow=none;endFill=0;" edge="1" parent="1" source="262" target="286">
+                <mxCell id="291" value="1" style="edgeStyle=none;html=1;endArrow=none;endFill=0;" parent="1" source="262" target="286" edge="1">
                     <mxGeometry x="-0.7361" y="7" relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="292" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="291">
+                <mxCell id="292" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="291" vertex="1" connectable="0">
                     <mxGeometry x="0.2398" relative="1" as="geometry">
                         <mxPoint x="5" y="-13" as="offset"/>
                     </mxGeometry>
@@ -183,7 +183,7 @@
                     <mxGeometry x="860" y="840" width="160" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="274" value="・状態は「受注」で絞り込んで参照する&lt;br&gt;・参照系" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;" parent="1" vertex="1">
-                    <mxGeometry x="240" y="1280" width="230" height="75" as="geometry"/>
+                    <mxGeometry x="100" y="1310" width="230" height="75" as="geometry"/>
                 </mxCell>
                 <mxCell id="276" value="・新規作成はできない&lt;br&gt;・削除もできない&lt;br&gt;・納期のみ更新できる&lt;br&gt;・作業No＋DET番号で一意になるが、納期に関しては作業Noで一意とみなして問題なし" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;" parent="1" vertex="1">
                     <mxGeometry x="330" y="850" width="270" height="90" as="geometry"/>
@@ -197,98 +197,117 @@
                 <mxCell id="283" value="受注管理DBとものレボの納期の差分を取得する" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="815" y="203" width="180" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="293" style="edgeStyle=none;html=1;endArrow=none;endFill=0;" edge="1" parent="1" source="286" target="289">
+                <mxCell id="293" style="edgeStyle=none;html=1;endArrow=none;endFill=0;" parent="1" source="286" target="289" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="294" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="293">
+                <mxCell id="294" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="293" vertex="1" connectable="0">
                     <mxGeometry x="-0.567" relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="295" value="1..n" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="293">
+                <mxCell id="295" value="1..n" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="293" vertex="1" connectable="0">
                     <mxGeometry x="0.5019" y="-1" relative="1" as="geometry">
                         <mxPoint x="17" y="-17" as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="297" style="edgeStyle=none;html=1;endArrow=none;endFill=0;" edge="1" parent="1" source="286" target="263">
+                <mxCell id="297" style="edgeStyle=none;html=1;endArrow=none;endFill=0;" parent="1" source="286" target="263" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="298" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="297">
+                <mxCell id="298" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="297" vertex="1" connectable="0">
                     <mxGeometry x="0.6216" y="-3" relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="299" value="0..n" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="297">
+                <mxCell id="299" value="0..n" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="297" vertex="1" connectable="0">
                     <mxGeometry x="-0.3562" y="-2" relative="1" as="geometry">
                         <mxPoint x="-6" y="-15" as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="286" value="&lt;u&gt;&lt;b&gt;ものレボ案件差分&lt;br&gt;&lt;/b&gt;&lt;/u&gt;(DifferentProposition&lt;span&gt;)&lt;/span&gt;&lt;br&gt;作業No&lt;br&gt;DET番号&lt;br&gt;納期&lt;br&gt;編集後納期" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" parent="1">
+                <mxCell id="286" value="&lt;u&gt;&lt;b&gt;ものレボ案件差分&lt;br&gt;&lt;/b&gt;&lt;/u&gt;(DifferentProposition&lt;span&gt;)&lt;/span&gt;&lt;br&gt;作業No&lt;br&gt;DET番号&lt;br&gt;納期&lt;br&gt;編集後納期" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" parent="1" vertex="1">
                     <mxGeometry x="20" y="1179" width="130" height="101" as="geometry"/>
                 </mxCell>
-                <mxCell id="288" value="&lt;u&gt;結果メール&lt;br&gt;&lt;/u&gt;" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
-                    <mxGeometry x="430" y="955" width="170" height="160" as="geometry"/>
+                <mxCell id="288" value="&lt;u&gt;結果メール&lt;br&gt;&lt;/u&gt;" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;" parent="1" vertex="1">
+                    <mxGeometry x="340" y="1050" width="370" height="250" as="geometry"/>
                 </mxCell>
-                <mxCell id="300" value="" style="rounded=0;whiteSpace=wrap;html=1;fontColor=#009900;" vertex="1" parent="1">
-                    <mxGeometry x="660" y="1098.5" width="180" height="120" as="geometry"/>
+                <mxCell id="300" value="" style="rounded=0;whiteSpace=wrap;html=1;fontColor=#009900;" parent="1" vertex="1">
+                    <mxGeometry x="750" y="1138.5" width="180" height="120" as="geometry"/>
                 </mxCell>
-                <mxCell id="305" style="edgeStyle=none;html=1;fontSize=12;endArrow=classic;endFill=1;" edge="1" parent="1" source="302" target="268">
+                <mxCell id="305" style="edgeStyle=none;html=1;fontSize=12;endArrow=classic;endFill=1;" parent="1" source="302" target="268" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="308" style="edgeStyle=none;html=1;fontSize=12;endArrow=classic;endFill=1;" edge="1" parent="1" source="302" target="269">
+                <mxCell id="308" style="edgeStyle=none;html=1;fontSize=12;endArrow=classic;endFill=1;" parent="1" source="302" target="269" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="302" value="(&lt;u style=&quot;color: rgb(240 , 240 , 240)&quot;&gt;&lt;b&gt;ものレボ案件差分&lt;/b&gt;&lt;/u&gt;)&lt;br&gt;作業No: 22C-113&lt;br&gt;DET番号: 1&lt;br&gt;納期: 2022/10/1&lt;br&gt;編集後納期: 2022/10/20" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;fillColor=#60a917;strokeColor=#2D7600;fontColor=#ffffff;" vertex="1" parent="1">
-                    <mxGeometry x="680" y="1118.5" width="140" height="80" as="geometry"/>
+                <mxCell id="302" value="(&lt;u style=&quot;color: rgb(240 , 240 , 240)&quot;&gt;&lt;b&gt;ものレボ案件差分&lt;/b&gt;&lt;/u&gt;)&lt;br&gt;作業No: 22C-113&lt;br&gt;DET番号: 1&lt;br&gt;納期: 2022/10/1&lt;br&gt;編集後納期: 2022/10/20" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;fillColor=#60a917;strokeColor=#2D7600;fontColor=#ffffff;" parent="1" vertex="1">
+                    <mxGeometry x="770" y="1158.5" width="140" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="306" style="edgeStyle=none;html=1;fontSize=12;endArrow=classic;endFill=1;" edge="1" parent="1" source="304" target="302">
+                <mxCell id="306" style="edgeStyle=none;html=1;fontSize=12;endArrow=classic;endFill=1;" parent="1" source="304" target="302" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="304" value="(&lt;u style=&quot;color: rgb(240 , 240 , 240)&quot;&gt;&lt;b&gt;ものレボ案件編集結果)&lt;/b&gt;&lt;/u&gt;&lt;br&gt;作業No: 22C-113&lt;br&gt;DET番号: 1&lt;br&gt;成功した:&amp;nbsp;&lt;span&gt;true&lt;/span&gt;&lt;span&gt;&lt;br&gt;&lt;/span&gt;納期: 2022/10/1&lt;br&gt;編集後納期: 2022/10/20" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;fillColor=#60a917;strokeColor=#2D7600;fontColor=#ffffff;" vertex="1" parent="1">
+                <mxCell id="304" value="(&lt;u style=&quot;color: rgb(240 , 240 , 240)&quot;&gt;&lt;b&gt;ものレボ案件編集結果)&lt;/b&gt;&lt;/u&gt;&lt;br&gt;作業No: 22C-113&lt;br&gt;DET番号: 1&lt;br&gt;成功した:&amp;nbsp;&lt;span&gt;true&lt;/span&gt;&lt;span&gt;&lt;br&gt;&lt;/span&gt;納期: 2022/10/1&lt;br&gt;編集後納期: 2022/10/20" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;fillColor=#60a917;strokeColor=#2D7600;fontColor=#ffffff;" parent="1" vertex="1">
                     <mxGeometry x="980" y="1010" width="150" height="99" as="geometry"/>
                 </mxCell>
-                <mxCell id="309" value="" style="rounded=0;whiteSpace=wrap;html=1;fontColor=#009900;" vertex="1" parent="1">
+                <mxCell id="309" value="" style="rounded=0;whiteSpace=wrap;html=1;fontColor=#009900;" parent="1" vertex="1">
                     <mxGeometry x="970" y="1216" width="190" height="139" as="geometry"/>
                 </mxCell>
-                <mxCell id="310" value="(&lt;u style=&quot;color: rgb(240 , 240 , 240)&quot;&gt;&lt;b&gt;ものレボ案件編集結果)&lt;/b&gt;&lt;/u&gt;&lt;br&gt;作業No: 22C-113&lt;br&gt;DET番号: 2&lt;br&gt;成功した:&amp;nbsp;&lt;span&gt;false&lt;/span&gt;&lt;span&gt;&lt;br&gt;&lt;/span&gt;納期: 2022/10/1&lt;br&gt;編集後納期: 2022/10/20" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;fillColor=#60a917;strokeColor=#2D7600;fontColor=#ffffff;" vertex="1" parent="1">
+                <mxCell id="310" value="(&lt;u style=&quot;color: rgb(240 , 240 , 240)&quot;&gt;&lt;b&gt;ものレボ案件編集結果)&lt;/b&gt;&lt;/u&gt;&lt;br&gt;作業No: 22C-113&lt;br&gt;DET番号: 2&lt;br&gt;成功した:&amp;nbsp;&lt;span&gt;false&lt;/span&gt;&lt;span&gt;&lt;br&gt;&lt;/span&gt;納期: 2022/10/1&lt;br&gt;編集後納期: 2022/10/20" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;fillColor=#60a917;strokeColor=#2D7600;fontColor=#ffffff;" parent="1" vertex="1">
                     <mxGeometry x="990" y="1236" width="150" height="99" as="geometry"/>
                 </mxCell>
-                <mxCell id="312" style="edgeStyle=none;html=1;fontSize=12;endArrow=none;endFill=0;dashed=1;" edge="1" parent="1" source="311" target="309">
+                <mxCell id="312" style="edgeStyle=none;html=1;fontSize=12;endArrow=none;endFill=0;dashed=1;" parent="1" source="311" target="309" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="311" value="同じ作業NoでもDET毎で失敗するケースもある" style="rounded=0;whiteSpace=wrap;html=1;fontColor=default;" vertex="1" parent="1">
+                <mxCell id="311" value="同じ作業NoでもDET毎で失敗するケースもある" style="rounded=0;whiteSpace=wrap;html=1;fontColor=default;" parent="1" vertex="1">
                     <mxGeometry x="1000" y="1150" width="160" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="315" style="edgeStyle=none;html=1;fontSize=12;endArrow=none;endFill=0;" edge="1" parent="1" source="289" target="314">
+                <mxCell id="315" style="edgeStyle=none;html=1;fontSize=12;endArrow=none;endFill=0;" parent="1" source="289" target="314" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="316" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;" vertex="1" connectable="0" parent="315">
+                <mxCell id="316" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;" parent="315" vertex="1" connectable="0">
                     <mxGeometry x="-0.8001" relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="317" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;" vertex="1" connectable="0" parent="315">
+                <mxCell id="317" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;" parent="315" vertex="1" connectable="0">
                     <mxGeometry x="0.8329" y="-2" relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="289" value="&lt;u&gt;&lt;b&gt;ものレボ案件編集結果&lt;br&gt;&lt;/b&gt;&lt;/u&gt;(UpdatedProposition&lt;span&gt;)&lt;/span&gt;&lt;br&gt;作業No&lt;br&gt;DET番号&lt;br&gt;成否&lt;br&gt;納期&lt;br&gt;編集後納期" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" parent="1">
+                <mxCell id="289" value="&lt;u&gt;&lt;b&gt;ものレボ案件編集結果&lt;br&gt;&lt;/b&gt;&lt;/u&gt;(UpdatedProposition&lt;span&gt;)&lt;/span&gt;&lt;br&gt;作業No&lt;br&gt;DET番号&lt;br&gt;成否&lt;br&gt;納期&lt;br&gt;編集後納期" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" parent="1" vertex="1">
                     <mxGeometry x="170" y="944.5" width="140" height="111" as="geometry"/>
                 </mxCell>
-                <mxCell id="313" value="" style="edgeStyle=none;html=1;fontColor=default;endArrow=none;endFill=0;" edge="1" parent="1" source="262" target="289">
+                <mxCell id="313" value="" style="edgeStyle=none;html=1;fontColor=default;endArrow=none;endFill=0;" parent="1" source="262" target="289" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="130" y="944.8684210526317" as="sourcePoint"/>
                         <mxPoint x="320" y="909.8684210526317" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="314" value="&lt;u&gt;&lt;b&gt;編集結果レポート&lt;br&gt;&lt;/b&gt;&lt;/u&gt;(EditedReport&lt;span&gt;)&lt;/span&gt;&lt;br&gt;作業No&lt;br&gt;DET番号&lt;br&gt;成否&lt;br&gt;納期&lt;br&gt;編集後納期" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" parent="1">
-                    <mxGeometry x="450" y="990.5" width="130" height="111" as="geometry"/>
+                <mxCell id="314" value="&lt;u&gt;&lt;b&gt;案件&lt;/b&gt;&lt;/u&gt;&lt;u&gt;&lt;b&gt;編集結果&lt;br&gt;&lt;/b&gt;&lt;/u&gt;(EditedProposition&lt;span&gt;)&lt;/span&gt;&lt;br&gt;作業No&lt;br&gt;DET番号&lt;br&gt;成否&lt;br&gt;納期&lt;br&gt;編集後納期" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="355" y="1069" width="130" height="111" as="geometry"/>
                 </mxCell>
-                <mxCell id="320" style="edgeStyle=none;html=1;fontSize=12;endArrow=classic;endFill=1;" edge="1" parent="1" source="318" target="304">
+                <mxCell id="320" style="edgeStyle=none;html=1;fontSize=12;endArrow=classic;endFill=1;" parent="1" source="318" target="304" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="318" value="(編集結果レポート)&lt;br&gt;作業No: 22C-113&lt;br&gt;DET番号: 1&lt;br&gt;成功した: true&lt;span&gt;&lt;br&gt;&lt;/span&gt;納期: 2022/10/1&lt;br&gt;編集後納期: 2022/10/20" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;fillColor=#60a917;strokeColor=#2D7600;fontColor=#ffffff;" vertex="1" parent="1">
-                    <mxGeometry x="680" y="1274" width="150" height="99" as="geometry"/>
+                <mxCell id="318" value="(編集結果レポート)&lt;br&gt;作業No: 22C-113&lt;br&gt;DET番号: 1&lt;br&gt;成功した: true&lt;span&gt;&lt;br&gt;&lt;/span&gt;納期: 2022/10/1&lt;br&gt;編集後納期: 2022/10/20" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;fillColor=#60a917;strokeColor=#2D7600;fontColor=#ffffff;" parent="1" vertex="1">
+                    <mxGeometry x="810" y="1371" width="150" height="99" as="geometry"/>
+                </mxCell>
+                <mxCell id="321" value="&lt;u&gt;&lt;b&gt;Eメールアドレス&lt;br&gt;&lt;/b&gt;&lt;/u&gt;(EmailAddress)&lt;br&gt;名前&lt;br&gt;アドレス" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" parent="1">
+                    <mxGeometry x="550" y="1180" width="120" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="324" style="edgeStyle=none;html=1;endArrow=none;endFill=0;" edge="1" parent="1" source="322" target="314">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="325" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="324">
+                    <mxGeometry x="-0.6716" y="-2" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="326" value="1..n" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="324">
+                    <mxGeometry x="0.7136" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="322" value="&lt;u&gt;&lt;b&gt;編集結果レポート&lt;/b&gt;&lt;/u&gt;&lt;u&gt;&lt;b&gt;&lt;br&gt;&lt;/b&gt;&lt;/u&gt;(EditedReport)&lt;br&gt;[]案件編集結果" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" parent="1">
+                    <mxGeometry x="550" y="1089" width="120" height="65" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>

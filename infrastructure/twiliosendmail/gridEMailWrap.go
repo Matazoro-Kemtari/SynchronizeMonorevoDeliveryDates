@@ -1,7 +1,7 @@
 package twiliosendmail
 
 import (
-	"SynchronizeMonorevoDeliveryDates/domain/sentmail"
+	"SynchronizeMonorevoDeliveryDates/domain/report"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -32,7 +32,7 @@ type SendGridMail struct {
 	apiKey string
 }
 
-func NewSendGridMail(sugar *zap.SugaredLogger, cnf *SendGridConfig) sentmail.EMailer {
+func NewSendGridMail(sugar *zap.SugaredLogger, cnf *SendGridConfig) report.EMailer {
 	return &SendGridMail{
 		sugar:  sugar,
 		apiKey: cnf.apiKey,
@@ -40,10 +40,10 @@ func NewSendGridMail(sugar *zap.SugaredLogger, cnf *SendGridConfig) sentmail.EMa
 }
 
 func (m *SendGridMail) Send(
-	tos []sentmail.EmailAddress,
-	ccs []sentmail.EmailAddress,
-	bccs []sentmail.EmailAddress,
-	from sentmail.EmailAddress,
+	tos []report.EmailAddress,
+	ccs []report.EmailAddress,
+	bccs []report.EmailAddress,
+	from report.EmailAddress,
 	subject string,
 	body string,
 	replacements map[string]string,
