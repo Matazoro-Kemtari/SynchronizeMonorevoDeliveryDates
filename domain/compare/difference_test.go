@@ -1,6 +1,7 @@
-package compare
+package compare_test
 
 import (
+	"SynchronizeMonorevoDeliveryDates/domain/compare"
 	"SynchronizeMonorevoDeliveryDates/domain/monorevo"
 	"SynchronizeMonorevoDeliveryDates/domain/orderdb"
 	"reflect"
@@ -15,13 +16,13 @@ func TestDifference_ExtractForDeliveryDate(t *testing.T) {
 	}
 	tests := []struct {
 		name string
-		e    *Difference
+		e    *compare.Difference
 		args args
 		want []monorevo.DifferentProposition
 	}{
 		{
 			name: "正常系_作業Noが同じ注文の納期に差分が無いときはnilを返すこと",
-			e:    NewDifference(),
+			e:    compare.NewDifference(),
 			args: args{
 				j: []orderdb.JobBook{
 					{
@@ -64,7 +65,7 @@ func TestDifference_ExtractForDeliveryDate(t *testing.T) {
 		},
 		{
 			name: "正常系_作業Noが同じ注文の納期に差がある案件の2つの納期を返すこと",
-			e:    NewDifference(),
+			e:    compare.NewDifference(),
 			args: args{
 				j: []orderdb.JobBook{
 					{
@@ -118,7 +119,7 @@ func TestDifference_ExtractForDeliveryDate(t *testing.T) {
 		},
 		{
 			name: "正常系_受注管理DBがnilのときはnilを返すこと",
-			e:    NewDifference(),
+			e:    compare.NewDifference(),
 			args: args{
 				j: nil,
 				p: []monorevo.Proposition{
@@ -132,7 +133,7 @@ func TestDifference_ExtractForDeliveryDate(t *testing.T) {
 		},
 		{
 			name: "正常系_ものレボがnilのときはnilを返すこと",
-			e:    NewDifference(),
+			e:    compare.NewDifference(),
 			args: args{
 				j: []orderdb.JobBook{
 					{
