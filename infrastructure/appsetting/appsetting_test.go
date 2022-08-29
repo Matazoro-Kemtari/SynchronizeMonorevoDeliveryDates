@@ -1,6 +1,7 @@
-package appsetting
+package appsetting_test
 
 import (
+	local "SynchronizeMonorevoDeliveryDates/infrastructure/appsetting"
 	"SynchronizeMonorevoDeliveryDates/usecase/appsetting"
 	"encoding/json"
 	"os"
@@ -11,7 +12,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func createDummyAppSetting(dummySetting *AppSetting) string {
+func createDummyAppSetting(dummySetting *local.AppSetting) string {
 	// テスト実行フォルダ取得
 	exeFile, err := os.Executable()
 	if err != nil {
@@ -34,13 +35,8 @@ func createDummyAppSetting(dummySetting *AppSetting) string {
 
 func TestLoadableSetting_Load(t *testing.T) {
 	// 仮の設定値
-	dummySetting := AppSetting{
-		SandboxMode: SandboxMode{
-			Monorevo: true,
-			SendGrid: true,
-		},
-	}
-	dummyPath := createDummyAppSetting(&dummySetting)
+	dummySetting := local.TestAppSettingCreate()
+	dummyPath := createDummyAppSetting(dummySetting)
 
 	logger, _ := zap.NewDevelopment()
 
@@ -49,14 +45,14 @@ func TestLoadableSetting_Load(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		l       *LoadableSetting
+		l       *local.LoadableSetting
 		args    args
 		want    *appsetting.AppSettingDto
 		wantErr bool
 	}{
 		{
 			name: "正常系_設定値が取得できること",
-			l:    NewLoadableSetting(logger.Sugar()),
+			l:    local.NewLoadableSetting(logger.Sugar()),
 			args: args{
 				path: dummyPath,
 			},

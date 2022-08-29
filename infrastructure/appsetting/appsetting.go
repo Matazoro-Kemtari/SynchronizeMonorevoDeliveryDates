@@ -52,3 +52,33 @@ func (l *LoadableSetting) Load(path string) (*appsetting.AppSettingDto, error) {
 	}, nil
 
 }
+
+type Options struct {
+	sandboxMode SandboxMode
+}
+
+type Option func(*Options)
+
+func OptSandboxMode(v SandboxMode) Option {
+	return func(opts *Options) {
+		opts.sandboxMode = v
+	}
+}
+
+func TestAppSettingCreate(options ...Option) *AppSetting {
+	// デフォルト値
+	opts := &Options{
+		sandboxMode: SandboxMode{
+			Monorevo: true,
+			SendGrid: true,
+		},
+	}
+
+	for _, option := range options {
+		option(opts)
+	}
+
+	return &AppSetting{
+		SandboxMode: SandboxMode{},
+	}
+}
