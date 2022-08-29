@@ -1,0 +1,51 @@
+{
+  "senderAddress": {
+    "email": "FromAddress@exsample.com",
+    "name": "送り主"
+  },
+  "recipientAddresses": [
+    {
+      "email": "RecipientAddress1@sink.sendgrid.net",
+      "name": "TO1"
+    },
+    {
+      "email": "RecipientAddress2@sink.sendgrid.net",
+      "name": "TO2"
+    },
+    {
+      "email": "RecipientAddress3@sink.sendgrid.net",
+      "name": "TO3"
+    }
+  ],
+  "ccAddresses": [
+    {
+      "email": "CopyAddress1@sink.sendgrid.net",
+      "name": "CC1"
+    },
+    {
+      "email": "CopyAddress2@sink.sendgrid.net",
+      "name": "CC2"
+    },
+    {
+      "email": "CopyAddress3@sink.sendgrid.net",
+      "name": "CC3"
+    }
+  ],
+  "bccAddresses": [
+    {
+      "email": "BlindCopyAddress1@sink.sendgrid.net",
+      "name": "BCC1"
+    },
+    {
+      "email": "BlindCopyAddress2@sink.sendgrid.net",
+      "name": "BCC2"
+    },
+    {
+      "email": "BlindCopyAddress3@sink.sendgrid.net",
+      "name": "BCC3"
+    }
+  ],
+  "subject": "納期同期レポート %count% 件",
+  "prefixReport": "",
+  "suffixReport": ""
+}

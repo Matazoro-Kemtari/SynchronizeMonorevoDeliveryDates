@@ -32,7 +32,7 @@ type SendGridMail struct {
 	apiKey string
 }
 
-func NewSendGridMail(sugar *zap.SugaredLogger, cnf *SendGridConfig) report.EMailer {
+func NewSendGridMail(sugar *zap.SugaredLogger, cnf *SendGridConfig) *SendGridMail {
 	return &SendGridMail{
 		sugar:  sugar,
 		apiKey: cnf.apiKey,
