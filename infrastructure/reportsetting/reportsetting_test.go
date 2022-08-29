@@ -1,6 +1,7 @@
-package reportsetting
+package reportsetting_test
 
 import (
+	local "SynchronizeMonorevoDeliveryDates/infrastructure/reportsetting"
 	"SynchronizeMonorevoDeliveryDates/usecase/reportsetting"
 	"encoding/json"
 	"os"
@@ -11,7 +12,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func createDummyAppSetting(dummySetting *ReportSetting) string {
+func createDummyAppSetting(dummySetting *local.ReportSetting) string {
 	// テスト実行フォルダ取得
 	exeFile, err := os.Executable()
 	if err != nil {
@@ -34,28 +35,8 @@ func createDummyAppSetting(dummySetting *ReportSetting) string {
 
 func TestLoadableSetting_Load(t *testing.T) {
 	// 仮の設定値
-	dummySetting := ReportSetting{
-		SenderAddress: MailAddress{
-			Email: "abc@example.com",
-			Name:  "サンプル送信者",
-		},
-		RecipientAddresses: []MailAddress{
-			{Email: "to1@example.com", Name: "宛先1"},
-			{Email: "to2@example.com", Name: "宛先2"},
-		},
-		CcAddresses: []MailAddress{
-			{Email: "cc1@example.com", Name: "CC1"},
-			{Email: "cc2@example.com", Name: "CC2"},
-		},
-		BccAddresses: []MailAddress{
-			{Email: "bcc1@example.com", Name: "BCC1"},
-			{Email: "bcc2@example.com", Name: "BCC2"},
-		},
-		Subject:      "題名XXX",
-		PrefixReport: "接頭辞\n接頭辞\n接頭辞",
-		SuffixReport: "接尾辞\n接尾辞\n接尾辞",
-	}
-	dummyPath := createDummyAppSetting(&dummySetting)
+	dummySetting := local.TestReportSettingCreate()
+	dummyPath := createDummyAppSetting(dummySetting)
 
 	logger, _ := zap.NewDevelopment()
 
@@ -64,14 +45,14 @@ func TestLoadableSetting_Load(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		l       *LoadableSetting
+		l       *local.LoadableSetting
 		args    args
 		want    *reportsetting.ReportSettingDto
 		wantErr bool
 	}{
 		{
 			name:    "正常系_設定値が取得できること",
-			l:       NewLoadableSetting(logger.Sugar()),
+			l:       local.NewLoadableSetting(logger.Sugar()),
 			args:    args{dummyPath},
 			want:    dummySetting.ConvertToReportSettingDto(),
 			wantErr: false,

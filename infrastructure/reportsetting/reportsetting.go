@@ -120,3 +120,96 @@ func (l *LoadableSetting) Load(path string) (*reportsetting.ReportSettingDto, er
 		SuffixReport:       setting.SuffixReport,
 	}, nil
 }
+
+type Options struct {
+	senderAddress      MailAddress
+	recipientAddresses []MailAddress
+	ccAddresses        []MailAddress
+	bccAddresses       []MailAddress
+	subject            string
+	prefixReport       string
+	suffixReport       string
+}
+
+type Option func(*Options)
+
+func OptSenderAddress(address MailAddress) Option {
+	return func(opts *Options) {
+		opts.senderAddress = address
+	}
+}
+
+func OptRecipientAddresses(addresses []MailAddress) Option {
+	return func(opts *Options) {
+		opts.recipientAddresses = addresses
+	}
+}
+
+func OptCcAddresses(addresses []MailAddress) Option {
+	return func(opts *Options) {
+		opts.ccAddresses = addresses
+	}
+}
+
+func OptBccAddresses(addresses []MailAddress) Option {
+	return func(opts *Options) {
+		opts.bccAddresses = addresses
+	}
+}
+
+func OptSubject(subject string) Option {
+	return func(opts *Options) {
+		opts.subject = subject
+	}
+}
+
+func OptPrefixReport(prefixReport string) Option {
+	return func(opts *Options) {
+		opts.prefixReport = prefixReport
+	}
+}
+
+func OptSuffixReport(suffixReport string) Option {
+	return func(opts *Options) {
+		opts.suffixReport = suffixReport
+	}
+}
+
+func TestReportSettingCreate(options ...Option) *ReportSetting {
+	// デフォルト値
+	opts := &Options{
+		senderAddress: MailAddress{
+			Email: "abc@example.com",
+			Name:  "サンプル送信者",
+		},
+		recipientAddresses: []MailAddress{
+			{Email: "to1@example.com", Name: "宛先1"},
+			{Email: "to2@example.com", Name: "宛先2"},
+		},
+		ccAddresses: []MailAddress{
+			{Email: "cc1@example.com", Name: "CC1"},
+			{Email: "cc2@example.com", Name: "CC2"},
+		},
+		bccAddresses: []MailAddress{
+			{Email: "bcc1@example.com", Name: "BCC1"},
+			{Email: "bcc2@example.com", Name: "BCC2"},
+		},
+		subject:      "題名XXX",
+		prefixReport: "接頭辞\n接頭辞\n接頭辞",
+		suffixReport: "接尾辞\n接尾辞\n接尾辞",
+	}
+
+	for _, option := range options {
+		option(opts)
+	}
+
+	return &ReportSetting{
+		SenderAddress:      opts.senderAddress,
+		RecipientAddresses: opts.recipientAddresses,
+		CcAddresses:        opts.ccAddresses,
+		BccAddresses:       opts.bccAddresses,
+		Subject:            opts.subject,
+		PrefixReport:       opts.prefixReport,
+		SuffixReport:       opts.suffixReport,
+	}
+}
