@@ -1,7 +1,8 @@
-package proposition
+package proposition_test
 
 import (
 	"SynchronizeMonorevoDeliveryDates/domain/monorevo"
+	"SynchronizeMonorevoDeliveryDates/infrastructure/proposition"
 	"os"
 	"reflect"
 	"testing"
@@ -46,7 +47,7 @@ func TestPropositionTable_PostRange(t *testing.T) {
 		},
 	}
 
-	cnf := TestMonorevoUserConfigCreate(
+	cnf := proposition.TestMonorevoUserConfigCreate(
 		os.Getenv("MONOREVO_COMPANY_ID"),
 		os.Getenv("MONOREVO_USER_ID"),
 		os.Getenv("MONOREVO_USER_PASSWORD"),
@@ -57,14 +58,14 @@ func TestPropositionTable_PostRange(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		p       *PropositionTable
+		p       *proposition.PropositionTable
 		args    args
 		want    []monorevo.UpdatedProposition
 		wantErr bool
 	}{
 		{
 			name: "異常系_存在しない作業Noはものレボ案件を更新するとエラーになること",
-			p: NewPropositionTable(
+			p: proposition.NewPropositionTable(
 				logger.Sugar(),
 				cnf,
 			),
@@ -86,7 +87,7 @@ func TestPropositionTable_PostRange(t *testing.T) {
 		},
 		{
 			name: "異常系_納期を過去日で更新しようとするとエラーになること",
-			p: NewPropositionTable(
+			p: proposition.NewPropositionTable(
 				logger.Sugar(),
 				cnf,
 			),
@@ -108,7 +109,7 @@ func TestPropositionTable_PostRange(t *testing.T) {
 		},
 		{
 			name: "正常系_納期が更新できること",
-			p: NewPropositionTable(
+			p: proposition.NewPropositionTable(
 				logger.Sugar(),
 				cnf,
 			),

@@ -1,6 +1,7 @@
-package proposition
+package proposition_test
 
 import (
+	"SynchronizeMonorevoDeliveryDates/infrastructure/proposition"
 	"os"
 	"regexp"
 	"testing"
@@ -18,7 +19,7 @@ func TestPropositionTable_FetchAll(t *testing.T) {
 
 	logger, _ := zap.NewDevelopment()
 
-	cnf := TestMonorevoUserConfigCreate(
+	cnf := proposition.TestMonorevoUserConfigCreate(
 		os.Getenv("MONOREVO_COMPANY_ID"),
 		os.Getenv("MONOREVO_USER_ID"),
 		os.Getenv("MONOREVO_USER_PASSWORD"),
@@ -26,13 +27,13 @@ func TestPropositionTable_FetchAll(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		p       *PropositionTable
+		p       *proposition.PropositionTable
 		want    string
 		wantErr bool
 	}{
 		{
 			name: "正常系_ものレボから案件を取得できること",
-			p: NewPropositionTable(
+			p: proposition.NewPropositionTable(
 				logger.Sugar(),
 				cnf,
 			),
