@@ -3,6 +3,10 @@
     "email": "FromAddress@exsample.com",
     "name": "送り主"
   },
+  "replyToAddress": {
+    "email": "ReplyTo@exsample.com",
+    "name": "返信先"
+  },
   "recipientAddresses": [
     {
       "email": "RecipientAddress1@sink.sendgrid.net",

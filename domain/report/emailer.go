@@ -2,15 +2,16 @@ package report
 
 import "time"
 
-type EMailer interface {
+type Sender interface {
 	Send(
 		tos []EmailAddress,
 		ccs []EmailAddress,
 		bccs []EmailAddress,
 		from EmailAddress,
 		subject string,
-		body string,
-		replacements map[string]string,
+		editedPropositions []EditedProposition,
+		prefixReport string,
+		suffixReport string,
 	) (string, error)
 }
 

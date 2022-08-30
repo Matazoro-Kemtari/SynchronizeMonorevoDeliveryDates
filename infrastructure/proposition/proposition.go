@@ -3,6 +3,7 @@ package proposition
 // https://qiita.com/0829/items/c1e494bb128ade5f0872
 
 import (
+	"SynchronizeMonorevoDeliveryDates/usecase/appsetting"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -26,11 +27,48 @@ func NewMonorevoUserConfig() *MonorevoUserConfig {
 	}
 }
 
-func TestMonorevoUserConfigCreate(comId, userId, userPass string) *MonorevoUserConfig {
+type Options struct {
+	comId    string
+	userId   string
+	userPass string
+}
+
+type Option func(*Options)
+
+func OptComId(v string) Option {
+	return func(opts *Options) {
+		opts.comId = v
+	}
+}
+
+func OptUserId(v string) Option {
+	return func(opts *Options) {
+		opts.userId = v
+	}
+}
+
+func OptUserPass(v string) Option {
+	return func(opts *Options) {
+		opts.userPass = v
+	}
+}
+
+func TestMonorevoUserConfigCreate(options ...Option) *MonorevoUserConfig {
+	// デフォルト値
+	opts := &Options{
+		comId:    os.Getenv("MONOREVO_COMPANY_ID"),
+		userId:   os.Getenv("MONOREVO_USER_ID"),
+		userPass: os.Getenv("MONOREVO_USER_PASSWORD"),
+	}
+
+	for _, option := range options {
+		option(opts)
+	}
+
 	return &MonorevoUserConfig{
-		comId:    comId,
-		userId:   userId,
-		userPass: userPass,
+		comId:    opts.comId,
+		userId:   opts.userId,
+		userPass: opts.userPass,
 	}
 }
 
@@ -42,10 +80,12 @@ type PropositionTable struct {
 	userPass    string
 	downloadDir string
 	workDir     string
+	sandboxMode bool
 }
 
 func NewPropositionTable(
 	sugar *zap.SugaredLogger,
+	appcnf *appsetting.AppSettingDto,
 	cnf *MonorevoUserConfig,
 ) *PropositionTable {
 	// 実行ディレクトリを取得する cronで実行時のカレントディレクトリ対策
@@ -58,6 +98,7 @@ func NewPropositionTable(
 		userPass:    cnf.userPass,
 		downloadDir: filepath.Join(exePath, "download"),
 		workDir:     filepath.Join(exePath, "work"),
+		sandboxMode: appcnf.SandboxMode.Monorevo,
 	}
 }
 

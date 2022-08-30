@@ -18,6 +18,15 @@ type AppSetting struct {
 	SandboxMode SandboxMode `json:"sandboxmode"`
 }
 
+func (m *AppSetting) ConvertToAppSettingDto() *appsetting.AppSettingDto {
+	return &appsetting.AppSettingDto{
+		SandboxMode: appsetting.SandboxModeDto{
+			Monorevo: m.SandboxMode.Monorevo,
+			SendGrid: m.SandboxMode.SendGrid,
+		},
+	}
+}
+
 type LoadableSetting struct {
 	sugar *zap.SugaredLogger
 }
@@ -44,13 +53,7 @@ func (l *LoadableSetting) Load(path string) (*appsetting.AppSettingDto, error) {
 	}
 
 	// 詰め替えて返す
-	return &appsetting.AppSettingDto{
-		SandboxMode: appsetting.SandboxModeDto{
-			Monorevo: setting.SandboxMode.Monorevo,
-			SendGrid: setting.SandboxMode.SendGrid,
-		},
-	}, nil
-
+	return setting.ConvertToAppSettingDto(), nil
 }
 
 type Options struct {

@@ -16,6 +16,7 @@ type MailAddress struct {
 
 type ReportSetting struct {
 	SenderAddress      MailAddress   `json:"senderAddress"`
+	ReplyToAddress     MailAddress   `json:"replyToAddress"`
 	RecipientAddresses []MailAddress `json:"recipientAddresses"`
 	CcAddresses        []MailAddress `json:"ccAddresses"`
 	BccAddresses       []MailAddress `json:"bccAddresses"`
@@ -50,6 +51,10 @@ func (r *ReportSetting) ConvertToReportSettingDto() *reportsetting.ReportSetting
 		SenderAddress: reportsetting.MailAddressDto{
 			Email: r.SenderAddress.Email,
 			Name:  r.SenderAddress.Name,
+		},
+		ReplyToAddress: reportsetting.MailAddressDto{
+			Email: r.ReplyToAddress.Email,
+			Name:  r.ReplyToAddress.Name,
 		},
 		RecipientAddresses: tos,
 		CcAddresses:        ccs,
@@ -123,6 +128,7 @@ func (l *LoadableSetting) Load(path string) (*reportsetting.ReportSettingDto, er
 
 type Options struct {
 	senderAddress      MailAddress
+	replyToAddress     MailAddress
 	recipientAddresses []MailAddress
 	ccAddresses        []MailAddress
 	bccAddresses       []MailAddress
@@ -136,6 +142,12 @@ type Option func(*Options)
 func OptSenderAddress(address MailAddress) Option {
 	return func(opts *Options) {
 		opts.senderAddress = address
+	}
+}
+
+func OptReplyToAddress(address MailAddress) Option {
+	return func(opts *Options) {
+		opts.replyToAddress = address
 	}
 }
 
@@ -182,6 +194,10 @@ func TestReportSettingCreate(options ...Option) *ReportSetting {
 			Email: "abc@example.com",
 			Name:  "サンプル送信者",
 		},
+		replyToAddress: MailAddress{
+			Email: "reply@example.com",
+			Name:  "返信先",
+		},
 		recipientAddresses: []MailAddress{
 			{Email: "to1@example.com", Name: "宛先1"},
 			{Email: "to2@example.com", Name: "宛先2"},
@@ -205,6 +221,7 @@ func TestReportSettingCreate(options ...Option) *ReportSetting {
 
 	return &ReportSetting{
 		SenderAddress:      opts.senderAddress,
+		ReplyToAddress:     opts.replyToAddress,
 		RecipientAddresses: opts.recipientAddresses,
 		CcAddresses:        opts.ccAddresses,
 		BccAddresses:       opts.bccAddresses,

@@ -7,6 +7,7 @@ type MailAddressDto struct {
 
 type ReportSettingDto struct {
 	SenderAddress      MailAddressDto
+	ReplyToAddress     MailAddressDto
 	RecipientAddresses []MailAddressDto
 	CcAddresses        []MailAddressDto
 	BccAddresses       []MailAddressDto

@@ -2,6 +2,7 @@ package proposition_test
 
 import (
 	"SynchronizeMonorevoDeliveryDates/infrastructure/proposition"
+	"SynchronizeMonorevoDeliveryDates/usecase/appsetting"
 	"os"
 	"regexp"
 	"testing"
@@ -19,11 +20,13 @@ func TestPropositionTable_FetchAll(t *testing.T) {
 
 	logger, _ := zap.NewDevelopment()
 
-	cnf := proposition.TestMonorevoUserConfigCreate(
-		os.Getenv("MONOREVO_COMPANY_ID"),
-		os.Getenv("MONOREVO_USER_ID"),
-		os.Getenv("MONOREVO_USER_PASSWORD"),
-	)
+	appcnf := &appsetting.AppSettingDto{
+		SandboxMode: appsetting.SandboxModeDto{
+			Monorevo: false,
+		},
+	}
+
+	cnf := proposition.TestMonorevoUserConfigCreate()
 
 	tests := []struct {
 		name    string
@@ -35,6 +38,7 @@ func TestPropositionTable_FetchAll(t *testing.T) {
 			name: "正常系_ものレボから案件を取得できること",
 			p: proposition.NewPropositionTable(
 				logger.Sugar(),
+				appcnf,
 				cnf,
 			),
 			want:    `X?[0-9]{2}[A-Z]-[0-9]{1,4}`,

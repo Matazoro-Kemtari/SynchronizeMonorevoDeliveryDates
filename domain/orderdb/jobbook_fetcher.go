@@ -32,11 +32,27 @@ type Options struct {
 
 type Option func(*Options)
 
+func OptWorkedNumber(v string) Option {
+	return func(opts *Options) {
+		opts.WorkedNumber = v
+	}
+}
+
+func OptDeliveryDate(v time.Time) Option {
+	return func(opts *Options) {
+		opts.DeliveryDate = v
+	}
+}
+
 func TestJobBookCreate(options ...Option) *JobBook {
 	// デフォルト値設定
-	opts := Options{
+	opts := &Options{
 		WorkedNumber: "99A-1234",
 		DeliveryDate: time.Now(),
+	}
+
+	for _, option := range options {
+		option(opts)
 	}
 	return NewJobBook(opts.WorkedNumber, opts.DeliveryDate)
 }

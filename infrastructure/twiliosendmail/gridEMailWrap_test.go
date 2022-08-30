@@ -1,87 +1,118 @@
-package twiliosendmail
+package twiliosendmail_test
 
 import (
-	"io/ioutil"
-	"myapp/domain/sentmail"
+	"SynchronizeMonorevoDeliveryDates/domain/report"
+	"SynchronizeMonorevoDeliveryDates/infrastructure/twiliosendmail"
+	"SynchronizeMonorevoDeliveryDates/usecase/appsetting"
 	"os"
-	"reflect"
+	"strings"
 	"testing"
+	"time"
+
+	"github.com/joho/godotenv"
+	"go.uber.org/zap"
 )
 
-func TestNew(t *testing.T) {
-	tests := []struct {
-		name    string
-		want    sentmail.EMailer
-		wantErr bool
-	}{
-		{
-			name:    "正常系_オブジェクト生成できること",
-			want:    &SendGridMail{apiKey: "abc123"},
-			wantErr: false,
-		},
+func TestSendGridMail_Send(t *testing.T) {
+	err_read := godotenv.Load(`../../.env`)
+	if err_read != nil {
+		os.Exit(1)
 	}
-	os.Setenv("API_KEY", "abc123")
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := NewSendGridConfig()
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("New() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestGridEMailWrap_Send(t *testing.T) {
-	os.Setenv("API_KEY", "abc123")
-
-	// 添付テスト用
-	attch, err := ioutil.ReadFile("testdata/test.zip")
-	if err != nil {
-		t.Fatalf("添付用ファイルオープンエラー: %v", err)
-	}
-
+	logger, _ := zap.NewDevelopment()
+	appcnf := appsetting.TestAppSettingDtoCreate(
+		appsetting.OptSandboxMode(
+			*appsetting.TestSandboxModeDtoCreate(
+				appsetting.OptSandboxModeSendGrid(false),
+			),
+		),
+	)
+	cnf := twiliosendmail.TestSendGridConfigCreate(
+		twiliosendmail.OptApiKey(os.Getenv("SEND_GRID_API_KEY")),
+	)
 	type args struct {
-		tos          []sentmail.EmailAddress
-		ccs          []sentmail.EmailAddress
-		bccs         []sentmail.EmailAddress
-		from         sentmail.EmailAddress
-		subject      string
-		body         string
-		attachment   []sentmail.Attachment
-		replacements map[string]string
+		tos                []report.EmailAddress
+		ccs                []report.EmailAddress
+		bccs               []report.EmailAddress
+		from               report.EmailAddress
+		replyTo            report.EmailAddress
+		subject            string
+		editedPropositions []report.EditedProposition
+		prefixReport       string
+		suffixReport       string
 	}
 	tests := []struct {
 		name    string
-		m       *SendGridMail
+		m       *twiliosendmail.SendGridMail
 		args    args
+		want    string
 		wantErr bool
 	}{
 		{
 			name: "正常系_添付無し送信成功",
-			m:    NewSendGridConfig().(*SendGrid),
+			m: twiliosendmail.NewSendGridMail(
+				logger.Sugar(),
+				appcnf,
+				cnf,
+			),
 			args: args{
-				tos: []sentmail.EmailAddress{{
-					Name:    "宛先１",
-					Address: "gounittest1@sink.sendgrid.net",
-				}},
-				ccs:  []sentmail.EmailAddress{},
-				bccs: []sentmail.EmailAddress{},
-				from: sentmail.EmailAddress{
-					Name:    "送り主",
-					Address: "k_hirano@wadass.com",
+				tos:     []report.EmailAddress{{Name: "宛先１", Address: "gounittest1@sink.sendgrid.net"}},
+				ccs:     nil,
+				bccs:    nil,
+				from:    report.EmailAddress{Name: "送り主", Address: "no-reply@exsample.com"},
+				replyTo: report.EmailAddress{Name: "返信先", Address: "reply@exsample.com"},
+				subject: "正常系_添付無し送信成功",
+				editedPropositions: []report.EditedProposition{
+					{
+						WorkedNumber:        "99A-0001",
+						Det:                 "1",
+						Successful:          true,
+						DeliveryDate:        time.Date(2099, 1, 1, 0, 0, 0, 0, time.UTC),
+						UpdatedDeliveryDate: time.Date(2099, 1, 20, 0, 0, 0, 0, time.UTC),
+					},
+					{
+						WorkedNumber:        "99A-0002",
+						Det:                 "2",
+						Successful:          false,
+						DeliveryDate:        time.Date(2099, 2, 1, 0, 0, 0, 0, time.UTC),
+						UpdatedDeliveryDate: time.Date(2099, 2, 20, 0, 0, 0, 0, time.UTC),
+					},
+					{
+						WorkedNumber:        "99A-0003",
+						Det:                 "3",
+						Successful:          true,
+						DeliveryDate:        time.Date(2099, 3, 1, 0, 0, 0, 0, time.UTC),
+						UpdatedDeliveryDate: time.Date(2099, 3, 20, 0, 0, 0, 0, time.UTC),
+					},
+					{
+						WorkedNumber:        "99A-0004",
+						Det:                 "4",
+						Successful:          false,
+						DeliveryDate:        time.Date(2099, 4, 1, 0, 0, 0, 0, time.UTC),
+						UpdatedDeliveryDate: time.Date(2099, 4, 20, 0, 0, 0, 0, time.UTC),
+					},
+					{
+						WorkedNumber:        "99A-0005",
+						Det:                 "5",
+						Successful:          true,
+						DeliveryDate:        time.Date(2099, 5, 1, 0, 0, 0, 0, time.UTC),
+						UpdatedDeliveryDate: time.Date(2099, 5, 20, 0, 0, 0, 0, time.UTC),
+					},
 				},
-				subject:      "正常系_添付無し送信成功",
-				body:         "本文:正常系_添付無し送信成功",
-				attachment:   []sentmail.Attachment{},
-				replacements: map[string]string{},
+				prefixReport: "次の納期を変更した",
+				suffixReport: "以上",
 			},
+			want:    time.Now().Format("Mon, 02 Jan 2006"),
 			wantErr: false,
 		},
 		{
 			name: "正常系_添付無し複数宛先送信成功",
-			m:    NewSendGridConfig().(*SendGrid),
+			m: twiliosendmail.NewSendGridMail(
+				logger.Sugar(),
+				appcnf,
+				cnf,
+			),
 			args: args{
-				tos: []sentmail.EmailAddress{
+				tos: []report.EmailAddress{
 					{
 						Name:    "宛先２",
 						Address: "gounittest2@sink.sendgrid.net",
@@ -95,10 +126,10 @@ func TestGridEMailWrap_Send(t *testing.T) {
 						Address: "gounittest4@sink.sendgrid.net",
 					},
 				},
-				ccs: []sentmail.EmailAddress{
-					{Name: "宛先CC２", Address: "gounittestcc2@sink.sendgrid.net"},
-					{Name: "宛先CC３", Address: "gounittestcc3@sink.sendgrid.net"},
-					{Name: "宛先CC４", Address: "gounittestcc4@sink.sendgrid.net"},
+				ccs: []report.EmailAddress{
+					{Name: "宛先CC2", Address: "gounittestcc2@sink.sendgrid.net"},
+					{Name: "宛先CC3", Address: "gounittestcc3@sink.sendgrid.net"},
+					{Name: "宛先CC4", Address: "gounittestcc4@sink.sendgrid.net"},
 					{Name: "宛先CC5", Address: "gounittestcc5@sink.sendgrid.net"},
 					{Name: "宛先CC6", Address: "gounittestcc6@sink.sendgrid.net"},
 					{Name: "宛先CC7", Address: "gounittestcc7@sink.sendgrid.net"},
@@ -121,74 +152,78 @@ func TestGridEMailWrap_Send(t *testing.T) {
 					{Name: "宛先CC24", Address: "gounittestcc24@sink.sendgrid.net"},
 					{Name: "宛先CC25", Address: "gounittestcc25@sink.sendgrid.net"},
 				},
-				bccs: []sentmail.EmailAddress{
+				bccs: []report.EmailAddress{
 					{
-						Name:    "宛先BCC２",
+						Name:    "宛先BCC2",
 						Address: "gounittestbcc2@sink.sendgrid.net",
 					},
 					{
-						Name:    "宛先BCC３",
+						Name:    "宛先BCC3",
 						Address: "gounittestbcc3@sink.sendgrid.net",
 					},
 					{
-						Name:    "宛先BCC４",
+						Name:    "宛先BCC4",
 						Address: "gounittestbcc4@sink.sendgrid.net",
 					},
 				},
-				from: sentmail.EmailAddress{
+				from: report.EmailAddress{
 					Name:    "送り主",
-					Address: "k_hirano@wadass.com",
+					Address: "no-reply@exsample.com",
 				},
-				subject:      "正常系_添付無し複数宛先送信",
-				body:         "本文:正常系_添付無し複数宛先送信",
-				attachment:   []sentmail.Attachment{},
-				replacements: map[string]string{},
-			},
-			wantErr: false,
-		},
-		{
-			name: "正常系_添付無し複数宛先送信成功",
-			m:    NewSendGridConfig().(*SendGrid),
-			args: args{
-				tos: []sentmail.EmailAddress{
-					{Name: "宛先２", Address: "gounittest2@sink.sendgrid.net"},
-					{Name: "宛先３", Address: "gounittest3@sink.sendgrid.net"},
-				},
-				ccs: []sentmail.EmailAddress{
-					{Name: "宛先CC２", Address: "gounittestcc2@sink.sendgrid.net"},
-				},
-				bccs: []sentmail.EmailAddress{
-					{Name: "宛先BCC２", Address: "gounittestbcc2@sink.sendgrid.net"},
-				},
-				from: sentmail.EmailAddress{
-					Name:    "送り主",
-					Address: "k_hirano@wadass.com",
-				},
+				replyTo: report.EmailAddress{Name: "返信先", Address: "reply@exsample.com"},
 				subject: "正常系_添付無し複数宛先送信",
-				body:    "本文:正常系_添付無し複数宛先送信",
-				attachment: []sentmail.Attachment{{
-					Data:     attch,
-					FileType: "",
-					FileName: "",
-				}},
-				replacements: map[string]string{},
+				editedPropositions: []report.EditedProposition{
+					{
+						WorkedNumber:        "99A-0001",
+						Det:                 "1",
+						Successful:          true,
+						DeliveryDate:        time.Date(2099, 1, 1, 0, 0, 0, 0, time.UTC),
+						UpdatedDeliveryDate: time.Date(2099, 1, 20, 0, 0, 0, 0, time.UTC),
+					},
+					{
+						WorkedNumber:        "99A-0002",
+						Det:                 "2",
+						Successful:          false,
+						DeliveryDate:        time.Date(2099, 2, 1, 0, 0, 0, 0, time.UTC),
+						UpdatedDeliveryDate: time.Date(2099, 2, 20, 0, 0, 0, 0, time.UTC),
+					},
+					{
+						WorkedNumber:        "99A-0003",
+						Det:                 "3",
+						Successful:          true,
+						DeliveryDate:        time.Date(2099, 3, 1, 0, 0, 0, 0, time.UTC),
+						UpdatedDeliveryDate: time.Date(2099, 3, 20, 0, 0, 0, 0, time.UTC),
+					},
+					{
+						WorkedNumber:        "99A-0004",
+						Det:                 "4",
+						Successful:          false,
+						DeliveryDate:        time.Date(2099, 4, 1, 0, 0, 0, 0, time.UTC),
+						UpdatedDeliveryDate: time.Date(2099, 4, 20, 0, 0, 0, 0, time.UTC),
+					},
+					{
+						WorkedNumber:        "99A-0005",
+						Det:                 "5",
+						Successful:          true,
+						DeliveryDate:        time.Date(2099, 5, 1, 0, 0, 0, 0, time.UTC),
+						UpdatedDeliveryDate: time.Date(2099, 5, 20, 0, 0, 0, 0, time.UTC),
+					},
+				},
+				prefixReport: "次の納期を変更した",
+				suffixReport: "以上",
 			},
 			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if _, err := tt.m.Send(
-				tt.args.tos,
-				tt.args.ccs,
-				tt.args.bccs,
-				tt.args.from,
-				tt.args.subject,
-				tt.args.body,
-				tt.args.attachment,
-				tt.args.replacements,
-			); (err != nil) != tt.wantErr {
-				t.Errorf("gridEMailWrap.Send() error = %v, wantErr %v", err, tt.wantErr)
+			got, err := tt.m.Send(tt.args.tos, tt.args.ccs, tt.args.bccs, tt.args.from, tt.args.replyTo, tt.args.subject, tt.args.editedPropositions, tt.args.prefixReport, tt.args.suffixReport)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("SendGridMail.Send() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !strings.Contains(got, tt.want) {
+				t.Errorf("SendGridMail.Send() = %v, want %v", got, tt.want)
 			}
 		})
 	}
