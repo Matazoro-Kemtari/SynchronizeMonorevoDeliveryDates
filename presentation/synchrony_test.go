@@ -2,12 +2,14 @@ package presentation_test
 
 import (
 	"SynchronizeMonorevoDeliveryDates/presentation"
+	"SynchronizeMonorevoDeliveryDates/usecase/appsetting/mock_appsetting"
 	"SynchronizeMonorevoDeliveryDates/usecase/difference"
 	"SynchronizeMonorevoDeliveryDates/usecase/difference/mock_difference"
 	"SynchronizeMonorevoDeliveryDates/usecase/monorevo"
 	"SynchronizeMonorevoDeliveryDates/usecase/monorevo/mock_monorevo"
 	"SynchronizeMonorevoDeliveryDates/usecase/orderdb"
 	"SynchronizeMonorevoDeliveryDates/usecase/orderdb/mock_orderdb"
+	"SynchronizeMonorevoDeliveryDates/usecase/reportsetting/mock_reportsetting"
 	"testing"
 	"time"
 
@@ -22,6 +24,12 @@ func TestSynchronizingDeliveryDate_Synchronize(t *testing.T) {
 	// モックコントローラーの生成
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+
+	// appsettingモック作成
+	mock_appCfgLoader := mock_appsetting.NewMockSettingLoader(ctrl)
+
+	// reportsettingモック作成
+	mock_repCfgLoader := mock_reportsetting.NewMockSettingLoader(ctrl)
 
 	// webモック作成
 	resWebFetches, mock_webFetcher := makeMockWebFetcher(ctrl)
