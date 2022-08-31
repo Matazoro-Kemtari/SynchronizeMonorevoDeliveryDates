@@ -1,7 +1,7 @@
 package reportsetting
 
 import (
-	"SynchronizeMonorevoDeliveryDates/usecase/reportsetting"
+	"SynchronizeMonorevoDeliveryDates/usecase/reportsetting_obtain_case"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -25,34 +25,34 @@ type ReportSetting struct {
 	SuffixReport       string        `json:"suffixReport"`
 }
 
-func (r *ReportSetting) ConvertToReportSettingDto() *reportsetting.ReportSettingDto {
-	tos := []reportsetting.MailAddressDto{}
+func (r *ReportSetting) ConvertToReportSettingDto() *reportsetting_obtain_case.ReportSettingDto {
+	tos := []reportsetting_obtain_case.MailAddressDto{}
 	for _, v := range r.RecipientAddresses {
-		tos = append(tos, reportsetting.MailAddressDto{
+		tos = append(tos, reportsetting_obtain_case.MailAddressDto{
 			Email: v.Email,
 			Name:  v.Name,
 		})
 	}
-	ccs := []reportsetting.MailAddressDto{}
+	ccs := []reportsetting_obtain_case.MailAddressDto{}
 	for _, v := range r.CcAddresses {
-		ccs = append(ccs, reportsetting.MailAddressDto{
+		ccs = append(ccs, reportsetting_obtain_case.MailAddressDto{
 			Email: v.Email,
 			Name:  v.Name,
 		})
 	}
-	bccs := []reportsetting.MailAddressDto{}
+	bccs := []reportsetting_obtain_case.MailAddressDto{}
 	for _, v := range r.BccAddresses {
-		bccs = append(bccs, reportsetting.MailAddressDto{
+		bccs = append(bccs, reportsetting_obtain_case.MailAddressDto{
 			Email: v.Email,
 			Name:  v.Name,
 		})
 	}
-	return &reportsetting.ReportSettingDto{
-		SenderAddress: reportsetting.MailAddressDto{
+	return &reportsetting_obtain_case.ReportSettingDto{
+		SenderAddress: reportsetting_obtain_case.MailAddressDto{
 			Email: r.SenderAddress.Email,
 			Name:  r.SenderAddress.Name,
 		},
-		ReplyToAddress: reportsetting.MailAddressDto{
+		ReplyToAddress: reportsetting_obtain_case.MailAddressDto{
 			Email: r.ReplyToAddress.Email,
 			Name:  r.ReplyToAddress.Name,
 		},
@@ -75,7 +75,7 @@ func NewLoadableSetting(sugar *zap.SugaredLogger) *LoadableSetting {
 	}
 }
 
-func (l *LoadableSetting) Load(path string) (*reportsetting.ReportSettingDto, error) {
+func (l *LoadableSetting) Load(path string) (*reportsetting_obtain_case.ReportSettingDto, error) {
 	r, err := os.Open(path)
 	if err != nil {
 		msg := fmt.Sprintf("設定ファイルが開けませんでした path: %v error: %v", path, err)
@@ -91,29 +91,29 @@ func (l *LoadableSetting) Load(path string) (*reportsetting.ReportSettingDto, er
 	}
 
 	// 詰め替えて返す
-	tos := []reportsetting.MailAddressDto{}
+	tos := []reportsetting_obtain_case.MailAddressDto{}
 	for _, v := range setting.RecipientAddresses {
-		tos = append(tos, reportsetting.MailAddressDto{
+		tos = append(tos, reportsetting_obtain_case.MailAddressDto{
 			Email: v.Email,
 			Name:  v.Name,
 		})
 	}
-	ccs := []reportsetting.MailAddressDto{}
+	ccs := []reportsetting_obtain_case.MailAddressDto{}
 	for _, v := range setting.CcAddresses {
-		ccs = append(ccs, reportsetting.MailAddressDto{
+		ccs = append(ccs, reportsetting_obtain_case.MailAddressDto{
 			Email: v.Email,
 			Name:  v.Name,
 		})
 	}
-	bccs := []reportsetting.MailAddressDto{}
+	bccs := []reportsetting_obtain_case.MailAddressDto{}
 	for _, v := range setting.BccAddresses {
-		bccs = append(bccs, reportsetting.MailAddressDto{
+		bccs = append(bccs, reportsetting_obtain_case.MailAddressDto{
 			Email: v.Email,
 			Name:  v.Name,
 		})
 	}
-	return &reportsetting.ReportSettingDto{
-		SenderAddress: reportsetting.MailAddressDto{
+	return &reportsetting_obtain_case.ReportSettingDto{
+		SenderAddress: reportsetting_obtain_case.MailAddressDto{
 			Email: setting.SenderAddress.Email,
 			Name:  setting.SenderAddress.Name,
 		},

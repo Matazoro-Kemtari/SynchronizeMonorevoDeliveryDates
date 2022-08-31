@@ -1,8 +1,8 @@
 package reportsetting_test
 
 import (
-	local "SynchronizeMonorevoDeliveryDates/infrastructure/reportsetting"
-	"SynchronizeMonorevoDeliveryDates/usecase/reportsetting"
+	"SynchronizeMonorevoDeliveryDates/infrastructure/reportsetting"
+	"SynchronizeMonorevoDeliveryDates/usecase/reportsetting_obtain_case"
 	"encoding/json"
 	"os"
 	"path/filepath"
@@ -12,7 +12,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func createDummyAppSetting(dummySetting *local.ReportSetting) string {
+func createDummyAppSetting(dummySetting *reportsetting.ReportSetting) string {
 	// テスト実行フォルダ取得
 	exeFile, err := os.Executable()
 	if err != nil {
@@ -35,7 +35,7 @@ func createDummyAppSetting(dummySetting *local.ReportSetting) string {
 
 func TestLoadableSetting_Load(t *testing.T) {
 	// 仮の設定値
-	dummySetting := local.TestReportSettingCreate()
+	dummySetting := reportsetting.TestReportSettingCreate()
 	dummyPath := createDummyAppSetting(dummySetting)
 
 	logger, _ := zap.NewDevelopment()
@@ -45,14 +45,14 @@ func TestLoadableSetting_Load(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		l       *local.LoadableSetting
+		l       *reportsetting.LoadableSetting
 		args    args
-		want    *reportsetting.ReportSettingDto
+		want    *reportsetting_obtain_case.ReportSettingDto
 		wantErr bool
 	}{
 		{
 			name:    "正常系_設定値が取得できること",
-			l:       local.NewLoadableSetting(logger.Sugar()),
+			l:       reportsetting.NewLoadableSetting(logger.Sugar()),
 			args:    args{dummyPath},
 			want:    dummySetting.ConvertToReportSettingDto(),
 			wantErr: false,

@@ -1,9 +1,9 @@
-package monorevo_test
+package proposition_fetch_case_test
 
 import (
 	"SynchronizeMonorevoDeliveryDates/domain/monorevo"
 	"SynchronizeMonorevoDeliveryDates/domain/monorevo/mock_monorevo"
-	local "SynchronizeMonorevoDeliveryDates/usecase/monorevo"
+	"SynchronizeMonorevoDeliveryDates/usecase/proposition_fetch_case"
 	"reflect"
 	"testing"
 
@@ -30,9 +30,9 @@ func TestPropositionFetchingUseCase_Execute(t *testing.T) {
 	mock_fetcher.EXPECT().FetchAll().Return(mock_results, nil)
 
 	// UseCase戻り値
-	results := []local.FetchedPropositionDto{}
+	results := []proposition_fetch_case.FetchedPropositionDto{}
 	for _, v := range mock_results {
-		results = append(results, local.FetchedPropositionDto{
+		results = append(results, proposition_fetch_case.FetchedPropositionDto{
 			WorkedNumber: v.WorkedNumber,
 			Det:          v.Det,
 			DeliveryDate: v.DeliveryDate,
@@ -41,13 +41,13 @@ func TestPropositionFetchingUseCase_Execute(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		m       *local.PropositionFetchingUseCase
-		want    []local.FetchedPropositionDto
+		m       *proposition_fetch_case.PropositionFetchingUseCase
+		want    []proposition_fetch_case.FetchedPropositionDto
 		wantErr bool
 	}{
 		{
 			name: "正常系_UseCaseを実行するとモックが実行されること",
-			m: local.NewPropositionFetchingUseCase(
+			m: proposition_fetch_case.NewPropositionFetchingUseCase(
 				logger.Sugar(),
 				mock_fetcher,
 			),

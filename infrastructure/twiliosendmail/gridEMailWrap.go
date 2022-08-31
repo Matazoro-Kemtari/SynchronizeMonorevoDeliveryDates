@@ -2,7 +2,7 @@ package twiliosendmail
 
 import (
 	"SynchronizeMonorevoDeliveryDates/domain/report"
-	"SynchronizeMonorevoDeliveryDates/usecase/appsetting"
+	"SynchronizeMonorevoDeliveryDates/usecase/appsetting_obtain_case"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -57,7 +57,7 @@ type SendGridMail struct {
 
 func NewSendGridMail(
 	sugar *zap.SugaredLogger,
-	appcnf *appsetting.AppSettingDto,
+	appcnf *appsetting_obtain_case.AppSettingDto,
 	cnf *SendGridConfig,
 ) *SendGridMail {
 	return &SendGridMail{

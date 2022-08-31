@@ -3,7 +3,7 @@ package twiliosendmail_test
 import (
 	"SynchronizeMonorevoDeliveryDates/domain/report"
 	"SynchronizeMonorevoDeliveryDates/infrastructure/twiliosendmail"
-	"SynchronizeMonorevoDeliveryDates/usecase/appsetting"
+	"SynchronizeMonorevoDeliveryDates/usecase/appsetting_obtain_case"
 	"os"
 	"strings"
 	"testing"
@@ -19,10 +19,10 @@ func TestSendGridMail_Send(t *testing.T) {
 		os.Exit(1)
 	}
 	logger, _ := zap.NewDevelopment()
-	appcnf := appsetting.TestAppSettingDtoCreate(
-		appsetting.OptSandboxMode(
-			*appsetting.TestSandboxModeDtoCreate(
-				appsetting.OptSandboxModeSendGrid(false),
+	appcnf := appsetting_obtain_case.TestAppSettingDtoCreate(
+		appsetting_obtain_case.OptSandboxMode(
+			*appsetting_obtain_case.TestSandboxModeDtoCreate(
+				appsetting_obtain_case.OptSandboxModeSendGrid(false),
 			),
 		),
 	)

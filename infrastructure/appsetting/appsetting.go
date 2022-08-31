@@ -1,7 +1,7 @@
 package appsetting
 
 import (
-	"SynchronizeMonorevoDeliveryDates/usecase/appsetting"
+	"SynchronizeMonorevoDeliveryDates/usecase/appsetting_obtain_case"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -18,9 +18,9 @@ type AppSetting struct {
 	SandboxMode SandboxMode `json:"sandboxmode"`
 }
 
-func (m *AppSetting) ConvertToAppSettingDto() *appsetting.AppSettingDto {
-	return &appsetting.AppSettingDto{
-		SandboxMode: appsetting.SandboxModeDto{
+func (m *AppSetting) ConvertToAppSettingDto() *appsetting_obtain_case.AppSettingDto {
+	return &appsetting_obtain_case.AppSettingDto{
+		SandboxMode: appsetting_obtain_case.SandboxModeDto{
 			Monorevo: m.SandboxMode.Monorevo,
 			SendGrid: m.SandboxMode.SendGrid,
 		},
@@ -37,7 +37,7 @@ func NewLoadableSetting(sugar *zap.SugaredLogger) *LoadableSetting {
 	}
 }
 
-func (l *LoadableSetting) Load(path string) (*appsetting.AppSettingDto, error) {
+func (l *LoadableSetting) Load(path string) (*appsetting_obtain_case.AppSettingDto, error) {
 	r, err := os.Open(path)
 	if err != nil {
 		msg := fmt.Sprintf("設定ファイルが開けませんでした path: %v error: %v", path, err)

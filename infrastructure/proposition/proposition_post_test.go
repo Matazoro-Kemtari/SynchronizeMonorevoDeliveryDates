@@ -3,7 +3,7 @@ package proposition_test
 import (
 	"SynchronizeMonorevoDeliveryDates/domain/monorevo"
 	"SynchronizeMonorevoDeliveryDates/infrastructure/proposition"
-	"SynchronizeMonorevoDeliveryDates/usecase/appsetting"
+	"SynchronizeMonorevoDeliveryDates/usecase/appsetting_obtain_case"
 	"os"
 	"reflect"
 	"testing"
@@ -48,8 +48,8 @@ func TestPropositionTable_PostRange(t *testing.T) {
 		},
 	}
 
-	appcnf := &appsetting.AppSettingDto{
-		SandboxMode: appsetting.SandboxModeDto{
+	appcnf := &appsetting_obtain_case.AppSettingDto{
+		SandboxMode: appsetting_obtain_case.SandboxModeDto{
 			Monorevo: false,
 		},
 	}

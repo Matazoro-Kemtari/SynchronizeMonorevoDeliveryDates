@@ -1,9 +1,9 @@
-package monorevo_test
+package proposition_post_case_test
 
 import (
 	"SynchronizeMonorevoDeliveryDates/domain/monorevo"
 	"SynchronizeMonorevoDeliveryDates/domain/monorevo/mock_monorevo"
-	local "SynchronizeMonorevoDeliveryDates/usecase/monorevo"
+	"SynchronizeMonorevoDeliveryDates/usecase/proposition_post_case"
 	"reflect"
 	"testing"
 	"time"
@@ -31,10 +31,10 @@ func TestPropositionPostingUseCase_Execute(t *testing.T) {
 	mock_poster.EXPECT().PostRange(gomock.Any()).Return(mock_results, nil)
 
 	// UseCase戻り値
-	results := []local.PostedPropositionDto{}
+	results := []proposition_post_case.PostedPropositionDto{}
 	for _, v := range mock_results {
 		results = append(results,
-			local.PostedPropositionDto{
+			proposition_post_case.PostedPropositionDto{
 				WorkedNumber:        v.WorkedNumber,
 				Det:                 v.Det,
 				Successful:          v.Successful,
@@ -45,23 +45,23 @@ func TestPropositionPostingUseCase_Execute(t *testing.T) {
 	}
 
 	type args struct {
-		p []local.PostingPropositionPram
+		p []proposition_post_case.PostingPropositionPram
 	}
 	tests := []struct {
 		name    string
-		m       *local.PropositionPostingUseCase
+		m       *proposition_post_case.PropositionPostingUseCase
 		args    args
-		want    []local.PostedPropositionDto
+		want    []proposition_post_case.PostedPropositionDto
 		wantErr bool
 	}{
 		{
 			name: "正常系_UseCaseを実行するとモックが実行されること",
-			m: local.NewPropositionPostingUseCase(
+			m: proposition_post_case.NewPropositionPostingUseCase(
 				logger.Sugar(),
 				mock_poster,
 			),
 			args: args{
-				p: []local.PostingPropositionPram{
+				p: []proposition_post_case.PostingPropositionPram{
 					{
 						WorkedNumber:        "99A-1234",
 						Det:                 "1",

@@ -1,4 +1,4 @@
-package monorevo
+package proposition_post_case
 
 import (
 	"SynchronizeMonorevoDeliveryDates/domain/monorevo"

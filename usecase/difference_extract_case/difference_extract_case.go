@@ -1,4 +1,4 @@
-package difference
+package difference_extract_case
 
 import (
 	"SynchronizeMonorevoDeliveryDates/domain/compare"

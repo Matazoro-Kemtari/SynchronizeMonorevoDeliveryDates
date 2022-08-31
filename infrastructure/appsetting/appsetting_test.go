@@ -2,7 +2,7 @@ package appsetting_test
 
 import (
 	local "SynchronizeMonorevoDeliveryDates/infrastructure/appsetting"
-	"SynchronizeMonorevoDeliveryDates/usecase/appsetting"
+	"SynchronizeMonorevoDeliveryDates/usecase/appsetting_obtain_case"
 	"encoding/json"
 	"os"
 	"path/filepath"
@@ -47,7 +47,7 @@ func TestLoadableSetting_Load(t *testing.T) {
 		name    string
 		l       *local.LoadableSetting
 		args    args
-		want    *appsetting.AppSettingDto
+		want    *appsetting_obtain_case.AppSettingDto
 		wantErr bool
 	}{
 		{
@@ -56,8 +56,8 @@ func TestLoadableSetting_Load(t *testing.T) {
 			args: args{
 				path: dummyPath,
 			},
-			want: &appsetting.AppSettingDto{
-				SandboxMode: appsetting.SandboxModeDto{
+			want: &appsetting_obtain_case.AppSettingDto{
+				SandboxMode: appsetting_obtain_case.SandboxModeDto{
 					Monorevo: dummySetting.SandboxMode.Monorevo,
 					SendGrid: dummySetting.SandboxMode.SendGrid,
 				},

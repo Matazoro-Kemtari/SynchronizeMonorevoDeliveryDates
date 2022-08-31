@@ -1,4 +1,4 @@
-package appsetting
+package appsetting_obtain_case
 
 type SandboxModeDto struct {
 	Monorevo bool

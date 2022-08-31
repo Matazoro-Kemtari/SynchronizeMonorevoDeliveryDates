@@ -3,7 +3,7 @@ package proposition
 // https://qiita.com/0829/items/c1e494bb128ade5f0872
 
 import (
-	"SynchronizeMonorevoDeliveryDates/usecase/appsetting"
+	"SynchronizeMonorevoDeliveryDates/usecase/appsetting_obtain_case"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -85,7 +85,7 @@ type PropositionTable struct {
 
 func NewPropositionTable(
 	sugar *zap.SugaredLogger,
-	appcnf *appsetting.AppSettingDto,
+	appcnf *appsetting_obtain_case.AppSettingDto,
 	cnf *MonorevoUserConfig,
 ) *PropositionTable {
 	// 実行ディレクトリを取得する cronで実行時のカレントディレクトリ対策

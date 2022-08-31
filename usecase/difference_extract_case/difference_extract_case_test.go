@@ -1,8 +1,8 @@
-package difference_test
+package difference_extract_case_test
 
 import (
 	"SynchronizeMonorevoDeliveryDates/domain/compare/mock_compare"
-	"SynchronizeMonorevoDeliveryDates/usecase/difference"
+	"SynchronizeMonorevoDeliveryDates/usecase/difference_extract_case"
 	"reflect"
 	"testing"
 
@@ -24,19 +24,19 @@ func TestPropositionExtractingUseCase_Execute(t *testing.T) {
 	mock_diff.EXPECT().ExtractForDeliveryDate(gomock.Any(), gomock.Any()).Return(nil)
 
 	type args struct {
-		s difference.DifferenceSourcePram
+		s difference_extract_case.DifferenceSourcePram
 	}
 	tests := []struct {
 		name string
-		m    *difference.PropositionExtractingUseCase
+		m    *difference_extract_case.PropositionExtractingUseCase
 		args args
-		want []difference.DifferentPropositionDto
+		want []difference_extract_case.DifferentPropositionDto
 	}{
 		{
 			name: "正常系_UseCaseを実行するとモックが実行されること",
-			m:    difference.NewExtractingPropositionUseCase(logger.Sugar(), mock_diff),
+			m:    difference_extract_case.NewExtractingPropositionUseCase(logger.Sugar(), mock_diff),
 			args: args{},
-			want: []difference.DifferentPropositionDto{},
+			want: []difference_extract_case.DifferentPropositionDto{},
 		},
 	}
 	for _, tt := range tests {

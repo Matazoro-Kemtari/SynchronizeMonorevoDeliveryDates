@@ -2,7 +2,7 @@ package proposition_test
 
 import (
 	"SynchronizeMonorevoDeliveryDates/infrastructure/proposition"
-	"SynchronizeMonorevoDeliveryDates/usecase/appsetting"
+	"SynchronizeMonorevoDeliveryDates/usecase/appsetting_obtain_case"
 	"os"
 	"regexp"
 	"testing"
@@ -20,8 +20,8 @@ func TestPropositionTable_FetchAll(t *testing.T) {
 
 	logger, _ := zap.NewDevelopment()
 
-	appcnf := &appsetting.AppSettingDto{
-		SandboxMode: appsetting.SandboxModeDto{
+	appcnf := &appsetting_obtain_case.AppSettingDto{
+		SandboxMode: appsetting_obtain_case.SandboxModeDto{
 			Monorevo: false,
 		},
 	}

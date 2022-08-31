@@ -1,4 +1,4 @@
-package reportsetting
+package reportsetting_obtain_case
 
 type MailAddressDto struct {
 	Email string
