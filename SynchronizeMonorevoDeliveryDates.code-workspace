@@ -6,6 +6,9 @@
 	],
 	"settings": {
 		"cSpell.words": [
+			"appcnf",
+			"appsetting",
+			"bccs",
 			"divs",
 			"fropositions",
 			"goquery",
@@ -18,11 +21,16 @@
 			"postable",
 			"prefs",
 			"Puerkito",
+			"reportsetting",
+			"sandboxmode",
 			"sclevine",
+			"sendgrid",
+			"sentmail",
 			"smlot",
 			"sqlserver",
 			"stretchr",
 			"tbody",
+			"twiliosendmail",
 			"wireinject"
 		],
 		"go.testTimeout": "120s"

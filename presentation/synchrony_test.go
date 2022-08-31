@@ -1,6 +1,7 @@
-package presentation
+package presentation_test
 
 import (
+	"SynchronizeMonorevoDeliveryDates/presentation"
 	"SynchronizeMonorevoDeliveryDates/usecase/difference"
 	"SynchronizeMonorevoDeliveryDates/usecase/difference/mock_difference"
 	"SynchronizeMonorevoDeliveryDates/usecase/monorevo"
@@ -36,12 +37,12 @@ func TestSynchronizingDeliveryDate_Synchronize(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		m       *SynchronizingDeliveryDate
+		m       *presentation.SynchronizingDeliveryDate
 		wantErr bool
 	}{
 		{
 			name: "正常系_UseCaseを実行するとモックが実行されること",
-			m: NewSynchronizingDeliveryDate(
+			m: presentation.NewSynchronizingDeliveryDate(
 				logger.Sugar(),
 				mock_webFetcher,
 				mock_dbFetcher,
