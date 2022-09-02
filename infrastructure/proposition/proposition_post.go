@@ -252,11 +252,12 @@ func (p *PropositionTable) updatedDeliveryDate(
 				)
 		}
 		p.sugar.Infof(
-			"更新: 作業No(%v) DET番号(%v): 納期 %v -> %v",
+			"更新: 作業No(%v) DET番号(%v): 納期 %v -> %v (サンドボックスモード: %v)",
 			diff.WorkedNumber,
 			diff.DET,
 			diff.DeliveryDate,
 			diff.UpdatedDeliveryDate,
+			p.sandboxMode,
 		)
 		time.Sleep(time.Millisecond * 50)
 
@@ -300,6 +301,14 @@ func (p *PropositionTable) editProposition(page *agouti.Page, updatedDeliveryDat
 	// 納期に入力
 	deliveryDateFld := page.FindByXPath(`//*[@id="deliveryDate"]/div[2]/div/input`)
 	deliveryDateFld.Fill(updatedDeliveryDateStr)
+
+	if p.sandboxMode {
+		// サンドボックスモードのときは バツボタンを押して終わる
+		xBtn := page.FindByXPath(`/html/body/div[3]/div[1]/div/div/header/button`) // idが動的に変わる
+		xBtn.Click()
+		time.Sleep(time.Millisecond * 100)
+		return nil
+	}
 
 	// 登録して案件一覧に移動ボタンを押す
 	entryNextBtn := page.FindByXPath(`//*[@id="smlot-detail"]/div/div/div/form/div[4]/div/button[2]`)

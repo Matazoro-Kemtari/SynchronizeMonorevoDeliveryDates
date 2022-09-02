@@ -1,6 +1,8 @@
 package main
 
 import (
+	"SynchronizeMonorevoDeliveryDates/infrastructure/appsetting"
+	"SynchronizeMonorevoDeliveryDates/infrastructure/reportsetting"
 	"flag"
 	"fmt"
 	"os"
@@ -72,7 +74,17 @@ func main() {
 		sugar.Fatal(err_read)
 	}
 
-	synchronize := InitializeSynchronize(sugar)
+	appConfigFile := "appsettings.json"
+	ap, err := appsetting.NewLoadableSetting(sugar).Load(appConfigFile)
+	if err != nil {
+		sugar.Fatalf("%vの読み込みに失敗しました error: %v", appConfigFile, err)
+	}
+	reportConfigFile := "reportsettings.json"
+	rp, err := reportsetting.NewLoadableSetting(sugar).Load(reportConfigFile)
+	if err != nil {
+		sugar.Fatalf("%vの読み込みに失敗しました error: %v", reportConfigFile, err)
+	}
+	synchronize := InitializeSynchronize(sugar, ap, rp)
 	if err := synchronize.Synchronize(); err != nil {
 		sugar.Fatal(err)
 	}

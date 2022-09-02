@@ -152,7 +152,7 @@ func (p *PropositionTable) loginToMonorevo(driver *agouti.WebDriver) (*agouti.Pa
 
 	// ログインする
 	page.FindByXPath(`//*[@id="inputCompany"]`).Fill(p.comID)
-	page.FindByXPath(`//*[@id="inputLoginID"]`).Fill(p.userID)
+	page.FindByXPath(`//*[@id="inputLoginId"]`).Fill(p.userID)
 	page.FindByXPath(`//*[@id="inputPassword"]`).Fill(p.userPass)
 	page.FindByXPath(`//*[@id="app"]/div/div[3]/form/div/div[2]/div[5]/button`).Click()
 
