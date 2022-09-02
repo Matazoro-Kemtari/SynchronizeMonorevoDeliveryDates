@@ -77,7 +77,7 @@ func makeMockWebPoster(resWebFetches []proposition_fetch_case.FetchedProposition
 		postPrams = append(postPrams,
 			proposition_post_case.PostingPropositionPram{
 				WorkedNumber:        resWebFetches[i].WorkedNumber,
-				Det:                 resWebFetches[i].Det,
+				DET:                 resWebFetches[i].DET,
 				DeliveryDate:        resWebFetches[i].DeliveryDate,
 				UpdatedDeliveryDate: resDbFetches[i].DeliveryDate,
 			},
@@ -88,7 +88,7 @@ func makeMockWebPoster(resWebFetches []proposition_fetch_case.FetchedProposition
 		resPosts = append(resPosts,
 			proposition_post_case.PostedPropositionDto{
 				WorkedNumber:        resWebFetches[i].WorkedNumber,
-				Det:                 resWebFetches[i].Det,
+				DET:                 resWebFetches[i].DET,
 				Successful:          true,
 				DeliveryDate:        resWebFetches[i].DeliveryDate,
 				UpdatedDeliveryDate: resDbFetches[i].DeliveryDate,
@@ -106,7 +106,7 @@ func makeMockDifferent(resWebFetches []proposition_fetch_case.FetchedProposition
 		diffPropositions = append(diffPropositions,
 			difference_extract_case.PropositionPram{
 				WorkedNumber: pro.WorkedNumber,
-				Det:          pro.Det,
+				DET:          pro.DET,
 				DeliveryDate: pro.DeliveryDate,
 			},
 		)
@@ -128,19 +128,19 @@ func makeMockDifferent(resWebFetches []proposition_fetch_case.FetchedProposition
 	resDiffs := []difference_extract_case.DifferentPropositionDto{
 		{
 			WorkedNumber:        resWebFetches[0].WorkedNumber,
-			Det:                 resWebFetches[0].Det,
+			DET:                 resWebFetches[0].DET,
 			DeliveryDate:        resWebFetches[0].DeliveryDate,
 			UpdatedDeliveryDate: resDbFetches[0].DeliveryDate,
 		},
 		{
 			WorkedNumber:        resWebFetches[1].WorkedNumber,
-			Det:                 resWebFetches[1].Det,
+			DET:                 resWebFetches[1].DET,
 			DeliveryDate:        resWebFetches[1].DeliveryDate,
 			UpdatedDeliveryDate: resDbFetches[1].DeliveryDate,
 		},
 		{
 			WorkedNumber:        resWebFetches[2].WorkedNumber,
-			Det:                 resWebFetches[2].Det,
+			DET:                 resWebFetches[2].DET,
 			DeliveryDate:        resWebFetches[2].DeliveryDate,
 			UpdatedDeliveryDate: resDbFetches[2].DeliveryDate,
 		},
@@ -178,17 +178,17 @@ func makeMockWebFetcher(ctrl *gomock.Controller) ([]proposition_fetch_case.Fetch
 	resWebFetches := []proposition_fetch_case.FetchedPropositionDto{
 		{
 			WorkedNumber: "99A-1234",
-			Det:          "1",
+			DET:          "1",
 			DeliveryDate: time.Now().AddDate(0, 0, -5),
 		},
 		{
 			WorkedNumber: "88A-1234",
-			Det:          "1",
+			DET:          "1",
 			DeliveryDate: time.Now().AddDate(0, 0, -5),
 		},
 		{
 			WorkedNumber: "77A-1234",
-			Det:          "1",
+			DET:          "1",
 			DeliveryDate: time.Now().AddDate(0, 0, -5),
 		},
 	}

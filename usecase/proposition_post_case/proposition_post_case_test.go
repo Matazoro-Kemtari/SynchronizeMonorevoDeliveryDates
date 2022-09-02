@@ -36,7 +36,7 @@ func TestPropositionPostingUseCase_Execute(t *testing.T) {
 		results = append(results,
 			proposition_post_case.PostedPropositionDto{
 				WorkedNumber:        v.WorkedNumber,
-				Det:                 v.Det,
+				DET:                 v.DET,
 				Successful:          v.Successful,
 				DeliveryDate:        v.DeliveryDate,
 				UpdatedDeliveryDate: v.UpdatedDeliveryDate,
@@ -64,7 +64,7 @@ func TestPropositionPostingUseCase_Execute(t *testing.T) {
 				p: []proposition_post_case.PostingPropositionPram{
 					{
 						WorkedNumber:        "99A-1234",
-						Det:                 "1",
+						DET:                 "1",
 						DeliveryDate:        time.Now(),
 						UpdatedDeliveryDate: time.Now(),
 					},

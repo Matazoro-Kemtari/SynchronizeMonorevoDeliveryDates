@@ -62,7 +62,7 @@ func (m *SynchronizingDeliveryDate) Synchronize() error {
 		posting = append(posting,
 			proposition_post_case.PostingPropositionPram{
 				WorkedNumber:        v.WorkedNumber,
-				Det:                 v.Det,
+				DET:                 v.DET,
 				DeliveryDate:        v.DeliveryDate,
 				UpdatedDeliveryDate: v.UpdatedDeliveryDate,
 			})
@@ -83,7 +83,7 @@ func (*SynchronizingDeliveryDate) convertDifferencePram(propositions []propositi
 		diffPropositions = append(diffPropositions,
 			difference_extract_case.PropositionPram{
 				WorkedNumber: pro.WorkedNumber,
-				Det:          pro.Det,
+				DET:          pro.DET,
 				DeliveryDate: pro.DeliveryDate,
 			},
 		)

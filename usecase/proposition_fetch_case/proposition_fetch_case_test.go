@@ -34,7 +34,7 @@ func TestPropositionFetchingUseCase_Execute(t *testing.T) {
 	for _, v := range mock_results {
 		results = append(results, proposition_fetch_case.FetchedPropositionDto{
 			WorkedNumber: v.WorkedNumber,
-			Det:          v.Det,
+			DET:          v.DET,
 			DeliveryDate: v.DeliveryDate,
 		})
 	}

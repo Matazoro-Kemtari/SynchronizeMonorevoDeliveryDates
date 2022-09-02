@@ -14,36 +14,36 @@ import (
 )
 
 type MonorevoUserConfig struct {
-	comId    string
-	userId   string
+	comID    string
+	userID   string
 	userPass string
 }
 
 func NewMonorevoUserConfig() *MonorevoUserConfig {
 	return &MonorevoUserConfig{
-		comId:    os.Getenv("MONOREVO_COMPANY_ID"),
-		userId:   os.Getenv("MONOREVO_USER_ID"),
+		comID:    os.Getenv("MONOREVO_COMPANY_ID"),
+		userID:   os.Getenv("MONOREVO_USER_ID"),
 		userPass: os.Getenv("MONOREVO_USER_PASSWORD"),
 	}
 }
 
 type Options struct {
-	comId    string
-	userId   string
+	comID    string
+	userID   string
 	userPass string
 }
 
 type Option func(*Options)
 
-func OptComId(v string) Option {
+func OptComID(v string) Option {
 	return func(opts *Options) {
-		opts.comId = v
+		opts.comID = v
 	}
 }
 
-func OptUserId(v string) Option {
+func OptUserID(v string) Option {
 	return func(opts *Options) {
-		opts.userId = v
+		opts.userID = v
 	}
 }
 
@@ -56,8 +56,8 @@ func OptUserPass(v string) Option {
 func TestMonorevoUserConfigCreate(options ...Option) *MonorevoUserConfig {
 	// デフォルト値
 	opts := &Options{
-		comId:    os.Getenv("MONOREVO_COMPANY_ID"),
-		userId:   os.Getenv("MONOREVO_USER_ID"),
+		comID:    os.Getenv("MONOREVO_COMPANY_ID"),
+		userID:   os.Getenv("MONOREVO_USER_ID"),
 		userPass: os.Getenv("MONOREVO_USER_PASSWORD"),
 	}
 
@@ -66,8 +66,8 @@ func TestMonorevoUserConfigCreate(options ...Option) *MonorevoUserConfig {
 	}
 
 	return &MonorevoUserConfig{
-		comId:    opts.comId,
-		userId:   opts.userId,
+		comID:    opts.comID,
+		userID:   opts.userID,
 		userPass: opts.userPass,
 	}
 }
@@ -75,8 +75,8 @@ func TestMonorevoUserConfigCreate(options ...Option) *MonorevoUserConfig {
 // ものレボ案件一覧Repository
 type PropositionTable struct {
 	sugar       *zap.SugaredLogger
-	comId       string
-	userId      string
+	comID       string
+	userID      string
 	userPass    string
 	downloadDir string
 	workDir     string
@@ -93,8 +93,8 @@ func NewPropositionTable(
 	exePath := filepath.Dir(exeFile)
 	return &PropositionTable{
 		sugar:       sugar,
-		comId:       cnf.comId,
-		userId:      cnf.userId,
+		comID:       cnf.comID,
+		userID:      cnf.userID,
 		userPass:    cnf.userPass,
 		downloadDir: filepath.Join(exePath, "download"),
 		workDir:     filepath.Join(exePath, "work"),
@@ -151,8 +151,8 @@ func (p *PropositionTable) loginToMonorevo(driver *agouti.WebDriver) (*agouti.Pa
 	}
 
 	// ログインする
-	page.FindByXPath(`//*[@id="inputCompany"]`).Fill(p.comId)
-	page.FindByXPath(`//*[@id="inputLoginId"]`).Fill(p.userId)
+	page.FindByXPath(`//*[@id="inputCompany"]`).Fill(p.comID)
+	page.FindByXPath(`//*[@id="inputLoginID"]`).Fill(p.userID)
 	page.FindByXPath(`//*[@id="inputPassword"]`).Fill(p.userPass)
 	page.FindByXPath(`//*[@id="app"]/div/div[3]/form/div/div[2]/div[5]/button`).Click()
 
@@ -168,7 +168,7 @@ func (p *PropositionTable) loginToMonorevo(driver *agouti.WebDriver) (*agouti.Pa
 			return nil, fmt.Errorf("ログインタイムアウト count: %v", i)
 		}
 	}
-	p.sugar.Infof("ログイン成功: 会社ID(%v) ログインID(%v)", p.comId, p.userId)
+	p.sugar.Infof("ログイン成功: 会社ID(%v) ログインID(%v)", p.comID, p.userID)
 
 	return page, nil
 }

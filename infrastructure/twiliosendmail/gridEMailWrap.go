@@ -174,7 +174,7 @@ func (m *SendGridMail) makePlainText(
 		body += fmt.Sprintf(
 			"%v\t%v\t%v\t%v\t%v\n",
 			v.WorkedNumber,
-			v.Det,
+			v.DET,
 			SuccessfulStr(v.Successful),
 			v.DeliveryDate.Format("2006/01/02"),
 			v.UpdatedDeliveryDate.Format("2006/01/02"),
@@ -200,7 +200,7 @@ func (m *SendGridMail) makeHtmlText(
 		body += fmt.Sprintf(
 			"<tr><td>%v</td><td>%v</td><td>%v</td><td>%v</td><td>%v</td></tr>\n",
 			v.WorkedNumber,
-			v.Det,
+			v.DET,
 			SuccessfulStr(v.Successful),
 			v.DeliveryDate.Format("2006/01/02"),
 			v.UpdatedDeliveryDate.Format("2006/01/02"),

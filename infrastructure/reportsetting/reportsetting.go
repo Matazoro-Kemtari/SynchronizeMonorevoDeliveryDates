@@ -18,8 +18,8 @@ type ReportSetting struct {
 	SenderAddress      MailAddress   `json:"senderAddress"`
 	ReplyToAddress     MailAddress   `json:"replyToAddress"`
 	RecipientAddresses []MailAddress `json:"recipientAddresses"`
-	CcAddresses        []MailAddress `json:"ccAddresses"`
-	BccAddresses       []MailAddress `json:"bccAddresses"`
+	CCAddresses        []MailAddress `json:"ccAddresses"`
+	BCCAddresses       []MailAddress `json:"bccAddresses"`
 	Subject            string        `json:"subject"`
 	PrefixReport       string        `json:"prefixReport"`
 	SuffixReport       string        `json:"suffixReport"`
@@ -34,14 +34,14 @@ func (r *ReportSetting) ConvertToReportSettingDto() *reportsetting_obtain_case.R
 		})
 	}
 	ccs := []reportsetting_obtain_case.MailAddressDto{}
-	for _, v := range r.CcAddresses {
+	for _, v := range r.CCAddresses {
 		ccs = append(ccs, reportsetting_obtain_case.MailAddressDto{
 			Email: v.Email,
 			Name:  v.Name,
 		})
 	}
 	bccs := []reportsetting_obtain_case.MailAddressDto{}
-	for _, v := range r.BccAddresses {
+	for _, v := range r.BCCAddresses {
 		bccs = append(bccs, reportsetting_obtain_case.MailAddressDto{
 			Email: v.Email,
 			Name:  v.Name,
@@ -57,8 +57,8 @@ func (r *ReportSetting) ConvertToReportSettingDto() *reportsetting_obtain_case.R
 			Name:  r.ReplyToAddress.Name,
 		},
 		RecipientAddresses: tos,
-		CcAddresses:        ccs,
-		BccAddresses:       bccs,
+		CCAddresses:        ccs,
+		BCCAddresses:       bccs,
 		Subject:            r.Subject,
 		PrefixReport:       r.PrefixReport,
 		SuffixReport:       r.SuffixReport,
@@ -99,14 +99,14 @@ func (l *LoadableSetting) Load(path string) (*reportsetting_obtain_case.ReportSe
 		})
 	}
 	ccs := []reportsetting_obtain_case.MailAddressDto{}
-	for _, v := range setting.CcAddresses {
+	for _, v := range setting.CCAddresses {
 		ccs = append(ccs, reportsetting_obtain_case.MailAddressDto{
 			Email: v.Email,
 			Name:  v.Name,
 		})
 	}
 	bccs := []reportsetting_obtain_case.MailAddressDto{}
-	for _, v := range setting.BccAddresses {
+	for _, v := range setting.BCCAddresses {
 		bccs = append(bccs, reportsetting_obtain_case.MailAddressDto{
 			Email: v.Email,
 			Name:  v.Name,
@@ -118,8 +118,8 @@ func (l *LoadableSetting) Load(path string) (*reportsetting_obtain_case.ReportSe
 			Name:  setting.SenderAddress.Name,
 		},
 		RecipientAddresses: tos,
-		CcAddresses:        ccs,
-		BccAddresses:       bccs,
+		CCAddresses:        ccs,
+		BCCAddresses:       bccs,
 		Subject:            setting.Subject,
 		PrefixReport:       setting.PrefixReport,
 		SuffixReport:       setting.SuffixReport,
@@ -157,13 +157,13 @@ func OptRecipientAddresses(addresses []MailAddress) Option {
 	}
 }
 
-func OptCcAddresses(addresses []MailAddress) Option {
+func OptCCAddresses(addresses []MailAddress) Option {
 	return func(opts *Options) {
 		opts.ccAddresses = addresses
 	}
 }
 
-func OptBccAddresses(addresses []MailAddress) Option {
+func OptBCCAddresses(addresses []MailAddress) Option {
 	return func(opts *Options) {
 		opts.bccAddresses = addresses
 	}
@@ -223,8 +223,8 @@ func TestReportSettingCreate(options ...Option) *ReportSetting {
 		SenderAddress:      opts.senderAddress,
 		ReplyToAddress:     opts.replyToAddress,
 		RecipientAddresses: opts.recipientAddresses,
-		CcAddresses:        opts.ccAddresses,
-		BccAddresses:       opts.bccAddresses,
+		CCAddresses:        opts.ccAddresses,
+		BCCAddresses:       opts.bccAddresses,
 		Subject:            opts.subject,
 		PrefixReport:       opts.prefixReport,
 		SuffixReport:       opts.suffixReport,
