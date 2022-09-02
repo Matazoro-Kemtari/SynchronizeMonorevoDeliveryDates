@@ -258,18 +258,18 @@ func NewSendingReportUseCase(
 
 func (s *SendingReportUseCase) Execute(r ReportPram) (string, error) {
 	return s.sender.Send(
-		convertToEmailAddresses(r.Tos),
-		convertToEmailAddresses(r.CCs),
-		convertToEmailAddresses(r.BCCs),
+		ConvertToEmailAddresses(r.Tos),
+		ConvertToEmailAddresses(r.CCs),
+		ConvertToEmailAddresses(r.BCCs),
 		*r.From.ConvertToEmailAddress(),
 		r.Subject,
-		convertToEditedProposition(r.EditedPropositions),
+		ConvertToEditedProposition(r.EditedPropositions),
 		r.PrefixReport,
 		r.SuffixReport,
 	)
 }
 
-func convertToEmailAddresses(e []EmailAddressPram) []report.EmailAddress {
+func ConvertToEmailAddresses(e []EmailAddressPram) []report.EmailAddress {
 	var ad []report.EmailAddress
 	for _, v := range e {
 		ad = append(ad, *v.ConvertToEmailAddress())
@@ -277,7 +277,7 @@ func convertToEmailAddresses(e []EmailAddressPram) []report.EmailAddress {
 	return ad
 }
 
-func convertToEditedProposition(e []EditedPropositionPram) []report.EditedProposition {
+func ConvertToEditedProposition(e []EditedPropositionPram) []report.EditedProposition {
 	var res []report.EditedProposition
 	for _, v := range e {
 		res = append(res, *v.ConvertToEditedProposition())

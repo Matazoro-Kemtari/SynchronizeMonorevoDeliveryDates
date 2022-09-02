@@ -24,12 +24,12 @@ func TestSendingReportUseCase_Execute(t *testing.T) {
 	mock_sender := mock_report.NewMockSender(ctrl)
 	// EXPECTはctrl#Finishが呼び出される前に FetchAllを呼び出さなければエラーになる
 	mock_sender.EXPECT().Send(
-		reportPram.Tos,
-		reportPram.CCs,
-		reportPram.BCCs,
-		reportPram.From,
+		report_send_case.ConvertToEmailAddresses(reportPram.Tos),
+		report_send_case.ConvertToEmailAddresses(reportPram.CCs),
+		report_send_case.ConvertToEmailAddresses(reportPram.BCCs),
+		*reportPram.From.ConvertToEmailAddress(),
 		reportPram.Subject,
-		reportPram.EditedPropositions,
+		report_send_case.ConvertToEditedProposition(reportPram.EditedPropositions),
 		reportPram.PrefixReport,
 		reportPram.SuffixReport,
 	).Return(mock_results, nil)
@@ -50,8 +50,10 @@ func TestSendingReportUseCase_Execute(t *testing.T) {
 				logger.Sugar(),
 				mock_sender,
 			),
-			args:    args{},
-			want:    "",
+			args: args{
+				r: *reportPram,
+			},
+			want:    mock_results,
 			wantErr: false,
 		},
 	}
