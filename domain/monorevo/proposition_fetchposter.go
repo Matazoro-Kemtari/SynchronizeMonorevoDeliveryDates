@@ -12,14 +12,14 @@ type MonorevoFetcher interface {
 // ものレボ案件のドメインモデル
 type Proposition struct {
 	WorkedNumber string
-	Det          string
+	DET          string
 	DeliveryDate time.Time
 }
 
 func NewProposition(warkNumber string, det string, deliveryDate time.Time) *Proposition {
 	return &Proposition{
 		WorkedNumber: warkNumber,
-		Det:          det,
+		DET:          det,
 		DeliveryDate: deliveryDate,
 	}
 }
@@ -32,7 +32,7 @@ type MonorevoPoster interface {
 // ものレボ案件差分
 type DifferentProposition struct {
 	WorkedNumber        string
-	Det                 string
+	DET                 string
 	DeliveryDate        time.Time
 	UpdatedDeliveryDate time.Time
 }
@@ -40,7 +40,7 @@ type DifferentProposition struct {
 func NewDifferenceProposition(workNumber string, det string, deliveryDate time.Time, updatedDeliveryDate time.Time) *DifferentProposition {
 	return &DifferentProposition{
 		WorkedNumber:        workNumber,
-		Det:                 det,
+		DET:                 det,
 		DeliveryDate:        deliveryDate,
 		UpdatedDeliveryDate: updatedDeliveryDate,
 	}
@@ -49,7 +49,7 @@ func NewDifferenceProposition(workNumber string, det string, deliveryDate time.T
 // ものレボ案件編集結果
 type UpdatedProposition struct {
 	WorkedNumber        string
-	Det                 string
+	DET                 string
 	Successful          bool
 	DeliveryDate        time.Time
 	UpdatedDeliveryDate time.Time
@@ -64,7 +64,7 @@ func NewUpdatedProposition(
 ) *UpdatedProposition {
 	return &UpdatedProposition{
 		WorkedNumber:        workedNumber,
-		Det:                 det,
+		DET:                 det,
 		Successful:          successful,
 		DeliveryDate:        deliveryDate,
 		UpdatedDeliveryDate: updatedDeliveryDate,
@@ -75,7 +75,7 @@ func NewUpdatedProposition(
 // 参考: https://shiimanblog.com/engineering/functional-options-pattern/
 type PropositionOptions struct {
 	WorkedNumber string
-	Det          string
+	DET          string
 	DeliveryDate time.Time
 }
 
@@ -85,7 +85,7 @@ func TestPropositionCreate(options ...PropositionOption) *Proposition {
 	// デフォルト値設定
 	opts := &PropositionOptions{
 		WorkedNumber: "99A-1234",
-		Det:          "1",
+		DET:          "1",
 		DeliveryDate: time.Now(),
 	}
 
@@ -93,12 +93,12 @@ func TestPropositionCreate(options ...PropositionOption) *Proposition {
 		option(opts)
 	}
 
-	return NewProposition(opts.WorkedNumber, opts.Det, opts.DeliveryDate)
+	return NewProposition(opts.WorkedNumber, opts.DET, opts.DeliveryDate)
 }
 
 type UpdatedPropositionOptions struct {
 	WorkedNumber        string
-	Det                 string
+	DET                 string
 	Successful          bool
 	DeliveryDate        time.Time
 	UpdatedDeliveryDate time.Time
@@ -110,7 +110,7 @@ func TestUpdatedPropositionCreate(options ...UpdatedPropositionOption) *UpdatedP
 	// デフォルト値設定
 	opts := &UpdatedPropositionOptions{
 		WorkedNumber:        "99A-1234",
-		Det:                 "1",
+		DET:                 "1",
 		Successful:          true,
 		DeliveryDate:        time.Now(),
 		UpdatedDeliveryDate: time.Now(),
@@ -122,7 +122,7 @@ func TestUpdatedPropositionCreate(options ...UpdatedPropositionOption) *UpdatedP
 
 	return NewUpdatedProposition(
 		opts.WorkedNumber,
-		opts.Det,
+		opts.DET,
 		opts.Successful,
 		opts.DeliveryDate,
 		opts.UpdatedDeliveryDate,

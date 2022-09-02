@@ -1,9 +1,9 @@
-package orderdb_test
+package jobbook_fetch_case_test
 
 import (
 	"SynchronizeMonorevoDeliveryDates/domain/orderdb"
 	"SynchronizeMonorevoDeliveryDates/domain/orderdb/mock_orderdb"
-	local "SynchronizeMonorevoDeliveryDates/usecase/orderdb"
+	"SynchronizeMonorevoDeliveryDates/usecase/jobbook_fetch_case"
 	"reflect"
 	"testing"
 
@@ -30,9 +30,9 @@ func TestJobBookFetchingUseCase_Execute(t *testing.T) {
 	mock_fetcher.EXPECT().FetchAll().Return(mock_results, nil)
 
 	// UseCase戻り値
-	results := []local.JobBookDto{}
+	results := []jobbook_fetch_case.JobBookDto{}
 	for _, v := range mock_results {
-		results = append(results, local.JobBookDto{
+		results = append(results, jobbook_fetch_case.JobBookDto{
 			v.WorkedNumber,
 			v.DeliveryDate,
 		})
@@ -40,13 +40,13 @@ func TestJobBookFetchingUseCase_Execute(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		m       *local.JobBookFetchingUseCase
-		want    []local.JobBookDto
+		m       *jobbook_fetch_case.JobBookFetchingUseCase
+		want    []jobbook_fetch_case.JobBookDto
 		wantErr bool
 	}{
 		{
 			name: "正常系_UseCaseを実行するとモックが実行されること",
-			m: local.NewJobBookFetchingUseCase(
+			m: jobbook_fetch_case.NewJobBookFetchingUseCase(
 				logger.Sugar(),
 				mock_fetcher,
 			),

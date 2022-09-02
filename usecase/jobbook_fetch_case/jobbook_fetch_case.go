@@ -1,4 +1,4 @@
-package orderdb
+package jobbook_fetch_case
 
 import (
 	"SynchronizeMonorevoDeliveryDates/domain/orderdb"

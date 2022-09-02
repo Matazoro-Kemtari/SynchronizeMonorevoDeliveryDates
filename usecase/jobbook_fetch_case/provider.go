@@ -1,7 +1,7 @@
 //go:build wireinject
 // +build wireinject
 
-package orderdb
+package jobbook_fetch_case
 
 import "github.com/google/wire"
 

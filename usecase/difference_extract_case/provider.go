@@ -1,7 +1,7 @@
 //go:build wireinject
 // +build wireinject
 
-package difference
+package difference_extract_case
 
 import "github.com/google/wire"
 

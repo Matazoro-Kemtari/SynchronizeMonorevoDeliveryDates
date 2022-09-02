@@ -1,4 +1,4 @@
-package monorevo
+package proposition_fetch_case
 
 import (
 	"SynchronizeMonorevoDeliveryDates/domain/monorevo"
@@ -9,7 +9,7 @@ import (
 
 type FetchedPropositionDto struct {
 	WorkedNumber string
-	Det          string
+	DET          string
 	DeliveryDate time.Time
 }
 
@@ -45,7 +45,7 @@ func (m *PropositionFetchingUseCase) Execute() ([]FetchedPropositionDto, error) 
 			cnv,
 			FetchedPropositionDto{
 				WorkedNumber: v.WorkedNumber,
-				Det:          v.Det,
+				DET:          v.DET,
 				DeliveryDate: v.DeliveryDate,
 			},
 		)

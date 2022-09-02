@@ -1,4 +1,4 @@
-package reportsetting
+package reportsetting_obtain_case
 
 type MailAddressDto struct {
 	Email string
@@ -9,8 +9,8 @@ type ReportSettingDto struct {
 	SenderAddress      MailAddressDto
 	ReplyToAddress     MailAddressDto
 	RecipientAddresses []MailAddressDto
-	CcAddresses        []MailAddressDto
-	BccAddresses       []MailAddressDto
+	CCAddresses        []MailAddressDto
+	BCCAddresses       []MailAddressDto
 	Subject            string
 	PrefixReport       string
 	SuffixReport       string

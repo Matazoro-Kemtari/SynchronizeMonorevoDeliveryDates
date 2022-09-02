@@ -3,7 +3,7 @@ package twiliosendmail_test
 import (
 	"SynchronizeMonorevoDeliveryDates/domain/report"
 	"SynchronizeMonorevoDeliveryDates/infrastructure/twiliosendmail"
-	"SynchronizeMonorevoDeliveryDates/usecase/appsetting"
+	"SynchronizeMonorevoDeliveryDates/usecase/appsetting_obtain_case"
 	"os"
 	"strings"
 	"testing"
@@ -19,10 +19,10 @@ func TestSendGridMail_Send(t *testing.T) {
 		os.Exit(1)
 	}
 	logger, _ := zap.NewDevelopment()
-	appcnf := appsetting.TestAppSettingDtoCreate(
-		appsetting.OptSandboxMode(
-			*appsetting.TestSandboxModeDtoCreate(
-				appsetting.OptSandboxModeSendGrid(false),
+	appcnf := appsetting_obtain_case.TestAppSettingDtoCreate(
+		appsetting_obtain_case.OptSandboxMode(
+			*appsetting_obtain_case.TestSandboxModeDtoCreate(
+				appsetting_obtain_case.OptSandboxModeSendGrid(false),
 			),
 		),
 	)
@@ -64,35 +64,35 @@ func TestSendGridMail_Send(t *testing.T) {
 				editedPropositions: []report.EditedProposition{
 					{
 						WorkedNumber:        "99A-0001",
-						Det:                 "1",
+						DET:                 "1",
 						Successful:          true,
 						DeliveryDate:        time.Date(2099, 1, 1, 0, 0, 0, 0, time.UTC),
 						UpdatedDeliveryDate: time.Date(2099, 1, 20, 0, 0, 0, 0, time.UTC),
 					},
 					{
 						WorkedNumber:        "99A-0002",
-						Det:                 "2",
+						DET:                 "2",
 						Successful:          false,
 						DeliveryDate:        time.Date(2099, 2, 1, 0, 0, 0, 0, time.UTC),
 						UpdatedDeliveryDate: time.Date(2099, 2, 20, 0, 0, 0, 0, time.UTC),
 					},
 					{
 						WorkedNumber:        "99A-0003",
-						Det:                 "3",
+						DET:                 "3",
 						Successful:          true,
 						DeliveryDate:        time.Date(2099, 3, 1, 0, 0, 0, 0, time.UTC),
 						UpdatedDeliveryDate: time.Date(2099, 3, 20, 0, 0, 0, 0, time.UTC),
 					},
 					{
 						WorkedNumber:        "99A-0004",
-						Det:                 "4",
+						DET:                 "4",
 						Successful:          false,
 						DeliveryDate:        time.Date(2099, 4, 1, 0, 0, 0, 0, time.UTC),
 						UpdatedDeliveryDate: time.Date(2099, 4, 20, 0, 0, 0, 0, time.UTC),
 					},
 					{
 						WorkedNumber:        "99A-0005",
-						Det:                 "5",
+						DET:                 "5",
 						Successful:          true,
 						DeliveryDate:        time.Date(2099, 5, 1, 0, 0, 0, 0, time.UTC),
 						UpdatedDeliveryDate: time.Date(2099, 5, 20, 0, 0, 0, 0, time.UTC),
@@ -175,35 +175,35 @@ func TestSendGridMail_Send(t *testing.T) {
 				editedPropositions: []report.EditedProposition{
 					{
 						WorkedNumber:        "99A-0001",
-						Det:                 "1",
+						DET:                 "1",
 						Successful:          true,
 						DeliveryDate:        time.Date(2099, 1, 1, 0, 0, 0, 0, time.UTC),
 						UpdatedDeliveryDate: time.Date(2099, 1, 20, 0, 0, 0, 0, time.UTC),
 					},
 					{
 						WorkedNumber:        "99A-0002",
-						Det:                 "2",
+						DET:                 "2",
 						Successful:          false,
 						DeliveryDate:        time.Date(2099, 2, 1, 0, 0, 0, 0, time.UTC),
 						UpdatedDeliveryDate: time.Date(2099, 2, 20, 0, 0, 0, 0, time.UTC),
 					},
 					{
 						WorkedNumber:        "99A-0003",
-						Det:                 "3",
+						DET:                 "3",
 						Successful:          true,
 						DeliveryDate:        time.Date(2099, 3, 1, 0, 0, 0, 0, time.UTC),
 						UpdatedDeliveryDate: time.Date(2099, 3, 20, 0, 0, 0, 0, time.UTC),
 					},
 					{
 						WorkedNumber:        "99A-0004",
-						Det:                 "4",
+						DET:                 "4",
 						Successful:          false,
 						DeliveryDate:        time.Date(2099, 4, 1, 0, 0, 0, 0, time.UTC),
 						UpdatedDeliveryDate: time.Date(2099, 4, 20, 0, 0, 0, 0, time.UTC),
 					},
 					{
 						WorkedNumber:        "99A-0005",
-						Det:                 "5",
+						DET:                 "5",
 						Successful:          true,
 						DeliveryDate:        time.Date(2099, 5, 1, 0, 0, 0, 0, time.UTC),
 						UpdatedDeliveryDate: time.Date(2099, 5, 20, 0, 0, 0, 0, time.UTC),

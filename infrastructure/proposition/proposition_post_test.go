@@ -3,7 +3,7 @@ package proposition_test
 import (
 	"SynchronizeMonorevoDeliveryDates/domain/monorevo"
 	"SynchronizeMonorevoDeliveryDates/infrastructure/proposition"
-	"SynchronizeMonorevoDeliveryDates/usecase/appsetting"
+	"SynchronizeMonorevoDeliveryDates/usecase/appsetting_obtain_case"
 	"os"
 	"reflect"
 	"testing"
@@ -24,32 +24,32 @@ func TestPropositionTable_PostRange(t *testing.T) {
 	nonexisitentCase := monorevo.DifferentProposition{
 
 		WorkedNumber:        "99A-9999",
-		Det:                 "1",
+		DET:                 "1",
 		DeliveryDate:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedDeliveryDate: time.Date(2020, 1, 10, 0, 0, 0, 0, time.UTC),
 	}
 	pastCase := monorevo.DifferentProposition{
 		WorkedNumber:        "22T-378",
-		Det:                 "1",
+		DET:                 "1",
 		DeliveryDate:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedDeliveryDate: time.Date(2020, 1, 10, 0, 0, 0, 0, time.UTC),
 	}
 	updatableCases := []monorevo.DifferentProposition{
 		{
 			WorkedNumber:        "99仮-1",
-			Det:                 "1",
+			DET:                 "1",
 			DeliveryDate:        time.Date(2222, 8, 21, 0, 0, 0, 0, time.UTC),
 			UpdatedDeliveryDate: time.Date(2222, 8, 22, 0, 0, 0, 0, time.UTC),
 		}, {
 			WorkedNumber:        "99仮-1",
-			Det:                 "2",
+			DET:                 "2",
 			DeliveryDate:        time.Date(2222, 10, 21, 0, 0, 0, 0, time.UTC),
 			UpdatedDeliveryDate: time.Date(2222, 10, 22, 0, 0, 0, 0, time.UTC),
 		},
 	}
 
-	appcnf := &appsetting.AppSettingDto{
-		SandboxMode: appsetting.SandboxModeDto{
+	appcnf := &appsetting_obtain_case.AppSettingDto{
+		SandboxMode: appsetting_obtain_case.SandboxModeDto{
 			Monorevo: false,
 		},
 	}
@@ -81,7 +81,7 @@ func TestPropositionTable_PostRange(t *testing.T) {
 			want: []monorevo.UpdatedProposition{
 				{
 					WorkedNumber:        nonexisitentCase.WorkedNumber,
-					Det:                 nonexisitentCase.Det,
+					DET:                 nonexisitentCase.DET,
 					Successful:          false,
 					DeliveryDate:        nonexisitentCase.DeliveryDate,
 					UpdatedDeliveryDate: nonexisitentCase.UpdatedDeliveryDate,
@@ -104,7 +104,7 @@ func TestPropositionTable_PostRange(t *testing.T) {
 			want: []monorevo.UpdatedProposition{
 				{
 					WorkedNumber:        pastCase.WorkedNumber,
-					Det:                 pastCase.Det,
+					DET:                 pastCase.DET,
 					Successful:          false,
 					DeliveryDate:        pastCase.DeliveryDate,
 					UpdatedDeliveryDate: pastCase.UpdatedDeliveryDate,
@@ -128,14 +128,14 @@ func TestPropositionTable_PostRange(t *testing.T) {
 			want: []monorevo.UpdatedProposition{
 				{
 					WorkedNumber:        updatableCases[0].WorkedNumber,
-					Det:                 updatableCases[0].Det,
+					DET:                 updatableCases[0].DET,
 					Successful:          true,
 					DeliveryDate:        updatableCases[0].DeliveryDate,
 					UpdatedDeliveryDate: updatableCases[0].UpdatedDeliveryDate,
 				},
 				{
 					WorkedNumber:        updatableCases[1].WorkedNumber,
-					Det:                 updatableCases[1].Det,
+					DET:                 updatableCases[1].DET,
 					Successful:          true,
 					DeliveryDate:        updatableCases[1].DeliveryDate,
 					UpdatedDeliveryDate: updatableCases[1].UpdatedDeliveryDate,

@@ -18,7 +18,7 @@ type Sender interface {
 // 編集結果
 type EditedProposition struct {
 	WorkedNumber        string
-	Det                 string
+	DET                 string
 	Successful          bool
 	DeliveryDate        time.Time
 	UpdatedDeliveryDate time.Time

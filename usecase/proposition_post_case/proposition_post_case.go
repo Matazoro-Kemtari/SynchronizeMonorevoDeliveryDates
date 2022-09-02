@@ -1,4 +1,4 @@
-package monorevo
+package proposition_post_case
 
 import (
 	"SynchronizeMonorevoDeliveryDates/domain/monorevo"
@@ -9,14 +9,14 @@ import (
 
 type PostingPropositionPram struct {
 	WorkedNumber        string
-	Det                 string
+	DET                 string
 	DeliveryDate        time.Time
 	UpdatedDeliveryDate time.Time
 }
 
 type PostedPropositionDto struct {
 	WorkedNumber        string
-	Det                 string
+	DET                 string
 	Successful          bool
 	DeliveryDate        time.Time
 	UpdatedDeliveryDate time.Time
@@ -48,7 +48,7 @@ func (m *PropositionPostingUseCase) Execute(p []PostingPropositionPram) ([]Poste
 			diffs,
 			*monorevo.NewDifferenceProposition(
 				v.WorkedNumber,
-				v.Det,
+				v.DET,
 				v.DeliveryDate,
 				v.UpdatedDeliveryDate,
 			),
@@ -66,7 +66,7 @@ func (m *PropositionPostingUseCase) Execute(p []PostingPropositionPram) ([]Poste
 			cnv,
 			PostedPropositionDto{
 				WorkedNumber:        v.WorkedNumber,
-				Det:                 v.Det,
+				DET:                 v.DET,
 				Successful:          v.Successful,
 				DeliveryDate:        v.DeliveryDate,
 				UpdatedDeliveryDate: v.UpdatedDeliveryDate,

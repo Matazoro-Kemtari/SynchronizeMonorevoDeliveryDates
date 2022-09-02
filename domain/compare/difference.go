@@ -27,7 +27,7 @@ func (e Difference) ExtractForDeliveryDate(j []orderdb.JobBook, p []monorevo.Pro
 				if !job.DeliveryDate.Equal(pp.DeliveryDate) {
 					diff = append(diff, *monorevo.NewDifferenceProposition(
 						job.WorkedNumber,
-						pp.Det,
+						pp.DET,
 						pp.DeliveryDate,
 						job.DeliveryDate,
 					))

@@ -44,7 +44,7 @@ func (p *PropositionTable) PostRange(postablePropositions []monorevo.DifferentPr
 				editedPropositions,
 				*monorevo.NewUpdatedProposition(
 					v.WorkedNumber,
-					v.Det,
+					v.DET,
 					false,
 					v.DeliveryDate,
 					v.UpdatedDeliveryDate,
@@ -62,7 +62,7 @@ func (p *PropositionTable) PostRange(postablePropositions []monorevo.DifferentPr
 				editedPropositions,
 				*monorevo.NewUpdatedProposition(
 					v.WorkedNumber,
-					v.Det,
+					v.DET,
 					false,
 					v.DeliveryDate,
 					v.UpdatedDeliveryDate,
@@ -70,7 +70,7 @@ func (p *PropositionTable) PostRange(postablePropositions []monorevo.DifferentPr
 			p.sugar.Error(
 				"案件検索ができなかった",
 				v.WorkedNumber,
-				v.Det,
+				v.DET,
 				err)
 			continue
 		} else if !r {
@@ -78,7 +78,7 @@ func (p *PropositionTable) PostRange(postablePropositions []monorevo.DifferentPr
 				editedPropositions,
 				*monorevo.NewUpdatedProposition(
 					v.WorkedNumber,
-					v.Det,
+					v.DET,
 					false,
 					v.DeliveryDate,
 					v.UpdatedDeliveryDate,
@@ -86,7 +86,7 @@ func (p *PropositionTable) PostRange(postablePropositions []monorevo.DifferentPr
 			p.sugar.Errorf(
 				"作業No(%v),DET番号(%v)の該当がなかった",
 				v.WorkedNumber,
-				v.Det)
+				v.DET)
 			continue
 		}
 
@@ -97,7 +97,7 @@ func (p *PropositionTable) PostRange(postablePropositions []monorevo.DifferentPr
 				editedPropositions,
 				*monorevo.NewUpdatedProposition(
 					v.WorkedNumber,
-					v.Det,
+					v.DET,
 					false,
 					v.DeliveryDate,
 					v.UpdatedDeliveryDate,
@@ -105,7 +105,7 @@ func (p *PropositionTable) PostRange(postablePropositions []monorevo.DifferentPr
 			p.sugar.Error(
 				"納期の更新ができませんでした",
 				v.DeliveryDate,
-				v.Det,
+				v.DET,
 				err)
 			continue
 		}
@@ -113,7 +113,7 @@ func (p *PropositionTable) PostRange(postablePropositions []monorevo.DifferentPr
 			editedPropositions,
 			*monorevo.NewUpdatedProposition(
 				v.WorkedNumber,
-				v.Det,
+				v.DET,
 				(successful == success),
 				v.DeliveryDate,
 				v.UpdatedDeliveryDate,
@@ -139,11 +139,11 @@ func (p *PropositionTable) searchPropositionTable(page *agouti.Page, proposition
 	}
 	// DET番号を入力する
 	detFld := page.FindByXPath(`//*[@id="searchContent"]/div[2]/div[2]/input`)
-	if err := detFld.Fill(proposition.Det); err != nil {
+	if err := detFld.Fill(proposition.DET); err != nil {
 		p.sugar.Debug("DET番号の入力に失敗した", err)
 		return false, fmt.Errorf("DET番号の入力に失敗した error: %v", err)
 	}
-	p.sugar.Infof("案件検索: 作業No(%v) DET番号(%v)", proposition.WorkedNumber, proposition.Det)
+	p.sugar.Infof("案件検索: 作業No(%v) DET番号(%v)", proposition.WorkedNumber, proposition.DET)
 	time.Sleep(time.Millisecond * 100)
 	searchBtn := page.FindByXPath(`//*[@id="searchButton"]/div/button`)
 	searchBtn.Click()
@@ -174,12 +174,12 @@ func (p *PropositionTable) searchPropositionTable(page *agouti.Page, proposition
 		msg := fmt.Sprintf(
 			"作業No(%v):DET番号(%v)は該当案件がありません",
 			proposition.WorkedNumber,
-			proposition.Det,
+			proposition.DET,
 		)
 		p.sugar.Errorf(msg)
 		return false, errors.New(msg)
 	}
-	p.sugar.Infof("案件該当: 作業No(%v) DET番号(%v) nodes: %v", proposition.WorkedNumber, proposition.Det, len(trs))
+	p.sugar.Infof("案件該当: 作業No(%v) DET番号(%v) nodes: %v", proposition.WorkedNumber, proposition.DET, len(trs))
 	return true, nil
 }
 
@@ -208,7 +208,7 @@ func (p *PropositionTable) updatedDeliveryDate(
 		return unspecified, fmt.Errorf(
 			"作業No(%v)とDET(%v)で検索した結果が2レコード以上あるため中止する record: %v",
 			diff.WorkedNumber,
-			diff.Det,
+			diff.DET,
 			(len(rows) / 2))
 	}
 
@@ -221,7 +221,7 @@ func (p *PropositionTable) updatedDeliveryDate(
 		dt := contentsDom.Find(fmt.Sprintf("#app > div > div.contents-wrapper > div.main-wrapper > div > div > div > form > table > tbody > tr:nth-child(%d) > td:nth-child(1)", i+1)).Text()
 		p.sugar.Infof("処理中の案件: 作業No(%v) DET番号(%v)", wk, dt)
 
-		if diff.WorkedNumber != wk && diff.Det != dt {
+		if diff.WorkedNumber != wk && diff.DET != dt {
 			// たまに検索に失敗していることがあったので保険的に比較する
 			msg := fmt.Sprintf("検索失敗 期待の作業No(%v) 表示の作業No(%v)が相違している", diff.WorkedNumber, wk)
 			p.sugar.Errorf(msg)
@@ -229,7 +229,7 @@ func (p *PropositionTable) updatedDeliveryDate(
 		}
 
 		// 詳細画面を開く
-		if err := p.openPropositionDetail(page, i); err != nil {
+		if err := p.openPropositionDETail(page, i); err != nil {
 			return failure,
 				fmt.Errorf("案件詳細が開けませんでした error: %v", err)
 		}
@@ -247,14 +247,14 @@ func (p *PropositionTable) updatedDeliveryDate(
 				fmt.Errorf(
 					"作業No(%v) DET番号(%v)の編集ができませんでした error: %v",
 					diff.WorkedNumber,
-					diff.Det,
+					diff.DET,
 					err,
 				)
 		}
 		p.sugar.Infof(
 			"更新: 作業No(%v) DET番号(%v): 納期 %v -> %v",
 			diff.WorkedNumber,
-			diff.Det,
+			diff.DET,
 			diff.DeliveryDate,
 			diff.UpdatedDeliveryDate,
 		)
@@ -343,7 +343,7 @@ func (p *PropositionTable) openEditableProposition(page *agouti.Page) error {
 	return nil
 }
 
-func (p *PropositionTable) openPropositionDetail(page *agouti.Page, row int) error {
+func (p *PropositionTable) openPropositionDETail(page *agouti.Page, row int) error {
 	// 詳細ボタンを押す
 	xpath := `//*[@id="app"]/div/div[2]/div[2]/div/div/div/form/table/tbody/` +
 		fmt.Sprintf("tr[%d]", row) +
