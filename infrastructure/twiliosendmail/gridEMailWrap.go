@@ -58,11 +58,11 @@ type SendGridMail struct {
 func NewSendGridMail(
 	sugar *zap.SugaredLogger,
 	appcnf *appsetting_obtain_case.AppSettingDto,
-	cnf *SendGridConfig,
+	sendgridConfig *SendGridConfig,
 ) *SendGridMail {
 	return &SendGridMail{
 		sugar:       sugar,
-		apiKey:      cnf.ApiKey,
+		apiKey:      sendgridConfig.ApiKey,
 		sandboxMode: appcnf.SandboxMode.SendGrid,
 	}
 }

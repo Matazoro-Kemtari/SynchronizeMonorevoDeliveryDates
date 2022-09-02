@@ -26,9 +26,7 @@ func TestSendGridMail_Send(t *testing.T) {
 			),
 		),
 	)
-	cnf := twiliosendmail.TestSendGridConfigCreate(
-		twiliosendmail.OptApiKey(os.Getenv("SEND_GRID_API_KEY")),
-	)
+	sendgridConfig := twiliosendmail.NewSendGridConfig()
 	type args struct {
 		tos                []report.EmailAddress
 		ccs                []report.EmailAddress
@@ -52,7 +50,7 @@ func TestSendGridMail_Send(t *testing.T) {
 			m: twiliosendmail.NewSendGridMail(
 				logger.Sugar(),
 				appcnf,
-				cnf,
+				sendgridConfig,
 			),
 			args: args{
 				tos:     []report.EmailAddress{{Name: "宛先１", Address: "gounittest1@sink.sendgrid.net"}},
@@ -109,7 +107,7 @@ func TestSendGridMail_Send(t *testing.T) {
 			m: twiliosendmail.NewSendGridMail(
 				logger.Sugar(),
 				appcnf,
-				cnf,
+				sendgridConfig,
 			),
 			args: args{
 				tos: []report.EmailAddress{

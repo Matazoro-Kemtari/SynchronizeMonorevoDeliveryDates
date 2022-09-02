@@ -3,10 +3,14 @@
 
 package twiliosendmail
 
-import "github.com/google/wire"
+import (
+	"SynchronizeMonorevoDeliveryDates/domain/report"
+
+	"github.com/google/wire"
+)
 
 var Set = wire.NewSet(
 	NewSendGridMail,
-	// TODO: ここまだ
-	wire.Bind(new(), new()),
+	wire.Bind(new(report.Sender), new(*SendGridMail)),
+	NewSendGridConfig,
 )
