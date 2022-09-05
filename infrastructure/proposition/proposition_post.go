@@ -32,12 +32,12 @@ func (p *PropositionTable) PostRange(postablePropositions []monorevo.DifferentPr
 	}
 
 	var editedPropositions []monorevo.UpdatedProposition
+	d := time.Date(
+		time.Now().Year(),
+		time.Now().Month(),
+		time.Now().Day(),
+		0, 0, 0, 0, time.UTC)
 	for _, v := range postablePropositions {
-		d := time.Date(
-			time.Now().Year(),
-			time.Now().Month(),
-			time.Now().Day(),
-			0, 0, 0, 0, time.UTC)
 		if v.UpdatedDeliveryDate.Before(d) {
 			// 現在日より過去日は処理しない ものレボが受け付けない
 			editedPropositions = append(
@@ -133,15 +133,24 @@ func (p *PropositionTable) searchPropositionTable(page *agouti.Page, proposition
 	// **検索条件**
 	// 作業Noを入力する
 	workNoFld := page.FindByXPath(`//*[@id="searchContent"]/div[2]/div[1]/input`)
+	workNoFld.Clear()
 	if err := workNoFld.Fill(proposition.WorkedNumber); err != nil {
 		p.sugar.Debug("作業Noの入力に失敗しました", err)
 		return false, fmt.Errorf("作業Noの入力に失敗しました error: %v", err)
 	}
 	// DET番号を入力する
 	detFld := page.FindByXPath(`//*[@id="searchContent"]/div[2]/div[2]/input`)
-	if err := detFld.Fill(proposition.DET); err != nil {
-		p.sugar.Debug("DET番号の入力に失敗した", err)
-		return false, fmt.Errorf("DET番号の入力に失敗した error: %v", err)
+	detFld.Clear()
+	if len(proposition.DET) > 0 {
+		if err := detFld.Fill(proposition.DET); err != nil {
+			p.sugar.Debug("DET番号の入力に失敗した", err)
+			return false, fmt.Errorf("DET番号の入力に失敗した error: %v", err)
+		}
+	} else {
+		if err := detFld.Fill(" "); err != nil {
+			p.sugar.Debug("DET番号の入力に失敗した", err)
+			return false, fmt.Errorf("DET番号の入力に失敗した error: %v", err)
+		}
 	}
 	p.sugar.Infof("案件検索: 作業No(%v) DET番号(%v)", proposition.WorkedNumber, proposition.DET)
 	time.Sleep(time.Millisecond * 100)
