@@ -139,7 +139,7 @@ func (m *SendGridMail) Send(
 		message.MailSettings = &mail.MailSettings{
 			SandboxMode: &mail.Setting{Enable: &m.sandboxMode},
 		}
-		m.sugar.Infof("サンドボックスモード: %v", m.sandboxMode)
+		m.sugar.Infof("sendgrid サンドボックスモード: %v", m.sandboxMode)
 	}
 
 	// メール送信
