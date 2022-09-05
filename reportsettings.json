@@ -50,6 +50,6 @@
     }
   ],
   "subject": "納期同期レポート %count% 件",
-  "prefixReport": "",
-  "suffixReport": ""
+  "prefixReport": "次の作業Noの納期を修正しました。",
+  "suffixReport": "更新に失敗している案件は、受注管理の状態と、ものレボの状態を確認してください。\nよろしくお願いいたします。"
 }
