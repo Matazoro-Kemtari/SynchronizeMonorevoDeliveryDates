@@ -9,7 +9,6 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/sclevine/agouti"
-	"golang.org/x/net/html"
 )
 
 func (p *PropositionTable) PostRange(postablePropositions []monorevo.DifferentProposition) ([]monorevo.UpdatedProposition, error) {
@@ -212,94 +211,82 @@ func (p *PropositionTable) updatedDeliveryDate(
 
 	// tbodySelectionを取得して td要素数を取得する
 	// 1Recordにつき2行なので倍になっている
-	rows := p.getSearchResults(contentsDom)
-	if len(rows) > 2 {
+	pos, err := p.getSearchResults(contentsDom, diff)
+	if err != nil {
 		return unspecified, fmt.Errorf(
-			"作業No(%v)とDET(%v)で検索した結果が2レコード以上あるため中止する record: %v",
+			"検索失敗 作業No(%v)とDET(%v)が見つかりません error: %v",
 			diff.WorkedNumber,
 			diff.DET,
-			(len(rows) / 2))
+			err)
 	}
 
-	// 表をループして納期を更新する
-	// 作業NoとDETで検索しているので 原則1レコードだけど
-	for i := 1; i <= len(rows); i += 2 {
-		// 表中の作業No
-		wk := contentsDom.Find(fmt.Sprintf("#app > div > div.contents-wrapper > div.main-wrapper > div > div > div > form > table > tbody > tr:nth-child(%d) > td:nth-child(2)", i)).Text()
-		// 表中のDET番号
-		dt := contentsDom.Find(fmt.Sprintf("#app > div > div.contents-wrapper > div.main-wrapper > div > div > div > form > table > tbody > tr:nth-child(%d) > td:nth-child(1)", i+1)).Text()
-		p.sugar.Infof("処理中の案件: 作業No(%v) DET番号(%v)", wk, dt)
+	p.sugar.Infof(
+		"更新処理中の案件: 作業No(%v) DET番号(%v)",
+		diff.WorkedNumber,
+		diff.DET)
 
-		if diff.WorkedNumber != wk && diff.DET != dt {
-			// たまに検索に失敗していることがあったので保険的に比較する
-			msg := fmt.Sprintf("検索失敗 期待の作業No(%v) 表示の作業No(%v)が相違している", diff.WorkedNumber, wk)
-			p.sugar.Errorf(msg)
-			return unspecified, errors.New(msg)
-		}
+	// 詳細画面を開く
+	if err := p.openPropositionDETail(page, pos); err != nil {
+		return failure,
+			fmt.Errorf("案件詳細が開けませんでした error: %v", err)
+	}
 
-		// 詳細画面を開く
-		if err := p.openPropositionDETail(page, i); err != nil {
-			return failure,
-				fmt.Errorf("案件詳細が開けませんでした error: %v", err)
-		}
+	// 案件編集ウィンドウを開く
+	if err := p.openEditableProposition(page); err != nil {
+		return failure,
+			fmt.Errorf("案件編集ウィンドウが開けませんでした error: %v", err)
+	}
 
-		// 案件編集ウィンドウを開く
-		if err := p.openEditableProposition(page); err != nil {
-			return failure,
-				fmt.Errorf("案件編集ウィンドウが開けませんでした error: %v", err)
-		}
+	// 編集する
+	updatedDeliveryDateStr := diff.UpdatedDeliveryDate.Format("2006/01/02")
+	if err := p.editProposition(page, updatedDeliveryDateStr); err != nil {
+		return failure,
+			fmt.Errorf(
+				"作業No(%v) DET番号(%v)の編集ができませんでした error: %v",
+				diff.WorkedNumber,
+				diff.DET,
+				err,
+			)
+	}
+	p.sugar.Infof(
+		"更新: 作業No(%v) DET番号(%v): 納期 %v -> %v (サンドボックスモード: %v)",
+		diff.WorkedNumber,
+		diff.DET,
+		diff.DeliveryDate,
+		diff.UpdatedDeliveryDate,
+		p.sandboxMode,
+	)
+	time.Sleep(time.Millisecond * 50)
 
-		// 編集する
-		updatedDeliveryDateStr := diff.UpdatedDeliveryDate.Format("2006/01/02")
-		if err := p.editProposition(page, updatedDeliveryDateStr); err != nil {
-			return failure,
-				fmt.Errorf(
-					"作業No(%v) DET番号(%v)の編集ができませんでした error: %v",
-					diff.WorkedNumber,
-					diff.DET,
-					err,
-				)
-		}
-		p.sugar.Infof(
-			"更新: 作業No(%v) DET番号(%v): 納期 %v -> %v (サンドボックスモード: %v)",
-			diff.WorkedNumber,
-			diff.DET,
-			diff.DeliveryDate,
-			diff.UpdatedDeliveryDate,
-			p.sandboxMode,
-		)
-		time.Sleep(time.Millisecond * 50)
+	// エラー表示を確認
+	parent := page.FindByXPath(`/html/body/div[2]`)
+	pid, _ := parent.Attribute("id") // idが動的に変わる
 
-		// エラー表示を確認
-		parent := page.FindByXPath(`/html/body/div[2]`)
-		pid, _ := parent.Attribute("id") // idが動的に変わる
-
-		dlg := page.FindByXPath(`/html/body/div[2]/div`)
-		for i := 0; ; i++ {
-			if v, err := dlg.Visible(); err != nil {
-				p.sugar.Info("更新結果ダイアログが閉じたのを確認")
-				break
-			} else if v {
-				// ダイアログ表示された
-				doc, err := p.getWebDocument(page)
-				if err != nil {
-					return failure, fmt.Errorf("ドキュメントの取得に失敗しました error: %v", err)
-				}
-
-				sel := doc.Find(fmt.Sprintf("#%v > div", pid))
-				msg := sel.Text()
-				if msg != "データの登録が完了しました" {
-					return failure, fmt.Errorf("更新に失敗しました message: %v", msg)
-				}
-				break
+	dlg := page.FindByXPath(`/html/body/div[2]/div`)
+	for i := 0; ; i++ {
+		if v, err := dlg.Visible(); err != nil {
+			p.sugar.Info("更新結果ダイアログが閉じたのを確認")
+			break
+		} else if v {
+			// ダイアログ表示された
+			doc, err := p.getWebDocument(page)
+			if err != nil {
+				return failure, fmt.Errorf("ドキュメントの取得に失敗しました error: %v", err)
 			}
-			p.sugar.Infof("更新結果ダイアログ消失待ち %v * 100ミリ秒", i+1)
-			time.Sleep(time.Millisecond * 100)
 
-			if i >= 600 {
-				p.sugar.Error("更新結果ダイアログ消失待ち タイムアウト", i)
-				return failure, fmt.Errorf("更新結果ダイアログ消失待ちタイムアウト error: %v", i)
+			sel := doc.Find(fmt.Sprintf("#%v > div", pid))
+			msg := sel.Text()
+			if msg != "データの登録が完了しました" {
+				return failure, fmt.Errorf("更新に失敗しました message: %v", msg)
 			}
+			break
+		}
+		p.sugar.Infof("更新結果ダイアログ消失待ち %v * 100ミリ秒", i+1)
+		time.Sleep(time.Millisecond * 100)
+
+		if i >= 600 {
+			p.sugar.Error("更新結果ダイアログ消失待ち タイムアウト", i)
+			return failure, fmt.Errorf("更新結果ダイアログ消失待ちタイムアウト error: %v", i)
 		}
 	}
 
@@ -387,14 +374,38 @@ func (p *PropositionTable) openPropositionDETail(page *agouti.Page, row int) err
 	return nil
 }
 
-func (p *PropositionTable) getSearchResults(contentsDom *goquery.Document) []*html.Node {
+func (p *PropositionTable) getSearchResults(contentsDom *goquery.Document, diff monorevo.DifferentProposition) (int, error) {
 	tbodySelection := contentsDom.Find(`#app > div > div.contents-wrapper > div.main-wrapper > div > div > div > form > table > tbody`)
 	rowSelection := tbodySelection.Children()
 
 	// 1Recordにつき2行なので倍になっている
 	rows := rowSelection.Nodes
 	p.sugar.Debugf("案件一覧テーブル %vレコード", (len(rows) / 2))
-	return rows
+
+	var idx int = -1
+	for i := 1; i <= len(rows); i += 2 {
+		// 1ページ以内に収まっている前提
+
+		// 表中の作業No
+		wk := contentsDom.Find(fmt.Sprintf("#app > div > div.contents-wrapper > div.main-wrapper > div > div > div > form > table > tbody > tr:nth-child(%d) > td:nth-child(2)", i)).Text()
+		// 表中のDET番号
+		dt := contentsDom.Find(fmt.Sprintf("#app > div > div.contents-wrapper > div.main-wrapper > div > div > div > form > table > tbody > tr:nth-child(%d) > td:nth-child(1)", i+1)).Text()
+		p.sugar.Infof("処理中の案件: 作業No(%v) DET番号(%v)", wk, dt)
+
+		if diff.WorkedNumber == wk && diff.DET == dt {
+			idx = i
+			break
+		}
+	}
+
+	if idx == -1 {
+		// たまに検索に失敗していることがあったので保険的に比較する
+		msg := fmt.Sprintf("検索失敗 作業No(%v)とDET(%v)が見つかりません 検索結果: %v", diff.WorkedNumber, diff.DET, rows)
+		p.sugar.Errorf(msg)
+		return 0, errors.New(msg)
+	}
+
+	return idx, nil
 }
 
 func (p *PropositionTable) getWebDocument(page *agouti.Page) (*goquery.Document, error) {
