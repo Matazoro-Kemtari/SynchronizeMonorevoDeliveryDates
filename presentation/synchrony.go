@@ -122,6 +122,7 @@ func (m *SynchronizingDeliveryDate) convertToReportPram(p []proposition_post_cas
 		CCs:                convertToEmailAddresses(m.reportSetting.CCAddresses),
 		BCCs:               convertToEmailAddresses(m.reportSetting.BCCAddresses),
 		From:               convertToEmailAddress(m.reportSetting.SenderAddress),
+		ReplyTo:            convertToEmailAddress(m.reportSetting.ReplyToAddress),
 		Subject:            m.reportSetting.Subject,
 		EditedPropositions: convertToEditedPropositionPrams(p),
 		PrefixReport:       m.reportSetting.PrefixReport,

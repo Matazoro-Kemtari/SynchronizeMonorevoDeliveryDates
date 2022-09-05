@@ -90,6 +90,10 @@ func (m *SendGridMail) Send(
 		m.sugar.Error("差出人が設定されていません")
 		return "", fmt.Errorf("差出人が設定されていません")
 	}
+	if replyTo.Address == "" {
+		m.sugar.Error("返信先が設定されていません")
+		return "", fmt.Errorf("返信先が設定されていません")
+	}
 	if len(editedPropositions) < 1 {
 		m.sugar.Error("編集結果がありません")
 		return "", fmt.Errorf("編集結果がありません")
