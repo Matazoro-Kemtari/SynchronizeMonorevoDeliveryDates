@@ -113,9 +113,8 @@ func (p *PropositionTable) getWebDriver() *agouti.WebDriver {
 		}),
 		agouti.ChromeOptions(
 			"args", []string{
-				// TODO: 開発中はコメントアウト
-				// "--headless",
-				// "--disable-gpu",
+				"--headless",
+				"--disable-gpu",
 				"--no-sandbox",
 				"--disable-dev-shm-usage", // /dev/shmパーティションの使用を禁止し、パーティションが小さすぎることによる、クラッシュを回避する。 dockerなどのVM環境下では、設定したほうがクラッシュする確率が減る。
 				// "window-size=500,400",                  // 画面を小さく
@@ -152,7 +151,7 @@ func (p *PropositionTable) loginToMonorevo(driver *agouti.WebDriver) (*agouti.Pa
 
 	// ログインする
 	page.FindByXPath(`//*[@id="inputCompany"]`).Fill(p.comID)
-	page.FindByXPath(`//*[@id="inputLoginID"]`).Fill(p.userID)
+	page.FindByXPath(`//*[@id="inputLoginId"]`).Fill(p.userID)
 	page.FindByXPath(`//*[@id="inputPassword"]`).Fill(p.userPass)
 	page.FindByXPath(`//*[@id="app"]/div/div[3]/form/div/div[2]/div[5]/button`).Click()
 

@@ -19,7 +19,7 @@ type SendGridConfig struct {
 
 func NewSendGridConfig() *SendGridConfig {
 	return &SendGridConfig{
-		ApiKey: os.Getenv("API_KEY"),
+		ApiKey: os.Getenv("SEND_GRID_API_KEY"),
 	}
 }
 
@@ -58,11 +58,11 @@ type SendGridMail struct {
 func NewSendGridMail(
 	sugar *zap.SugaredLogger,
 	appcnf *appsetting_obtain_case.AppSettingDto,
-	cnf *SendGridConfig,
+	sendgridConfig *SendGridConfig,
 ) *SendGridMail {
 	return &SendGridMail{
 		sugar:       sugar,
-		apiKey:      cnf.ApiKey,
+		apiKey:      sendgridConfig.ApiKey,
 		sandboxMode: appcnf.SandboxMode.SendGrid,
 	}
 }
@@ -77,6 +77,7 @@ func (m *SendGridMail) Send(
 	editedPropositions []report.EditedProposition,
 	prefixReport string,
 	suffixReport string,
+	replacements map[string]string,
 ) (string, error) {
 	if m.apiKey == "" {
 		m.sugar.Error("API KEYが設定されていません")
@@ -89,6 +90,10 @@ func (m *SendGridMail) Send(
 	if from.Address == "" {
 		m.sugar.Error("差出人が設定されていません")
 		return "", fmt.Errorf("差出人が設定されていません")
+	}
+	if replyTo.Address == "" {
+		m.sugar.Error("返信先が設定されていません")
+		return "", fmt.Errorf("返信先が設定されていません")
 	}
 	if len(editedPropositions) < 1 {
 		m.sugar.Error("編集結果がありません")
@@ -128,6 +133,11 @@ func (m *SendGridMail) Send(
 	h := mail.NewContent("text/html", html)
 	message.AddContent(h)
 
+	// 置換設定
+	for key, value := range replacements {
+		p.SetSubstitution("%"+key+"%", value)
+	}
+
 	// カスタムヘッダを指定 サンプルの例に倣って設定
 	message.SetHeader("X-Sent-Using", "SendGrid-API")
 	// SendGridのコンソールログで見分けるために設定
@@ -139,6 +149,7 @@ func (m *SendGridMail) Send(
 		message.MailSettings = &mail.MailSettings{
 			SandboxMode: &mail.Setting{Enable: &m.sandboxMode},
 		}
+		m.sugar.Infof("sendgrid サンドボックスモード: %v", m.sandboxMode)
 	}
 
 	// メール送信

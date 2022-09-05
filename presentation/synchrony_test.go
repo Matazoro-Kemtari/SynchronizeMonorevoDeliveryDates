@@ -2,7 +2,7 @@ package presentation_test
 
 import (
 	"SynchronizeMonorevoDeliveryDates/presentation"
-	"SynchronizeMonorevoDeliveryDates/usecase/appsetting_obtain_case/mock_appsetting_obtain_case"
+	"SynchronizeMonorevoDeliveryDates/usecase/appsetting_obtain_case"
 	"SynchronizeMonorevoDeliveryDates/usecase/difference_extract_case"
 	"SynchronizeMonorevoDeliveryDates/usecase/difference_extract_case/mock_difference_extract_case"
 	"SynchronizeMonorevoDeliveryDates/usecase/jobbook_fetch_case"
@@ -11,7 +11,9 @@ import (
 	"SynchronizeMonorevoDeliveryDates/usecase/proposition_fetch_case/mock_proposition_fetch_case"
 	"SynchronizeMonorevoDeliveryDates/usecase/proposition_post_case"
 	"SynchronizeMonorevoDeliveryDates/usecase/proposition_post_case/mock_proposition_post_case"
-	"SynchronizeMonorevoDeliveryDates/usecase/reportsetting_obtain_case/mock_reportsetting_obtain_case"
+	"SynchronizeMonorevoDeliveryDates/usecase/report_send_case"
+	"SynchronizeMonorevoDeliveryDates/usecase/report_send_case/mock_report_send_case"
+	"SynchronizeMonorevoDeliveryDates/usecase/reportsetting_obtain_case"
 	"testing"
 	"time"
 
@@ -28,10 +30,10 @@ func TestSynchronizingDeliveryDate_Synchronize(t *testing.T) {
 	defer ctrl.Finish()
 
 	// appsettingモック作成
-	mock_appCfgLoader := mock_appsetting_obtain_case.NewMockSettingLoader(ctrl)
+	appSetting := appsetting_obtain_case.TestAppSettingDtoCreate()
 
 	// reportsettingモック作成
-	mock_repCfgLoader := mock_reportsetting_obtain_case.NewMockSettingLoader(ctrl)
+	reportSetting := reportsetting_obtain_case.TestReportSettingDtoCreate()
 
 	// webモック作成
 	resWebFetches, mock_webFetcher := makeMockWebFetcher(ctrl)
@@ -45,19 +47,25 @@ func TestSynchronizingDeliveryDate_Synchronize(t *testing.T) {
 	// 更新モック作成
 	mock_post := makeMockWebPoster(resWebFetches, resDbFetches, ctrl)
 
+	// 報告モック作成
+	mock_report := makeMockReportSender(reportSetting, resWebFetches, resDbFetches, ctrl)
+
 	tests := []struct {
 		name    string
 		m       *presentation.SynchronizingDeliveryDate
 		wantErr bool
 	}{
 		{
-			name: "正常系_UseCaseを実行するとモックが実行されること",
+			name: "正常系_controllerを実行するとモックが実行されること",
 			m: presentation.NewSynchronizingDeliveryDate(
 				logger.Sugar(),
+				appSetting,
+				reportSetting,
 				mock_webFetcher,
 				mock_dbFetcher,
 				mock_diff,
 				mock_post,
+				mock_report,
 			),
 			wantErr: false,
 		},
@@ -69,6 +77,53 @@ func TestSynchronizingDeliveryDate_Synchronize(t *testing.T) {
 			}
 		})
 	}
+}
+
+func convertToEmailAddresses(cfgs []reportsetting_obtain_case.MailAddressDto) []report_send_case.EmailAddressPram {
+	var mails []report_send_case.EmailAddressPram
+	for _, v := range cfgs {
+		mails = append(mails, convertToEmailAddress(v))
+	}
+	return mails
+}
+
+func convertToEmailAddress(m reportsetting_obtain_case.MailAddressDto) report_send_case.EmailAddressPram {
+	return report_send_case.EmailAddressPram{
+		Name:    m.Name,
+		Address: m.Email,
+	}
+}
+
+func makeMockReportSender(setting *reportsetting_obtain_case.ReportSettingDto, resWebFetches []proposition_fetch_case.FetchedPropositionDto, resDbFetches []jobbook_fetch_case.JobBookDto, ctrl *gomock.Controller) *mock_report_send_case.MockExecutor {
+	var editedPropositions []report_send_case.EditedPropositionPram
+	for i := 0; i < len(resWebFetches); i++ {
+		editedPropositions = append(editedPropositions,
+			*report_send_case.TestEditedPropositionPramCreate(
+				report_send_case.OptWorkedNumber(resWebFetches[i].WorkedNumber),
+				report_send_case.OptDET(resWebFetches[i].DET),
+				report_send_case.OptSuccessful(true),
+				report_send_case.OptDeliveryDate(resWebFetches[i].DeliveryDate),
+				report_send_case.OptUpdatedDeliveryDate(resDbFetches[i].DeliveryDate),
+			),
+		)
+	}
+
+	reportRes := time.Now().Format("2006/01/02")
+
+	reportPram := *report_send_case.TestReportPramCreate(
+		report_send_case.OptTos(convertToEmailAddresses(setting.RecipientAddresses)),
+		report_send_case.OptCCs(convertToEmailAddresses(setting.CCAddresses)),
+		report_send_case.OptBCCs(convertToEmailAddresses(setting.BCCAddresses)),
+		report_send_case.OptFrom(convertToEmailAddress(setting.SenderAddress)),
+		report_send_case.OptSubject(setting.Subject),
+		report_send_case.OptEditedPropositions(editedPropositions),
+		report_send_case.OptPrefixReport(setting.PrefixReport),
+		report_send_case.OptSuffixReport(setting.SuffixReport),
+	)
+	mock_report := mock_report_send_case.NewMockExecutor(ctrl)
+	mock_report.EXPECT().Execute(reportPram).Return(reportRes, nil)
+
+	return mock_report
 }
 
 func makeMockWebPoster(resWebFetches []proposition_fetch_case.FetchedPropositionDto, resDbFetches []jobbook_fetch_case.JobBookDto, ctrl *gomock.Controller) *mock_proposition_post_case.MockPostingExecutor {

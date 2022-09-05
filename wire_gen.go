@@ -10,25 +10,33 @@ import (
 	"SynchronizeMonorevoDeliveryDates/domain/compare"
 	"SynchronizeMonorevoDeliveryDates/infrastructure/jobbook"
 	"SynchronizeMonorevoDeliveryDates/infrastructure/proposition"
+	"SynchronizeMonorevoDeliveryDates/infrastructure/twiliosendmail"
 	"SynchronizeMonorevoDeliveryDates/presentation"
-	"SynchronizeMonorevoDeliveryDates/usecase/difference"
-	"SynchronizeMonorevoDeliveryDates/usecase/monorevo"
-	"SynchronizeMonorevoDeliveryDates/usecase/orderdb"
+	"SynchronizeMonorevoDeliveryDates/usecase/appsetting_obtain_case"
+	"SynchronizeMonorevoDeliveryDates/usecase/difference_extract_case"
+	"SynchronizeMonorevoDeliveryDates/usecase/jobbook_fetch_case"
+	"SynchronizeMonorevoDeliveryDates/usecase/proposition_fetch_case"
+	"SynchronizeMonorevoDeliveryDates/usecase/proposition_post_case"
+	"SynchronizeMonorevoDeliveryDates/usecase/report_send_case"
+	"SynchronizeMonorevoDeliveryDates/usecase/reportsetting_obtain_case"
 	"go.uber.org/zap"
 )
 
 // Injectors from wire.go:
 
-func InitializeSynchronize(log *zap.SugaredLogger) *presentation.SynchronizingDeliveryDate {
+func InitializeSynchronize(log *zap.SugaredLogger, ap *appsetting_obtain_case.AppSettingDto, rep *reportsetting_obtain_case.ReportSettingDto) *presentation.SynchronizingDeliveryDate {
 	monorevoUserConfig := proposition.NewMonorevoUserConfig()
-	propositionTable := proposition.NewPropositionTable(log, monorevoUserConfig)
-	propositionFetchingUseCase := monorevo.NewPropositionFetchingUseCase(log, propositionTable)
+	propositionTable := proposition.NewPropositionTable(log, ap, monorevoUserConfig)
+	propositionFetchingUseCase := proposition_fetch_case.NewPropositionFetchingUseCase(log, propositionTable)
 	orderDbConfig := jobbook.NewOrderDbConfig()
 	repository := jobbook.NewRepository(log, orderDbConfig)
-	jobBookFetchingUseCase := orderdb.NewJobBookFetchingUseCase(log, repository)
-	compareDifference := compare.NewDifference()
-	propositionExtractingUseCase := difference.NewExtractingPropositionUseCase(log, compareDifference)
-	propositionPostingUseCase := monorevo.NewPropositionPostingUseCase(log, propositionTable)
-	synchronizingDeliveryDate := presentation.NewSynchronizingDeliveryDate(log, propositionFetchingUseCase, jobBookFetchingUseCase, propositionExtractingUseCase, propositionPostingUseCase)
+	jobBookFetchingUseCase := jobbook_fetch_case.NewJobBookFetchingUseCase(log, repository)
+	difference := compare.NewDifference()
+	propositionExtractingUseCase := difference_extract_case.NewExtractingPropositionUseCase(log, difference)
+	propositionPostingUseCase := proposition_post_case.NewPropositionPostingUseCase(log, propositionTable)
+	sendGridConfig := twiliosendmail.NewSendGridConfig()
+	sendGridMail := twiliosendmail.NewSendGridMail(log, ap, sendGridConfig)
+	sendingReportUseCase := report_send_case.NewSendingReportUseCase(log, sendGridMail)
+	synchronizingDeliveryDate := presentation.NewSynchronizingDeliveryDate(log, ap, rep, propositionFetchingUseCase, jobBookFetchingUseCase, propositionExtractingUseCase, propositionPostingUseCase, sendingReportUseCase)
 	return synchronizingDeliveryDate
 }

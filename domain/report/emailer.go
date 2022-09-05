@@ -8,10 +8,12 @@ type Sender interface {
 		ccs []EmailAddress,
 		bccs []EmailAddress,
 		from EmailAddress,
+		replyTo EmailAddress,
 		subject string,
 		editedPropositions []EditedProposition,
 		prefixReport string,
 		suffixReport string,
+		replacements map[string]string,
 	) (string, error)
 }
 

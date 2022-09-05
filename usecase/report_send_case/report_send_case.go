@@ -141,10 +141,12 @@ type ReportPram struct {
 	CCs                []EmailAddressPram
 	BCCs               []EmailAddressPram
 	From               EmailAddressPram
+	ReplyTo            EmailAddressPram
 	Subject            string
 	EditedPropositions []EditedPropositionPram
 	PrefixReport       string
 	SuffixReport       string
+	Replacements       map[string]string
 }
 
 type ReportOptions struct {
@@ -152,10 +154,12 @@ type ReportOptions struct {
 	ccs                []EmailAddressPram
 	bccs               []EmailAddressPram
 	from               EmailAddressPram
+	replyTo            EmailAddressPram
 	subject            string
 	editedPropositions []EditedPropositionPram
 	prefixReport       string
 	suffixReport       string
+	replacements       map[string]string
 }
 
 type ReportOption func(*ReportOptions)
@@ -181,6 +185,12 @@ func OptBCCs(v []EmailAddressPram) ReportOption {
 func OptFrom(v EmailAddressPram) ReportOption {
 	return func(opts *ReportOptions) {
 		opts.from = v
+	}
+}
+
+func OptReplyTo(v EmailAddressPram) ReportOption {
+	return func(opts *ReportOptions) {
+		opts.replyTo = v
 	}
 }
 
@@ -215,10 +225,12 @@ func TestReportPramCreate(options ...ReportOption) *ReportPram {
 		ccs:                []EmailAddressPram{},
 		bccs:               []EmailAddressPram{},
 		from:               *TestEmailAddressPramCreate(OptName("送信者"), OptAddress("testing@example.com")),
+		replyTo:            *TestEmailAddressPramCreate(OptName("返信先"), OptAddress("testing-return@example.com")),
 		subject:            "結果報告",
 		editedPropositions: []EditedPropositionPram{*TestEditedPropositionPramCreate()},
 		prefixReport:       "結果報告:接頭辞",
 		suffixReport:       "結果報告:接尾辞",
+		replacements:       map[string]string{"count": "999"},
 	}
 
 	for _, option := range options {
@@ -230,10 +242,12 @@ func TestReportPramCreate(options ...ReportOption) *ReportPram {
 		CCs:                opts.ccs,
 		BCCs:               opts.bccs,
 		From:               opts.from,
+		ReplyTo:            opts.replyTo,
 		Subject:            opts.subject,
 		EditedPropositions: opts.editedPropositions,
 		PrefixReport:       opts.prefixReport,
 		SuffixReport:       opts.suffixReport,
+		Replacements:       opts.replacements,
 	}
 }
 
@@ -262,10 +276,12 @@ func (s *SendingReportUseCase) Execute(r ReportPram) (string, error) {
 		ConvertToEmailAddresses(r.CCs),
 		ConvertToEmailAddresses(r.BCCs),
 		*r.From.ConvertToEmailAddress(),
+		*r.ReplyTo.ConvertToEmailAddress(),
 		r.Subject,
 		ConvertToEditedProposition(r.EditedPropositions),
 		r.PrefixReport,
 		r.SuffixReport,
+		r.Replacements,
 	)
 }
 

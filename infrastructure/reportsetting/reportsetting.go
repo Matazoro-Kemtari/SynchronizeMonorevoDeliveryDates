@@ -117,6 +117,10 @@ func (l *LoadableSetting) Load(path string) (*reportsetting_obtain_case.ReportSe
 			Email: setting.SenderAddress.Email,
 			Name:  setting.SenderAddress.Name,
 		},
+		ReplyToAddress: reportsetting_obtain_case.MailAddressDto{
+			Email: setting.ReplyToAddress.Email,
+			Name:  setting.ReplyToAddress.Name,
+		},
 		RecipientAddresses: tos,
 		CCAddresses:        ccs,
 		BCCAddresses:       bccs,
