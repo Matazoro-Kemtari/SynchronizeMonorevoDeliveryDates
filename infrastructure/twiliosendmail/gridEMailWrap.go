@@ -19,7 +19,7 @@ type SendGridConfig struct {
 
 func NewSendGridConfig() *SendGridConfig {
 	return &SendGridConfig{
-		ApiKey: os.Getenv("API_KEY"),
+		ApiKey: os.Getenv("SEND_GRID_API_KEY"),
 	}
 }
 
