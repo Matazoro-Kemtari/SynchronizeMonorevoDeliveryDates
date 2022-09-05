@@ -77,6 +77,7 @@ func (m *SendGridMail) Send(
 	editedPropositions []report.EditedProposition,
 	prefixReport string,
 	suffixReport string,
+	replacements map[string]string,
 ) (string, error) {
 	if m.apiKey == "" {
 		m.sugar.Error("API KEYが設定されていません")
@@ -131,6 +132,11 @@ func (m *SendGridMail) Send(
 	html := m.makeHtmlText(editedPropositions, prefixReport, suffixReport)
 	h := mail.NewContent("text/html", html)
 	message.AddContent(h)
+
+	// 置換設定
+	for key, value := range replacements {
+		p.SetSubstitution("%"+key+"%", value)
+	}
 
 	// カスタムヘッダを指定 サンプルの例に倣って設定
 	message.SetHeader("X-Sent-Using", "SendGrid-API")

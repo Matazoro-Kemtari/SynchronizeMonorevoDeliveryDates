@@ -146,6 +146,7 @@ type ReportPram struct {
 	EditedPropositions []EditedPropositionPram
 	PrefixReport       string
 	SuffixReport       string
+	Replacements       map[string]string
 }
 
 type ReportOptions struct {
@@ -158,6 +159,7 @@ type ReportOptions struct {
 	editedPropositions []EditedPropositionPram
 	prefixReport       string
 	suffixReport       string
+	replacements       map[string]string
 }
 
 type ReportOption func(*ReportOptions)
@@ -228,6 +230,7 @@ func TestReportPramCreate(options ...ReportOption) *ReportPram {
 		editedPropositions: []EditedPropositionPram{*TestEditedPropositionPramCreate()},
 		prefixReport:       "結果報告:接頭辞",
 		suffixReport:       "結果報告:接尾辞",
+		replacements:       map[string]string{"count": "999"},
 	}
 
 	for _, option := range options {
@@ -244,6 +247,7 @@ func TestReportPramCreate(options ...ReportOption) *ReportPram {
 		EditedPropositions: opts.editedPropositions,
 		PrefixReport:       opts.prefixReport,
 		SuffixReport:       opts.suffixReport,
+		Replacements:       opts.replacements,
 	}
 }
 
@@ -277,6 +281,7 @@ func (s *SendingReportUseCase) Execute(r ReportPram) (string, error) {
 		ConvertToEditedProposition(r.EditedPropositions),
 		r.PrefixReport,
 		r.SuffixReport,
+		r.Replacements,
 	)
 }
 

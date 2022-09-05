@@ -37,6 +37,7 @@ func TestSendGridMail_Send(t *testing.T) {
 		editedPropositions []report.EditedProposition
 		prefixReport       string
 		suffixReport       string
+		replacements       map[string]string
 	}
 	tests := []struct {
 		name    string
@@ -98,6 +99,7 @@ func TestSendGridMail_Send(t *testing.T) {
 				},
 				prefixReport: "次の納期を変更した",
 				suffixReport: "以上",
+				replacements: map[string]string{"count": "5"},
 			},
 			want:    time.Now().Format("Mon, 02 Jan 2006"),
 			wantErr: false,
@@ -209,13 +211,14 @@ func TestSendGridMail_Send(t *testing.T) {
 				},
 				prefixReport: "次の納期を変更した",
 				suffixReport: "以上",
+				replacements: map[string]string{"count": "5"},
 			},
 			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.m.Send(tt.args.tos, tt.args.ccs, tt.args.bccs, tt.args.from, tt.args.replyTo, tt.args.subject, tt.args.editedPropositions, tt.args.prefixReport, tt.args.suffixReport)
+			got, err := tt.m.Send(tt.args.tos, tt.args.ccs, tt.args.bccs, tt.args.from, tt.args.replyTo, tt.args.subject, tt.args.editedPropositions, tt.args.prefixReport, tt.args.suffixReport, tt.args.replacements)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("SendGridMail.Send() error = %v, wantErr %v", err, tt.wantErr)
 				return

@@ -13,6 +13,7 @@ type Sender interface {
 		editedPropositions []EditedProposition,
 		prefixReport string,
 		suffixReport string,
+		replacements map[string]string,
 	) (string, error)
 }
 

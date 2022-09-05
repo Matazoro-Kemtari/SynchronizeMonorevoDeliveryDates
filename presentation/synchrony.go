@@ -8,6 +8,7 @@ import (
 	"SynchronizeMonorevoDeliveryDates/usecase/proposition_post_case"
 	"SynchronizeMonorevoDeliveryDates/usecase/report_send_case"
 	"SynchronizeMonorevoDeliveryDates/usecase/reportsetting_obtain_case"
+	"strconv"
 
 	"go.uber.org/zap"
 )
@@ -127,6 +128,7 @@ func (m *SynchronizingDeliveryDate) convertToReportPram(p []proposition_post_cas
 		EditedPropositions: convertToEditedPropositionPrams(p),
 		PrefixReport:       m.reportSetting.PrefixReport,
 		SuffixReport:       m.reportSetting.SuffixReport,
+		Replacements:       map[string]string{"count": strconv.Itoa(len(p))},
 	}
 }
 

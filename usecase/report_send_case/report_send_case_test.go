@@ -33,6 +33,7 @@ func TestSendingReportUseCase_Execute(t *testing.T) {
 		report_send_case.ConvertToEditedProposition(reportPram.EditedPropositions),
 		reportPram.PrefixReport,
 		reportPram.SuffixReport,
+		reportPram.Replacements,
 	).Return(mock_results, nil)
 
 	type args struct {

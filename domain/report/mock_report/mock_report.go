@@ -35,16 +35,16 @@ func (m *MockSender) EXPECT() *MockSenderMockRecorder {
 }
 
 // Send mocks base method.
-func (m *MockSender) Send(tos, ccs, bccs []report.EmailAddress, from, replyTo report.EmailAddress, subject string, editedPropositions []report.EditedProposition, prefixReport, suffixReport string) (string, error) {
+func (m *MockSender) Send(tos, ccs, bccs []report.EmailAddress, from, replyTo report.EmailAddress, subject string, editedPropositions []report.EditedProposition, prefixReport, suffixReport string, replacements map[string]string) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Send", tos, ccs, bccs, from, replyTo, subject, editedPropositions, prefixReport, suffixReport)
+	ret := m.ctrl.Call(m, "Send", tos, ccs, bccs, from, replyTo, subject, editedPropositions, prefixReport, suffixReport, replacements)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Send indicates an expected call of Send.
-func (mr *MockSenderMockRecorder) Send(tos, ccs, bccs, from, replyTo, subject, editedPropositions, prefixReport, suffixReport interface{}) *gomock.Call {
+func (mr *MockSenderMockRecorder) Send(tos, ccs, bccs, from, replyTo, subject, editedPropositions, prefixReport, suffixReport, replacements interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Send", reflect.TypeOf((*MockSender)(nil).Send), tos, ccs, bccs, from, replyTo, subject, editedPropositions, prefixReport, suffixReport)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Send", reflect.TypeOf((*MockSender)(nil).Send), tos, ccs, bccs, from, replyTo, subject, editedPropositions, prefixReport, suffixReport, replacements)
 }
