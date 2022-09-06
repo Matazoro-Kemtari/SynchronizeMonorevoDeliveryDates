@@ -107,6 +107,9 @@ $ go get -u gorm.io/gorm
 ```
 #### メール送信
 sendgrid
+golangのバージョンに注意 golang#1.19では、Windowsでは送信できるものの、ラズベリーパイではエラーになる現象があった。
+モジュールのREADMEにある通り、golang#1.17でビルドすること。
+[github](https://github.com/sendgrid/sendgrid-go)
 [Goでメール送信！Twilio SendGridを使って簡単に実装する方法](https://sendgrid.kke.co.jp/blog/?p=1241)
 ```
 $ go get -u github.com/sendgrid/sendgrid-go

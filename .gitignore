@@ -27,6 +27,7 @@ main
 *.zip
 *.pdf
 app_log.json
+SynchronizeMonorevoDeliveryDates
 
 # ものレボからダウンロードしたcsv
 output_*.csv

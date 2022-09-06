@@ -66,6 +66,7 @@ func main() {
 		ErrorOutputPaths: []string{"stderr"},
 	}
 	logger, _ := myConfig.Build()
+	defer logger.Sync()
 	sugar := logger.Sugar()
 
 	// .envファイルから環境変数を読み込む
