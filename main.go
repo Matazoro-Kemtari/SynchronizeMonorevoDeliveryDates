@@ -11,6 +11,7 @@ import (
 	"github.com/joho/godotenv"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 // バージョン埋め込む
@@ -45,12 +46,9 @@ func main() {
 
 	level := zap.NewAtomicLevel()
 	level.SetLevel(zapcore.DebugLevel)
-
 	// https://qiita.com/emonuh/items/28dbee9bf2fe51d28153#config%E7%B7%A8
-	myConfig := zap.Config{
-		Level:    level,
-		Encoding: "json",
-		EncoderConfig: zapcore.EncoderConfig{
+	enc := zapcore.NewJSONEncoder(
+		zapcore.EncoderConfig{
 			TimeKey:        "Time",
 			LevelKey:       "Level",
 			NameKey:        "Name",
@@ -62,10 +60,18 @@ func main() {
 			EncodeDuration: zapcore.StringDurationEncoder,
 			EncodeCaller:   zapcore.ShortCallerEncoder,
 		},
-		OutputPaths:      []string{"stdout", logFile},
-		ErrorOutputPaths: []string{"stderr"},
-	}
-	logger, _ := myConfig.Build()
+	)
+	sink := zapcore.AddSync(
+		&lumberjack.Logger{
+			Filename:   "./" + logFile, // ファイル名
+			MaxSize:    500,            // ローテーションするファイルサイズ(megabytes)
+			MaxAge:     7,              // 古いログを保持する日数
+			MaxBackups: 3,              // 保持する古いログの最大ファイル数
+			LocalTime:  false,          // バックアップファイルの時刻フォーマットをサーバローカル時間指定
+			Compress:   false,          // ローテーションされたファイルのgzip圧縮
+		},
+	)
+	logger := zap.New(zapcore.NewCore(enc, sink, level))
 	defer logger.Sync()
 	sugar := logger.Sugar()
 
