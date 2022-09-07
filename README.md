@@ -1,116 +1,118 @@
 # SynchronizeMono-revoDeliveryDates
-ものレボの納期を同期させる
+## 概要
+受注管理DBと、ものレボの納期を同期させます。
 
-## 技術資料
-<img src="images/sudoDiagram.png" alt="sudo図"/>
+## 動作環境
+Raspberry piで実行します。
 
-### 規約
-[他言語プログラマが最低限、気にすべきGoのネーミングルール](https://zenn.dev/keitakn/articles/go-naming-rules)
-[Go の命名規則](https://micnncim.com/posts/ja/go-naming-convention)
+### Raspberry pi
+名刺サイズの小型コンピュータの事で、LinuxOSが動作します。
+常時起動性・定期実効性に優れています。
 
-### 開発環境インストール
-vscodeは入っている前提で説明する。
+## ファイル
+|ファイル名|説明|
+|--|--|
+|app_log.json|動作ログ|
+|appsettings.json|アプリ動作設定|
+|reportsettings.json|結果メール設定|
+|SynchronizeMonorevoDeliveryDates|アプリ本体|
+|download/work|作業フォルダ|
 
-こちらを参考に、拡張機能をインストールして、設定を行う。
-[VSCodeでGo言語の開発環境を構築する](https://qiita.com/melty_go/items/c977ba594efcffc8b567)
+運用するうえで、編集する必要があるのは、reportsettings.jsonです。
 
-さらに読み進めてプロジェクトのセットアップを行う。
-もしくは、gitからダウンロードする。
+## 結果メール設定ファイル編集
 
-launch.jsonを記述する。
-```json
-{
-    // IntelliSense を使用して利用可能な属性を学べます。
-    // 既存の属性の説明をホバーして表示します。
-    // 詳細情報は次を確認してください: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Launch Workspace",
-            "type": "go",
-            "request": "launch",
-            "mode": "auto",
-            "program": "${workspaceFolder}"
-        },
-        {
-            "name": "Launch File",
-            "type": "go",
-            "request": "launch",
-            "mode": "auto",
-            "program": "${fileDirname}"
-        }
+1. Windowsで、次のフォルダを開きます。
+\\raspberrypi\seikan\bin\JSONedit_0_10_0_4
+<img src="images/jsonEditDir.png" alt="JSONedit"/>
 
-    ]
-}
-```
+1. JSONedit.exeをダブルクリックして実行します。
+<img src="images/jsonEditDir.png" alt="JSONedit"/>
 
-### 必要ライブラリ
+1. メニューから、File > Openをクリックして、reportsettings.jsonを開きます。
+\\raspberrypi\seikan\bin\SynchronizeMonorevoDeliveryDates\reportsettings.json
+<img src="images/newJsonEdit.png" alt="Open"/>
 
-#### DIツール
-[Goでwireを使って依存性注入（DI）する](https://rinoguchi.net/2022/06/go_wire_id.html)
-[GoのDIツールwireで知っておくと良いこと](https://christina04.hatenablog.com/entry/google-wire)
-[GoのプロジェクトのDIをWireを使ってシンプルに](https://qiita.com/momotaro98/items/0b75a37048833dd6d324)
-```
-$ go install github.com/google/wire/cmd/wire@latest
-```
-#### 環境変数
-[【Go】.envファイルをGolangでも使用するためのライブラリ「godotenv」](https://qiita.com/sola-msr/items/fb7d6889d7bd7a6705d0)
-```
-$ go get -u github.com/joho/godotenv
-```
-#### ロギング
-[golangの高速な構造化ログライブラリ「zap」の使い方](https://qiita.com/emonuh/items/28dbee9bf2fe51d28153)
-```
-$ go get -u go.uber.org/zap
-```
-#### スクレイピング
-[golangでagoutiとgoqueryを使ってスクレイピングする](https://qiita.com/york_____nishi/items/b76ff9163afaaad13de2)
-goquery
-```
-$ go get -u github.com/PuerkitoBio/goquery
-```
-#### ブラウザ自動操作
-chromium driver
-[Go×agoutiで病院の予約戦争に勝利する](https://tanabebe.hatenablog.com/entry/2019/12/24/180000)
-frame対策:[阿部寛をWebDriverでいじくる](https://qiita.com/h-hiroki/items/04d8c6636968c07a438e)
-[Goではじめてみたブラウザの自動操作](https://qiita.com/0829/items/c1e494bb128ade5f0872)
-[Python Webスクレイピング テクニック集「取得できない値は無い」JavaScript対応@追記あり6/12](https://qiita.com/Azunyan1111/items/b161b998790b1db2ff7a)
-```
-$ go get -u github.com/sclevine/agouti
-```
-#### モック
-[Goでメソッドを簡単にモック化する【gomock】](https://qiita.com/gold-kou/items/81562f9142323b364a60)
-参考:[Goのテストに使える手作りモックパターン](https://moneyforward.com/engineers_blog/2021/03/08/go-test-mock/#fnref:1)
-```
-$ go get github.com/golang/mock/gomock
-$ go install github.com/golang/mock/mockgen
-```
-#### アサーション
-testify
-標準パッケージのtestingにはassert関数はありません。
-testifyライブラリーを使用することで、assert関数を使うことができます。
-[Golangのtestify/assert 使えそうな関数まとめ](https://qiita.com/JpnLavender/items/21b4574a7513472903ea)
-```
-$ go get -u -v github.com/stretchr/testify
-```
-#### ORマッパー
-gorm
-Go言語のORMライブラリ
-[GORMガイド](https://gorm.io/ja_JP/docs/index.html)
-[GORMガイド:データベースに接続する(SQLServer)](https://gorm.io/ja_JP/docs/connecting_to_the_database.html#SQL-Server)
-[【Go】Gormの使い方(CRUD)](https://zenn.dev/a_ichi1/articles/4b113d4c46857a)
-[GORMガイド:モデルを宣言する](https://gorm.io/ja_JP/docs/models.html)
-[GORM による Model (Entity) の設計](https://zenn.dev/spiegel/books/a-study-in-postgresql/viewer/models-with-gorm)
-```
-$ go get -u gorm.io/gorm
-# go get -u gorm.io/driver/sqlserver
-```
-#### メール送信
-sendgrid
-golangのバージョンに注意 golang#1.19では、Windowsでは送信できるものの、ラズベリーパイではエラーになる現象があった。
-モジュールのREADMEにある通り、golang#1.17でビルドすること。
-[github](https://github.com/sendgrid/sendgrid-go)
-[Goでメール送信！Twilio SendGridを使って簡単に実装する方法](https://sendgrid.kke.co.jp/blog/?p=1241)
-```
-$ go get -u github.com/sendgrid/sendgrid-go
-```
+### 送信者・返信先の設定
+左側のツリーを広げると、下表の様な階層が確認できます。
+このうち、"senderAddress"と"replyToAddress"が送信者・返信先の設定です。
+|Level-1|Level-2|説明|
+|--|--|--|
+|senderAddress||送信者の設定項目|
+|senderAddress|email|送信者のメールアドレス|
+|senderAddress|name|送信者の名前|
+|replyToAddress||返信先の設定項目|
+|replyToAddress|email|返信先のメールアドレス|
+|replyToAddress|name|返信先の名前|
+"email"・"name"のいずれかを選択して、下図右側の矢印部分を編集します。
+
+**注意:** Level-1/2の名称は変更しないでください。
+アプリが動作しなくなります。
+変更して良いのは、設定値(Value)のみです。
+
+<img src="images/senderAddressJsonEdit.png" alt="sender setting"/>
+
+### 宛先(TO)・CC・BCCの設定
+基本的には、送信者と同じ形式をしています。
+宛先(TO)・CC・BCCは、複数設定できる事から、角カッコで、複数のメールアドレスを表現しています。
+
+#### 宛先追加
+宛先を追加するには、既存のメールアドレスをコピーするのが簡単です。
+図のように操作してください。
+その後、メールアドレスと名前を編集します。
+"recipientAddresses"の角カッコを、"ccAddresses"・"bccAddresses"へ貼りつける事もできます。
+<img src="images/addRecipientJsonEdit.png" alt="宛先を追加"/>
+
+#### 宛先削除
+角カッコを選択後、Deleteキーを押します。
+
+### 表題の設定
+表題を編集するには、"subject"を選択し、下図右側のValueを編集します。
+"%count%"は、アプリ内で、納期の変更対象の件数に置換されます。
+<img src="images/subjectJsonEdit.png" alt="表題"/>
+
+### 接頭辞・接尾辞の設定
+同期レポート本文の、冒頭と末尾にそれぞれ挿入されます。
+編集の方法は表題と同じです。
+"%count%"を入力すると、表題と同様に置換されます。
+|項目|説明|解説|
+|--|--|--|
+|prefixReport|接頭辞|冒頭に挿入されます|
+|suffixReport|接尾辞|末尾に挿入されます|
+
+## 実行スケジュール
+毎日午前7時に、納期の同期を行い、結果をメール送信します。
+スケジュールの変更は、リモートデスクトップで小型コンピュータにログインして行います。
+
+### リモートデスクトップ
+1. リモートデスクトップは、スタートメニューから、Windowsアクセサリにあります。
+<img src="images/rd_taskmenu.png" alt="スタートメニュー"/>
+1. コンピュータ名に「raspberrypi」を入力します。
+1. 「接続」ボタンを押します。
+<img src="images/rd_connect.png" alt="接続"/>
+1. 「Session」は変更しないでください。
+1. 「username」「password」両方に、「seikan」と入力してください。
+1. 「OK」ボタンを押します。
+<img src="images/rd_login.png" alt="ログイン"/>
+
+### リモートデスクトップの終了
+1. リモートデスクトップを終了するときは、左上のアイコンから、「ログアウト」を押します。
+<img src="images/raspberrypilogoutmenu.png" alt="ログアウト"/>
+1. シャットダウンウィンドウから、「Logout」を押します。
+通常は、「Logout」を押しますが、シャットダウンや再起動をしたいときは、「Shutdon」「Reboot」のいずれかを押します。
+<img src="images/raspberrypishutdownmenu.png" alt="シャットダウンメニュー"/>
+
+**注意** このコンピュータを移動する際に、電源を抜く際は、シャットダウンを行ってください。
+Linuxサーバが壊れてしまうことがあります。
+また、電気工事など停電時は、シャットダウンをしてください。
+
+### 実行スケジュール設定
+1. 左上のアイコンをクリックして、「タスクスケジューラー」を起動します。
+<img src="images/raspberrypimenu.png" alt="ラズパイメニュー"/>
+1. 一つだけタスクが登録されています。
+この例では、毎日午前7時に設定してあります。
+<img src="images/cronsummary.png" alt="タスクスケジューラ"/>
+1. 変更する場合は、「編集」ボタンを押します。
+1. この画面で、いつタスクを実行するのか設定します。
+<img src="images/crondetail.png" alt="タスクスケジューラ設定"/>
+1. 設定が終わったら、「OK」ボタンを押します。
