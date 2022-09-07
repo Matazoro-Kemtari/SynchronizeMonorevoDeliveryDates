@@ -68,13 +68,17 @@ func (m *SynchronizingDeliveryDate) Synchronize() error {
 	diff := m.extractor.Execute(diffPram)
 	m.sugar.Debug("diff", diff)
 
-	m.sugar.Info("ものレボへ案件一覧を送信する")
-	posting := convertToPostPrams(diff)
-	posted, err := m.webPoster.Execute(posting)
-	if err != nil {
-		m.sugar.Fatal("ものレボへ案件一覧を送信で失敗しました", err)
+	var posted []proposition_post_case.PostedPropositionDto
+	if diff != nil {
+		m.sugar.Info("ものレボへ案件一覧を送信する")
+		posting := convertToPostPrams(diff)
+		posted, err := m.webPoster.Execute(posting)
+		if err != nil {
+			m.sugar.Fatal("ものレボへ案件一覧を送信で失敗しました", err)
+		}
+		m.sugar.Debug("posted", posted)
+
 	}
-	m.sugar.Debug("posted", posted)
 
 	// 詰め替え
 	reportPram := m.convertToReportPram(posted)

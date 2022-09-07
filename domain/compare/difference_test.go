@@ -49,14 +49,17 @@ func TestDifference_ExtractForDeliveryDate(t *testing.T) {
 				p: []monorevo.Proposition{
 					{
 						WorkedNumber: "99A-1",
+						DET:          "1",
 						DeliveryDate: time.Date(3000, 1, 1, 0, 0, 0, 0, time.UTC),
 					},
 					{
 						WorkedNumber: "99A-2",
+						DET:          "1",
 						DeliveryDate: time.Date(3000, 2, 1, 0, 0, 0, 0, time.UTC),
 					},
 					{
 						WorkedNumber: "99A-3",
+						DET:          "1",
 						DeliveryDate: time.Date(3000, 3, 1, 0, 0, 0, 0, time.UTC),
 					},
 				},
@@ -92,14 +95,17 @@ func TestDifference_ExtractForDeliveryDate(t *testing.T) {
 				p: []monorevo.Proposition{
 					{
 						WorkedNumber: "99B-1",
+						DET:          "1",
 						DeliveryDate: time.Date(3000, 1, 10, 0, 0, 0, 0, time.UTC),
 					},
 					{
 						WorkedNumber: "99B-2",
+						DET:          "1",
 						DeliveryDate: time.Date(3000, 2, 10, 0, 0, 0, 0, time.UTC),
 					},
 					{
 						WorkedNumber: "99B-3",
+						DET:          "1",
 						DeliveryDate: time.Date(3000, 3, 10, 0, 0, 0, 0, time.UTC),
 					},
 				},
@@ -107,13 +113,82 @@ func TestDifference_ExtractForDeliveryDate(t *testing.T) {
 			want: []monorevo.DifferentProposition{
 				{
 					WorkedNumber:        "99B-2",
+					DET:                 "1",
 					DeliveryDate:        time.Date(3000, 2, 10, 0, 0, 0, 0, time.UTC),
 					UpdatedDeliveryDate: time.Date(3000, 2, 20, 0, 0, 0, 0, time.UTC),
 				},
 				{
 					WorkedNumber:        "99B-3",
+					DET:                 "1",
 					DeliveryDate:        time.Date(3000, 3, 10, 0, 0, 0, 0, time.UTC),
 					UpdatedDeliveryDate: time.Date(3000, 3, 9, 0, 0, 0, 0, time.UTC),
+				},
+			},
+		},
+		{
+			name: "正常系_同じ作業NoでDET番号違いの納期の差分を返すこと",
+			e:    compare.NewDifference(),
+			args: args{
+				j: []orderdb.JobBook{
+					{
+						WorkedNumber: "20R-1",
+						DeliveryDate: time.Date(3020, 1, 10, 0, 0, 0, 0, time.UTC),
+					},
+					{
+						WorkedNumber: "20R-2",
+						DeliveryDate: time.Date(3020, 2, 10, 0, 0, 0, 0, time.UTC),
+					},
+					{
+						WorkedNumber: "20R-3",
+						DeliveryDate: time.Date(3020, 3, 10, 0, 0, 0, 0, time.UTC),
+					},
+				},
+				p: []monorevo.Proposition{
+					{
+						WorkedNumber: "20R-1",
+						DET:          "1",
+						DeliveryDate: time.Date(3020, 1, 15, 0, 0, 0, 0, time.UTC),
+					},
+					{
+						WorkedNumber: "20R-1",
+						DET:          "2",
+						DeliveryDate: time.Date(3020, 1, 16, 0, 0, 0, 0, time.UTC),
+					},
+					{
+						WorkedNumber: "20R-1",
+						DET:          "ASSY",
+						DeliveryDate: time.Date(3020, 1, 17, 0, 0, 0, 0, time.UTC),
+					},
+					{
+						WorkedNumber: "20Q-1",
+						DET:          "1",
+						DeliveryDate: time.Date(3020, 1, 15, 0, 0, 0, 0, time.UTC),
+					},
+					{
+						WorkedNumber: "20Q-1",
+						DET:          "1",
+						DeliveryDate: time.Date(3020, 1, 15, 0, 0, 0, 0, time.UTC),
+					},
+				},
+			},
+			want: []monorevo.DifferentProposition{
+				{
+					WorkedNumber:        "20R-1",
+					DET:                 "1",
+					DeliveryDate:        time.Date(3020, 1, 15, 0, 0, 0, 0, time.UTC),
+					UpdatedDeliveryDate: time.Date(3020, 1, 10, 0, 0, 0, 0, time.UTC),
+				},
+				{
+					WorkedNumber:        "20R-1",
+					DET:                 "2",
+					DeliveryDate:        time.Date(3020, 1, 16, 0, 0, 0, 0, time.UTC),
+					UpdatedDeliveryDate: time.Date(3020, 1, 10, 0, 0, 0, 0, time.UTC),
+				},
+				{
+					WorkedNumber:        "20R-1",
+					DET:                 "ASSY",
+					DeliveryDate:        time.Date(3020, 1, 17, 0, 0, 0, 0, time.UTC),
+					UpdatedDeliveryDate: time.Date(3020, 1, 10, 0, 0, 0, 0, time.UTC),
 				},
 			},
 		},
@@ -125,6 +200,7 @@ func TestDifference_ExtractForDeliveryDate(t *testing.T) {
 				p: []monorevo.Proposition{
 					{
 						WorkedNumber: "12A-345",
+						DET:          "1",
 						DeliveryDate: time.Now(),
 					},
 				},

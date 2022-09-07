@@ -68,6 +68,9 @@ func (m *PropositionExtractingUseCase) Execute(s DifferenceSourcePram) []Differe
 		))
 	}
 	diff := m.extractor.ExtractForDeliveryDate(j, p)
+	if diff == nil {
+		return nil
+	}
 
 	// DTOに詰め替え
 	cnv := []DifferentPropositionDto{}
