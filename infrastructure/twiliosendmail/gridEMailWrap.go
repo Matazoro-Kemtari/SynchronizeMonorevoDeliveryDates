@@ -208,8 +208,12 @@ func (m *SendGridMail) makeHtmlText(
 	body += fmt.Sprintf("<p>%v</p>\n", replaceBr(prefixReport))
 	body += "<table><tr><th>作業No</th><th>DET番号</th><th>成否</th><th>変更前納期</th><th>変更後納期</th></tr>"
 	for _, v := range editedPropositions {
+		var tr string = "<tr><td>%v</td><td>%v</td><td>%v</td><td>%v</td><td>%v</td></tr>\n"
+		if !v.Successful {
+			tr = `<tr><td><font color="red">%v</font></td><td><font color="red">%v</font></td><td><font color="red">%v</font></td><td>%v</td><td>%v</td></tr>\n`
+		}
 		body += fmt.Sprintf(
-			"<tr><td>%v</td><td>%v</td><td>%v</td><td>%v</td><td>%v</td></tr>\n",
+			tr,
 			v.WorkedNumber,
 			v.DET,
 			SuccessfulStr(v.Successful),
