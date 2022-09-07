@@ -47,8 +47,10 @@ func main() {
 	level := zap.NewAtomicLevel()
 	level.SetLevel(zapcore.DebugLevel)
 	// https://qiita.com/emonuh/items/28dbee9bf2fe51d28153#config%E7%B7%A8
-	enc := zapcore.NewJSONEncoder(
-		zapcore.EncoderConfig{
+	myConfig := zap.Config{
+		Level:    level,
+		Encoding: "json",
+		EncoderConfig: zapcore.EncoderConfig{
 			TimeKey:        "Time",
 			LevelKey:       "Level",
 			NameKey:        "Name",
@@ -60,7 +62,9 @@ func main() {
 			EncodeDuration: zapcore.StringDurationEncoder,
 			EncodeCaller:   zapcore.ShortCallerEncoder,
 		},
-	)
+		OutputPaths:      []string{"stdout"},
+		ErrorOutputPaths: []string{"stderr"},
+	}
 	sink := zapcore.AddSync(
 		&lumberjack.Logger{
 			Filename:   "./" + logFile, // ファイル名
@@ -71,7 +75,7 @@ func main() {
 			Compress:   false,          // ローテーションされたファイルのgzip圧縮
 		},
 	)
-	logger := zap.New(zapcore.NewCore(enc, sink, level))
+	logger, _ := myConfig.Build(SetOutput(sink, myConfig))
 	defer logger.Sync()
 	sugar := logger.Sugar()
 
@@ -95,4 +99,22 @@ func main() {
 	if err := synchronize.Synchronize(); err != nil {
 		sugar.Fatal(err)
 	}
+}
+
+// SetOutput replaces existing Core with new, that writes to passed WriteSyncer.
+// https://github.com/uber-go/zap/issues/342
+func SetOutput(ws zapcore.WriteSyncer, conf zap.Config) zap.Option {
+	var enc zapcore.Encoder
+	// Copy paste from zap.Config.buildEncoder.
+	switch conf.Encoding {
+	case "json":
+		enc = zapcore.NewJSONEncoder(conf.EncoderConfig)
+	case "console":
+		enc = zapcore.NewConsoleEncoder(conf.EncoderConfig)
+	default:
+		panic("unknown encoding")
+	}
+	return zap.WrapCore(func(zapcore.Core) zapcore.Core {
+		return zapcore.NewCore(enc, ws, conf.Level)
+	})
 }
