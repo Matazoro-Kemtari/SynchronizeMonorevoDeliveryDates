@@ -95,10 +95,6 @@ func (m *SendGridMail) Send(
 		m.sugar.Error("返信先が設定されていません")
 		return "", fmt.Errorf("返信先が設定されていません")
 	}
-	if len(editedPropositions) < 1 {
-		m.sugar.Error("編集結果がありません")
-		return "", fmt.Errorf("編集結果がありません")
-	}
 
 	// メッセージの構築
 	message := mail.NewV3Mail()
@@ -180,16 +176,20 @@ func (m *SendGridMail) makePlainText(
 	suffixReport string,
 ) string {
 	body := replaceLf(prefixReport) + "\n"
-	body += "作業No\tDET番号\t成否\t変更前納期\t変更後納期\n"
-	for _, v := range editedPropositions {
-		body += fmt.Sprintf(
-			"%v\t%v\t%v\t%v\t%v\n",
-			v.WorkedNumber,
-			v.DET,
-			SuccessfulStr(v.Successful),
-			v.DeliveryDate.Format("2006/01/02"),
-			v.UpdatedDeliveryDate.Format("2006/01/02"),
-		)
+	if len(editedPropositions) > 0 {
+		body += "作業No\tDET番号\t成否\t変更前納期\t変更後納期\n"
+		for _, v := range editedPropositions {
+			body += fmt.Sprintf(
+				"%v\t%v\t%v\t%v\t%v\n",
+				v.WorkedNumber,
+				v.DET,
+				SuccessfulStr(v.Successful),
+				v.DeliveryDate.Format("2006/01/02"),
+				v.UpdatedDeliveryDate.Format("2006/01/02"),
+			)
+		}
+	} else {
+		body += "同期対象がありませんでした\n"
 	}
 	body += replaceLf(suffixReport)
 
@@ -206,22 +206,26 @@ func (m *SendGridMail) makeHtmlText(
 	body += `<meta http-equiv="content-type" content="text/html; charset=UTF-8">`
 	body += "</head><body>\n"
 	body += fmt.Sprintf("<p>%v</p>\n", replaceBr(prefixReport))
-	body += "<table><tr><th>作業No</th><th>DET番号</th><th>成否</th><th>変更前納期</th><th>変更後納期</th></tr>"
-	for _, v := range editedPropositions {
-		var tr string = "<tr><td>%v</td><td>%v</td><td>%v</td><td>%v</td><td>%v</td></tr>\n"
-		if !v.Successful {
-			tr = `<tr><td><font color="red">%v</font></td><td><font color="red">%v</font></td><td><font color="red">%v</font></td><td>%v</td><td>%v</td></tr>\n`
+	if len(editedPropositions) > 0 {
+		body += "<table><tr><th>作業No</th><th>DET番号</th><th>成否</th><th>変更前納期</th><th>変更後納期</th></tr>"
+		for _, v := range editedPropositions {
+			var tr string = "<tr><td>%v</td><td>%v</td><td>%v</td><td>%v</td><td>%v</td></tr>\n"
+			if !v.Successful {
+				tr = `<tr><td><font color="red">%v</font></td><td><font color="red">%v</font></td><td><font color="red">%v</font></td><td>%v</td><td>%v</td></tr>\n`
+			}
+			body += fmt.Sprintf(
+				tr,
+				v.WorkedNumber,
+				v.DET,
+				SuccessfulStr(v.Successful),
+				v.DeliveryDate.Format("2006/01/02"),
+				v.UpdatedDeliveryDate.Format("2006/01/02"),
+			)
 		}
-		body += fmt.Sprintf(
-			tr,
-			v.WorkedNumber,
-			v.DET,
-			SuccessfulStr(v.Successful),
-			v.DeliveryDate.Format("2006/01/02"),
-			v.UpdatedDeliveryDate.Format("2006/01/02"),
-		)
+		body += "</table>"
+	} else {
+		body += "<p>同期対象がありませんでした</p>\n"
 	}
-	body += "</table>"
 	body += fmt.Sprintf("<p>%v</p>\n", replaceBr(suffixReport))
 	body += "</body></html>"
 	return body

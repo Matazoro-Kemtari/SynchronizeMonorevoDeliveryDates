@@ -21,8 +21,8 @@ func NewDifference() *Difference {
 // ものレボの納期と受注管理DBの納期を比較して 差分を返す
 func (e Difference) ExtractForDeliveryDate(j []orderdb.JobBook, p []monorevo.Proposition) []monorevo.DifferentProposition {
 	var diff []monorevo.DifferentProposition
-	for _, job := range j {
-		for _, pp := range p {
+	for _, pp := range p {
+		for _, job := range j {
 			if job.WorkedNumber == pp.WorkedNumber {
 				if !job.DeliveryDate.Equal(pp.DeliveryDate) {
 					diff = append(diff, *monorevo.NewDifferenceProposition(
