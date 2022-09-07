@@ -64,7 +64,7 @@ func main() {
 	sink := zapcore.AddSync(
 		&lumberjack.Logger{
 			Filename:   "./" + logFile, // ファイル名
-			MaxSize:    500,            // ローテーションするファイルサイズ(megabytes)
+			MaxSize:    1,              // ローテーションするファイルサイズ(megabytes)
 			MaxAge:     7,              // 古いログを保持する日数
 			MaxBackups: 3,              // 保持する古いログの最大ファイル数
 			LocalTime:  false,          // バックアップファイルの時刻フォーマットをサーバローカル時間指定
