@@ -1,0 +1,44 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"cSpell.words": [
+			"appcnf",
+			"appsetting",
+			"appsettings",
+			"bccs",
+			"cfgs",
+			"divs",
+			"extractdifference",
+			"fropositions",
+			"goquery",
+			"gorm",
+			"jobbook",
+			"KHTML",
+			"monorevo",
+			"natefinch",
+			"nonexisitent",
+			"obtainappsetting",
+			"orderdb",
+			"postable",
+			"prefs",
+			"Puerkito",
+			"reportsetting",
+			"reportsettings",
+			"sandboxmode",
+			"sclevine",
+			"sendgrid",
+			"sentmail",
+			"smlot",
+			"sqlserver",
+			"stretchr",
+			"tbody",
+			"twiliosendmail",
+			"wireinject"
+		],
+		"go.testTimeout": "120s"
+	}
+}
