@@ -72,12 +72,12 @@ func (m *SynchronizingDeliveryDate) Synchronize() error {
 	if diff != nil {
 		m.sugar.Info("ものレボへ案件一覧を送信する")
 		posting := convertToPostPrams(diff)
-		posted, err := m.webPoster.Execute(posting)
+		var err error
+		posted, err = m.webPoster.Execute(posting)
 		if err != nil {
 			m.sugar.Fatal("ものレボへ案件一覧を送信で失敗しました", err)
 		}
 		m.sugar.Debug("posted", posted)
-
 	}
 
 	// 詰め替え
