@@ -18,6 +18,7 @@ type PropositionPram struct {
 	WorkedNumber string
 	DET          string
 	DeliveryDate time.Time
+	Code         string
 }
 
 type DifferenceSourcePram struct {
@@ -30,6 +31,7 @@ type DifferentPropositionDto struct {
 	DET                 string
 	DeliveryDate        time.Time
 	UpdatedDeliveryDate time.Time
+	Code                string
 }
 
 type Executor interface {
@@ -65,6 +67,7 @@ func (m *PropositionExtractingUseCase) Execute(s DifferenceSourcePram) []Differe
 			v.WorkedNumber,
 			v.DET,
 			v.DeliveryDate,
+			v.Code,
 		))
 	}
 	diff := m.extractor.ExtractForDeliveryDate(j, p)
@@ -82,6 +85,7 @@ func (m *PropositionExtractingUseCase) Execute(s DifferenceSourcePram) []Differe
 				DET:                 v.DET,
 				DeliveryDate:        v.DeliveryDate,
 				UpdatedDeliveryDate: v.UpdatedDeliveryDate,
+				Code:                v.Code,
 			},
 		)
 	}

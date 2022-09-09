@@ -36,7 +36,7 @@ func TestPropositionExtractingUseCase_Execute(t *testing.T) {
 			name: "正常系_UseCaseを実行するとモックが実行されること",
 			m:    difference_extract_case.NewExtractingPropositionUseCase(logger.Sugar(), mock_diff),
 			args: args{},
-			want: []difference_extract_case.DifferentPropositionDto{},
+			want: nil,
 		},
 	}
 	for _, tt := range tests {

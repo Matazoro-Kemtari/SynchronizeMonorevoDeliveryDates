@@ -47,6 +47,7 @@ func (p *PropositionTable) PostRange(postablePropositions []monorevo.DifferentPr
 					false,
 					v.DeliveryDate,
 					v.UpdatedDeliveryDate,
+					v.Code,
 				))
 			p.sugar.Errorf(
 				"現在日(%v)より過去の納期(%v)は受付できない",
@@ -65,6 +66,7 @@ func (p *PropositionTable) PostRange(postablePropositions []monorevo.DifferentPr
 					false,
 					v.DeliveryDate,
 					v.UpdatedDeliveryDate,
+					v.Code,
 				))
 			p.sugar.Error(
 				"案件検索ができなかった",
@@ -81,6 +83,7 @@ func (p *PropositionTable) PostRange(postablePropositions []monorevo.DifferentPr
 					false,
 					v.DeliveryDate,
 					v.UpdatedDeliveryDate,
+					v.Code,
 				))
 			p.sugar.Errorf(
 				"作業No(%v),DET番号(%v)の該当がなかった",
@@ -100,6 +103,7 @@ func (p *PropositionTable) PostRange(postablePropositions []monorevo.DifferentPr
 					false,
 					v.DeliveryDate,
 					v.UpdatedDeliveryDate,
+					v.Code,
 				))
 			p.sugar.Error(
 				"納期の更新ができませんでした",
@@ -116,6 +120,7 @@ func (p *PropositionTable) PostRange(postablePropositions []monorevo.DifferentPr
 				(successful == success),
 				v.DeliveryDate,
 				v.UpdatedDeliveryDate,
+				v.Code,
 			))
 	}
 
