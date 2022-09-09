@@ -30,6 +30,7 @@ func (e Difference) ExtractForDeliveryDate(j []orderdb.JobBook, p []monorevo.Pro
 						pp.DET,
 						pp.DeliveryDate,
 						job.DeliveryDate,
+						pp.Code,
 					))
 				}
 				break

@@ -40,11 +40,6 @@ func TestPropositionTable_PostRange(t *testing.T) {
 			DET:                 "1",
 			DeliveryDate:        time.Date(2222, 8, 21, 0, 0, 0, 0, time.UTC),
 			UpdatedDeliveryDate: time.Date(2222, 8, 22, 0, 0, 0, 0, time.UTC),
-		}, {
-			WorkedNumber:        "99仮-1",
-			DET:                 "2",
-			DeliveryDate:        time.Date(2222, 10, 21, 0, 0, 0, 0, time.UTC),
-			UpdatedDeliveryDate: time.Date(2222, 10, 22, 0, 0, 0, 0, time.UTC),
 		},
 	}
 
@@ -122,7 +117,6 @@ func TestPropositionTable_PostRange(t *testing.T) {
 			args: args{
 				[]monorevo.DifferentProposition{
 					updatableCases[0],
-					updatableCases[1],
 				},
 			},
 			want: []monorevo.UpdatedProposition{
@@ -132,13 +126,6 @@ func TestPropositionTable_PostRange(t *testing.T) {
 					Successful:          true,
 					DeliveryDate:        updatableCases[0].DeliveryDate,
 					UpdatedDeliveryDate: updatableCases[0].UpdatedDeliveryDate,
-				},
-				{
-					WorkedNumber:        updatableCases[1].WorkedNumber,
-					DET:                 updatableCases[1].DET,
-					Successful:          true,
-					DeliveryDate:        updatableCases[1].DeliveryDate,
-					UpdatedDeliveryDate: updatableCases[1].UpdatedDeliveryDate,
 				},
 			},
 			wantErr: false,
