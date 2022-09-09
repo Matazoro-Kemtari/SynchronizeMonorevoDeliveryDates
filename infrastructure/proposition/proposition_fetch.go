@@ -198,6 +198,7 @@ func (p *PropositionTable) deserializeCsv(name string) ([]monorevo.Proposition, 
 				row[0],
 				row[1],
 				d,
+				row[21],
 			),
 		)
 	}
