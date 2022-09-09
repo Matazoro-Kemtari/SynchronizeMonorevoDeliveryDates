@@ -22,17 +22,18 @@ func TestPropositionTable_PostRange(t *testing.T) {
 	logger, _ := zap.NewDevelopment()
 
 	nonexisitentCase := monorevo.DifferentProposition{
-
 		WorkedNumber:        "99A-9999",
 		DET:                 "1",
 		DeliveryDate:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedDeliveryDate: time.Date(2020, 1, 10, 0, 0, 0, 0, time.UTC),
+		Code:                "22B-1",
 	}
 	pastCase := monorevo.DifferentProposition{
 		WorkedNumber:        "22T-378",
 		DET:                 "1",
 		DeliveryDate:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedDeliveryDate: time.Date(2020, 1, 10, 0, 0, 0, 0, time.UTC),
+		Code:                "22C-1",
 	}
 	updatableCases := []monorevo.DifferentProposition{
 		{
@@ -40,6 +41,7 @@ func TestPropositionTable_PostRange(t *testing.T) {
 			DET:                 "1",
 			DeliveryDate:        time.Date(2222, 8, 21, 0, 0, 0, 0, time.UTC),
 			UpdatedDeliveryDate: time.Date(2222, 8, 22, 0, 0, 0, 0, time.UTC),
+			Code:                "",
 		},
 	}
 
@@ -80,6 +82,7 @@ func TestPropositionTable_PostRange(t *testing.T) {
 					Successful:          false,
 					DeliveryDate:        nonexisitentCase.DeliveryDate,
 					UpdatedDeliveryDate: nonexisitentCase.UpdatedDeliveryDate,
+					Code:                nonexisitentCase.Code,
 				},
 			},
 			wantErr: false,
@@ -103,6 +106,7 @@ func TestPropositionTable_PostRange(t *testing.T) {
 					Successful:          false,
 					DeliveryDate:        pastCase.DeliveryDate,
 					UpdatedDeliveryDate: pastCase.UpdatedDeliveryDate,
+					Code:                pastCase.Code,
 				},
 			},
 			wantErr: false,
@@ -126,6 +130,7 @@ func TestPropositionTable_PostRange(t *testing.T) {
 					Successful:          true,
 					DeliveryDate:        updatableCases[0].DeliveryDate,
 					UpdatedDeliveryDate: updatableCases[0].UpdatedDeliveryDate,
+					Code:                updatableCases[0].Code,
 				},
 			},
 			wantErr: false,
