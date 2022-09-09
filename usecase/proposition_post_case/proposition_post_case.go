@@ -12,6 +12,7 @@ type PostingPropositionPram struct {
 	DET                 string
 	DeliveryDate        time.Time
 	UpdatedDeliveryDate time.Time
+	Code                string
 }
 
 type PostedPropositionDto struct {
@@ -20,6 +21,7 @@ type PostedPropositionDto struct {
 	Successful          bool
 	DeliveryDate        time.Time
 	UpdatedDeliveryDate time.Time
+	Code                string
 }
 
 type PostingExecutor interface {
@@ -51,6 +53,7 @@ func (m *PropositionPostingUseCase) Execute(p []PostingPropositionPram) ([]Poste
 				v.DET,
 				v.DeliveryDate,
 				v.UpdatedDeliveryDate,
+				v.Code,
 			),
 		)
 	}
@@ -70,6 +73,7 @@ func (m *PropositionPostingUseCase) Execute(p []PostingPropositionPram) ([]Poste
 				Successful:          v.Successful,
 				DeliveryDate:        v.DeliveryDate,
 				UpdatedDeliveryDate: v.UpdatedDeliveryDate,
+				Code:                v.Code,
 			},
 		)
 	}

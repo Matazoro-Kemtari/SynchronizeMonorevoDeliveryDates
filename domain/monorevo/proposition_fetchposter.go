@@ -14,13 +14,15 @@ type Proposition struct {
 	WorkedNumber string
 	DET          string
 	DeliveryDate time.Time
+	Code         string
 }
 
-func NewProposition(warkNumber string, det string, deliveryDate time.Time) *Proposition {
+func NewProposition(warkNumber string, det string, deliveryDate time.Time, code string) *Proposition {
 	return &Proposition{
 		WorkedNumber: warkNumber,
 		DET:          det,
 		DeliveryDate: deliveryDate,
+		Code:         code,
 	}
 }
 
@@ -35,14 +37,16 @@ type DifferentProposition struct {
 	DET                 string
 	DeliveryDate        time.Time
 	UpdatedDeliveryDate time.Time
+	Code                string
 }
 
-func NewDifferenceProposition(workNumber string, det string, deliveryDate time.Time, updatedDeliveryDate time.Time) *DifferentProposition {
+func NewDifferenceProposition(workNumber string, det string, deliveryDate time.Time, updatedDeliveryDate time.Time, code string) *DifferentProposition {
 	return &DifferentProposition{
 		WorkedNumber:        workNumber,
 		DET:                 det,
 		DeliveryDate:        deliveryDate,
 		UpdatedDeliveryDate: updatedDeliveryDate,
+		Code:                code,
 	}
 }
 
@@ -53,6 +57,7 @@ type UpdatedProposition struct {
 	Successful          bool
 	DeliveryDate        time.Time
 	UpdatedDeliveryDate time.Time
+	Code                string
 }
 
 func NewUpdatedProposition(
@@ -61,6 +66,7 @@ func NewUpdatedProposition(
 	successful bool,
 	deliveryDate time.Time,
 	updatedDeliveryDate time.Time,
+	code string,
 ) *UpdatedProposition {
 	return &UpdatedProposition{
 		WorkedNumber:        workedNumber,
@@ -68,6 +74,7 @@ func NewUpdatedProposition(
 		Successful:          successful,
 		DeliveryDate:        deliveryDate,
 		UpdatedDeliveryDate: updatedDeliveryDate,
+		Code:                code,
 	}
 }
 
@@ -77,9 +84,34 @@ type PropositionOptions struct {
 	WorkedNumber string
 	DET          string
 	DeliveryDate time.Time
+	Code         string
 }
 
 type PropositionOption func(*PropositionOptions)
+
+func OptWorkedNumber(v string) PropositionOption {
+	return func(opts *PropositionOptions) {
+		opts.WorkedNumber = v
+	}
+}
+
+func OptDET(v string) PropositionOption {
+	return func(opts *PropositionOptions) {
+		opts.DET = v
+	}
+}
+
+func OptDeliveryDate(v time.Time) PropositionOption {
+	return func(opts *PropositionOptions) {
+		opts.DeliveryDate = v
+	}
+}
+
+func OptCode(v string) PropositionOption {
+	return func(opts *PropositionOptions) {
+		opts.Code = v
+	}
+}
 
 func TestPropositionCreate(options ...PropositionOption) *Proposition {
 	// デフォルト値設定
@@ -87,13 +119,14 @@ func TestPropositionCreate(options ...PropositionOption) *Proposition {
 		WorkedNumber: "99A-1234",
 		DET:          "1",
 		DeliveryDate: time.Now(),
+		Code:         "99A-1",
 	}
 
 	for _, option := range options {
 		option(opts)
 	}
 
-	return NewProposition(opts.WorkedNumber, opts.DET, opts.DeliveryDate)
+	return NewProposition(opts.WorkedNumber, opts.DET, opts.DeliveryDate, opts.Code)
 }
 
 type UpdatedPropositionOptions struct {
@@ -102,6 +135,7 @@ type UpdatedPropositionOptions struct {
 	Successful          bool
 	DeliveryDate        time.Time
 	UpdatedDeliveryDate time.Time
+	Code                string
 }
 
 type UpdatedPropositionOption func(*UpdatedPropositionOptions)
@@ -114,6 +148,7 @@ func TestUpdatedPropositionCreate(options ...UpdatedPropositionOption) *UpdatedP
 		Successful:          true,
 		DeliveryDate:        time.Now(),
 		UpdatedDeliveryDate: time.Now(),
+		Code:                "99A-1",
 	}
 
 	for _, option := range options {
@@ -126,5 +161,6 @@ func TestUpdatedPropositionCreate(options ...UpdatedPropositionOption) *UpdatedP
 		opts.Successful,
 		opts.DeliveryDate,
 		opts.UpdatedDeliveryDate,
+		opts.Code,
 	)
 }

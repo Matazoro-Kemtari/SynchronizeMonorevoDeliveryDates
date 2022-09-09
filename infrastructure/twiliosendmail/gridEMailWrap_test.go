@@ -67,6 +67,7 @@ func TestSendGridMail_Send(t *testing.T) {
 						Successful:          true,
 						DeliveryDate:        time.Date(2099, 1, 1, 0, 0, 0, 0, time.UTC),
 						UpdatedDeliveryDate: time.Date(2099, 1, 20, 0, 0, 0, 0, time.UTC),
+						Code:                "99X-1",
 					},
 					{
 						WorkedNumber:        "99A-0002",
@@ -74,6 +75,7 @@ func TestSendGridMail_Send(t *testing.T) {
 						Successful:          false,
 						DeliveryDate:        time.Date(2099, 2, 1, 0, 0, 0, 0, time.UTC),
 						UpdatedDeliveryDate: time.Date(2099, 2, 20, 0, 0, 0, 0, time.UTC),
+						Code:                "99X-2",
 					},
 					{
 						WorkedNumber:        "99A-0003",
@@ -81,6 +83,7 @@ func TestSendGridMail_Send(t *testing.T) {
 						Successful:          true,
 						DeliveryDate:        time.Date(2099, 3, 1, 0, 0, 0, 0, time.UTC),
 						UpdatedDeliveryDate: time.Date(2099, 3, 20, 0, 0, 0, 0, time.UTC),
+						Code:                "99X-3",
 					},
 					{
 						WorkedNumber:        "99A-0004",
@@ -88,6 +91,7 @@ func TestSendGridMail_Send(t *testing.T) {
 						Successful:          false,
 						DeliveryDate:        time.Date(2099, 4, 1, 0, 0, 0, 0, time.UTC),
 						UpdatedDeliveryDate: time.Date(2099, 4, 20, 0, 0, 0, 0, time.UTC),
+						Code:                "99X-4",
 					},
 					{
 						WorkedNumber:        "99A-0005",
@@ -95,6 +99,7 @@ func TestSendGridMail_Send(t *testing.T) {
 						Successful:          true,
 						DeliveryDate:        time.Date(2099, 5, 1, 0, 0, 0, 0, time.UTC),
 						UpdatedDeliveryDate: time.Date(2099, 5, 20, 0, 0, 0, 0, time.UTC),
+						Code:                "99X-5",
 					},
 				},
 				prefixReport: "次の納期を変更した",
@@ -179,6 +184,7 @@ func TestSendGridMail_Send(t *testing.T) {
 						Successful:          true,
 						DeliveryDate:        time.Date(2099, 1, 1, 0, 0, 0, 0, time.UTC),
 						UpdatedDeliveryDate: time.Date(2099, 1, 20, 0, 0, 0, 0, time.UTC),
+						Code:                "99X-1",
 					},
 					{
 						WorkedNumber:        "99A-0002",
@@ -186,6 +192,7 @@ func TestSendGridMail_Send(t *testing.T) {
 						Successful:          false,
 						DeliveryDate:        time.Date(2099, 2, 1, 0, 0, 0, 0, time.UTC),
 						UpdatedDeliveryDate: time.Date(2099, 2, 20, 0, 0, 0, 0, time.UTC),
+						Code:                "99X-2",
 					},
 					{
 						WorkedNumber:        "99A-0003",
@@ -193,6 +200,7 @@ func TestSendGridMail_Send(t *testing.T) {
 						Successful:          true,
 						DeliveryDate:        time.Date(2099, 3, 1, 0, 0, 0, 0, time.UTC),
 						UpdatedDeliveryDate: time.Date(2099, 3, 20, 0, 0, 0, 0, time.UTC),
+						Code:                "99X-3",
 					},
 					{
 						WorkedNumber:        "99A-0004",
@@ -200,6 +208,7 @@ func TestSendGridMail_Send(t *testing.T) {
 						Successful:          false,
 						DeliveryDate:        time.Date(2099, 4, 1, 0, 0, 0, 0, time.UTC),
 						UpdatedDeliveryDate: time.Date(2099, 4, 20, 0, 0, 0, 0, time.UTC),
+						Code:                "99X-4",
 					},
 					{
 						WorkedNumber:        "99A-0005",
@@ -207,6 +216,7 @@ func TestSendGridMail_Send(t *testing.T) {
 						Successful:          true,
 						DeliveryDate:        time.Date(2099, 5, 1, 0, 0, 0, 0, time.UTC),
 						UpdatedDeliveryDate: time.Date(2099, 5, 20, 0, 0, 0, 0, time.UTC),
+						Code:                "99X-5",
 					},
 				},
 				prefixReport: "次の納期を変更した",

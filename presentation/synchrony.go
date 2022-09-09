@@ -52,21 +52,21 @@ func (m *SynchronizingDeliveryDate) Synchronize() error {
 	if err != nil {
 		m.sugar.Fatal("ものレボから案件一覧を取得で失敗しました", err)
 	}
-	m.sugar.Debug("propositions", propositions)
+	m.sugar.Debug("propositions:", propositions)
 
 	m.sugar.Info("受注管理DBから作業情報を取得する")
 	jobBooks, err := m.dbFetcher.Execute()
 	if err != nil {
 		m.sugar.Fatal("受注管理DBから作業情報を取得で失敗しました", err)
 	}
-	m.sugar.Debug("jobBooks", jobBooks)
+	m.sugar.Debug("jobBooks:", jobBooks)
 
 	// 詰め替え
 	diffPram := convertToDifferencePram(propositions, jobBooks)
 
 	m.sugar.Info("比較差分を算出する")
 	diff := m.extractor.Execute(diffPram)
-	m.sugar.Debug("diff", diff)
+	m.sugar.Debug("diff:", diff)
 
 	var posted []proposition_post_case.PostedPropositionDto
 	if diff != nil {
@@ -77,7 +77,7 @@ func (m *SynchronizingDeliveryDate) Synchronize() error {
 		if err != nil {
 			m.sugar.Fatal("ものレボへ案件一覧を送信で失敗しました", err)
 		}
-		m.sugar.Debug("posted", posted)
+		m.sugar.Debug("posted:", posted)
 	}
 
 	// 詰め替え
@@ -87,7 +87,7 @@ func (m *SynchronizingDeliveryDate) Synchronize() error {
 	if err != nil {
 		m.sugar.Fatal("結果報告で失敗しました", err)
 	}
-	m.sugar.Debug("sent", sent)
+	m.sugar.Debug("sent:", sent)
 
 	return nil
 }

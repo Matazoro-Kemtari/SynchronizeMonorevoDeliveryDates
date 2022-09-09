@@ -24,6 +24,7 @@ type EditedProposition struct {
 	Successful          bool
 	DeliveryDate        time.Time
 	UpdatedDeliveryDate time.Time
+	Code                string
 }
 
 // 編集結果レポート
