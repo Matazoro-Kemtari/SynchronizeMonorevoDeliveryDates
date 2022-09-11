@@ -11,6 +11,7 @@ type FetchedPropositionDto struct {
 	WorkedNumber string
 	DET          string
 	DeliveryDate time.Time
+	Code         string
 }
 
 type FetchingExecutor interface {
@@ -47,6 +48,7 @@ func (m *PropositionFetchingUseCase) Execute() ([]FetchedPropositionDto, error) 
 				WorkedNumber: v.WorkedNumber,
 				DET:          v.DET,
 				DeliveryDate: v.DeliveryDate,
+				Code:         v.Code,
 			},
 		)
 	}
