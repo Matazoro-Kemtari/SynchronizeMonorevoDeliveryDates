@@ -160,6 +160,7 @@ func convertToDifferencePram(propositions []proposition_fetch_case.FetchedPropos
 				WorkedNumber: pro.WorkedNumber,
 				DET:          pro.DET,
 				DeliveryDate: pro.DeliveryDate,
+				Code:         pro.Code,
 			},
 		)
 	}
