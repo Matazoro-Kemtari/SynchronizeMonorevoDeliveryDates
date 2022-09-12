@@ -114,8 +114,10 @@ func convertToEditedPropositionPrams(p []proposition_post_case.PostedProposition
 			WorkedNumber:        v.WorkedNumber,
 			DET:                 v.DET,
 			Successful:          v.Successful,
+			Reason:              v.Reason,
 			DeliveryDate:        v.DeliveryDate,
 			UpdatedDeliveryDate: v.UpdatedDeliveryDate,
+			Code:                v.Code,
 		})
 	}
 	return params
@@ -146,6 +148,7 @@ func convertToPostPrams(diff []difference_extract_case.DifferentPropositionDto) 
 				DET:                 v.DET,
 				DeliveryDate:        v.DeliveryDate,
 				UpdatedDeliveryDate: v.UpdatedDeliveryDate,
+				Code:                v.Code,
 			})
 	}
 	return posting

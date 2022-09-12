@@ -177,16 +177,17 @@ func (m *SendGridMail) makePlainText(
 ) string {
 	body := replaceLf(prefixReport) + "\n"
 	if len(editedPropositions) > 0 {
-		body += "作業No\tDET番号\tコード\t成否\t変更前納期\t変更後納期\n"
+		body += "作業No\tDET番号\tコード\t成否\t変更前納期\t変更後納期\tエラー\n"
 		for _, v := range editedPropositions {
 			body += fmt.Sprintf(
-				"%v\t%v\t%v\t%v\t%v\t%v\n",
+				"%v\t%v\t%v\t%v\t%v\t%v\t%v\n",
 				v.WorkedNumber,
 				v.DET,
 				v.Code,
 				SuccessfulStr(v.Successful),
 				v.DeliveryDate.Format("2006/01/02"),
 				v.UpdatedDeliveryDate.Format("2006/01/02"),
+				v.Reason,
 			)
 		}
 	} else {
@@ -208,21 +209,22 @@ func (m *SendGridMail) makeHtmlText(
 	body += "</head><body>\n"
 	body += fmt.Sprintf("<p>%v</p>\n", replaceBr(prefixReport))
 	if len(editedPropositions) > 0 {
-		body += "<table><tr><th>作業No</th><th>DET番号</th><th>コード</th><th>成否</th><th>変更前納期</th><th>変更後納期</th></tr>"
+		body += "<table><tr><th>作業No</th><th>DET番号</th><th>コード</th><th>成否</th><th>変更前納期</th><th>変更後納期</th><th>エラー</th></tr>"
 		for _, v := range editedPropositions {
-			var td string = "<td>%v</td><td>%v</td><td>%v</td><td>%v</td><td>%v</td><td>%v</td>"
+			var fontStart, fontEnd string
 			if !v.Successful {
-				td = `<td><font color="red">%v</font></td><td><font color="red">%v</font></td><td><font color="red">%v</font></td><td><font color="red">%v</font></td><td>%v</td><td>%v</td>`
+				fontStart = `<font color="red">`
+				fontEnd = `</font>`
 			}
-			tr := "<tr>" + td + "</tr>\n"
 			body += fmt.Sprintf(
-				tr,
-				v.WorkedNumber,
-				v.DET,
-				v.Code,
-				SuccessfulStr(v.Successful),
+				"<tr><td>%v</td><td>%v</td><td>%v</td><td>%v</td><td>%v</td><td>%v</td><td>%v</td></tr>\n",
+				fontStart+v.WorkedNumber+fontEnd,
+				fontStart+v.DET+fontEnd,
+				fontStart+v.Code+fontEnd,
+				fontStart+SuccessfulStr(v.Successful)+fontEnd,
 				v.DeliveryDate.Format("2006/01/02"),
 				v.UpdatedDeliveryDate.Format("2006/01/02"),
+				fontStart+v.Reason+fontEnd,
 			)
 		}
 		body += "</table>"

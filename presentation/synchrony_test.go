@@ -14,6 +14,7 @@ import (
 	"SynchronizeMonorevoDeliveryDates/usecase/report_send_case"
 	"SynchronizeMonorevoDeliveryDates/usecase/report_send_case/mock_report_send_case"
 	"SynchronizeMonorevoDeliveryDates/usecase/reportsetting_obtain_case"
+	"fmt"
 	"testing"
 	"time"
 
@@ -94,7 +95,12 @@ func convertToEmailAddress(m reportsetting_obtain_case.MailAddressDto) report_se
 	}
 }
 
-func makeMockReportSender(setting *reportsetting_obtain_case.ReportSettingDto, resWebFetches []proposition_fetch_case.FetchedPropositionDto, resDbFetches []jobbook_fetch_case.JobBookDto, ctrl *gomock.Controller) *mock_report_send_case.MockExecutor {
+func makeMockReportSender(
+	setting *reportsetting_obtain_case.ReportSettingDto,
+	resWebFetches []proposition_fetch_case.FetchedPropositionDto,
+	resDbFetches []jobbook_fetch_case.JobBookDto,
+	ctrl *gomock.Controller,
+) *mock_report_send_case.MockExecutor {
 	var editedPropositions []report_send_case.EditedPropositionPram
 	for i := 0; i < len(resWebFetches); i++ {
 		editedPropositions = append(editedPropositions,
@@ -102,8 +108,10 @@ func makeMockReportSender(setting *reportsetting_obtain_case.ReportSettingDto, r
 				report_send_case.OptWorkedNumber(resWebFetches[i].WorkedNumber),
 				report_send_case.OptDET(resWebFetches[i].DET),
 				report_send_case.OptSuccessful(true),
+				report_send_case.OptReason(""),
 				report_send_case.OptDeliveryDate(resWebFetches[i].DeliveryDate),
 				report_send_case.OptUpdatedDeliveryDate(resDbFetches[i].DeliveryDate),
+				report_send_case.OptCode(resWebFetches[i].Code),
 			),
 		)
 	}
@@ -115,10 +123,12 @@ func makeMockReportSender(setting *reportsetting_obtain_case.ReportSettingDto, r
 		report_send_case.OptCCs(convertToEmailAddresses(setting.CCAddresses)),
 		report_send_case.OptBCCs(convertToEmailAddresses(setting.BCCAddresses)),
 		report_send_case.OptFrom(convertToEmailAddress(setting.SenderAddress)),
+		report_send_case.OptReplyTo(convertToEmailAddress(setting.ReplyToAddress)),
 		report_send_case.OptSubject(setting.Subject),
 		report_send_case.OptEditedPropositions(editedPropositions),
 		report_send_case.OptPrefixReport(setting.PrefixReport),
 		report_send_case.OptSuffixReport(setting.SuffixReport),
+		report_send_case.OptReplacements(map[string]string{"count": fmt.Sprint(len(editedPropositions))}),
 	)
 	mock_report := mock_report_send_case.NewMockExecutor(ctrl)
 	mock_report.EXPECT().Execute(reportPram).Return(reportRes, nil)
@@ -135,6 +145,7 @@ func makeMockWebPoster(resWebFetches []proposition_fetch_case.FetchedProposition
 				DET:                 resWebFetches[i].DET,
 				DeliveryDate:        resWebFetches[i].DeliveryDate,
 				UpdatedDeliveryDate: resDbFetches[i].DeliveryDate,
+				Code:                resWebFetches[i].Code,
 			},
 		)
 	}
@@ -145,8 +156,10 @@ func makeMockWebPoster(resWebFetches []proposition_fetch_case.FetchedProposition
 				WorkedNumber:        resWebFetches[i].WorkedNumber,
 				DET:                 resWebFetches[i].DET,
 				Successful:          true,
+				Reason:              "",
 				DeliveryDate:        resWebFetches[i].DeliveryDate,
 				UpdatedDeliveryDate: resDbFetches[i].DeliveryDate,
+				Code:                resWebFetches[i].Code,
 			},
 		)
 	}
@@ -163,6 +176,7 @@ func makeMockDifferent(resWebFetches []proposition_fetch_case.FetchedProposition
 				WorkedNumber: pro.WorkedNumber,
 				DET:          pro.DET,
 				DeliveryDate: pro.DeliveryDate,
+				Code:         pro.Code,
 			},
 		)
 	}
@@ -186,18 +200,21 @@ func makeMockDifferent(resWebFetches []proposition_fetch_case.FetchedProposition
 			DET:                 resWebFetches[0].DET,
 			DeliveryDate:        resWebFetches[0].DeliveryDate,
 			UpdatedDeliveryDate: resDbFetches[0].DeliveryDate,
+			Code:                resWebFetches[0].Code,
 		},
 		{
 			WorkedNumber:        resWebFetches[1].WorkedNumber,
 			DET:                 resWebFetches[1].DET,
 			DeliveryDate:        resWebFetches[1].DeliveryDate,
 			UpdatedDeliveryDate: resDbFetches[1].DeliveryDate,
+			Code:                resWebFetches[1].Code,
 		},
 		{
 			WorkedNumber:        resWebFetches[2].WorkedNumber,
 			DET:                 resWebFetches[2].DET,
 			DeliveryDate:        resWebFetches[2].DeliveryDate,
 			UpdatedDeliveryDate: resDbFetches[2].DeliveryDate,
+			Code:                resWebFetches[2].Code,
 		},
 	}
 	mock_diff := mock_difference_extract_case.NewMockExecutor(ctrl)
@@ -235,16 +252,19 @@ func makeMockWebFetcher(ctrl *gomock.Controller) ([]proposition_fetch_case.Fetch
 			WorkedNumber: "99A-1234",
 			DET:          "1",
 			DeliveryDate: time.Now().AddDate(0, 0, -5),
+			Code:         "11A",
 		},
 		{
 			WorkedNumber: "88A-1234",
 			DET:          "1",
 			DeliveryDate: time.Now().AddDate(0, 0, -5),
+			Code:         "22B",
 		},
 		{
 			WorkedNumber: "77A-1234",
 			DET:          "1",
 			DeliveryDate: time.Now().AddDate(0, 0, -5),
+			Code:         "33C",
 		},
 	}
 	mock_webFetcher := mock_proposition_fetch_case.NewMockFetchingExecutor(ctrl)
