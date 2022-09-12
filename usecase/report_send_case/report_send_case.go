@@ -61,6 +61,7 @@ type EditedPropositionPram struct {
 	Successful          bool
 	DeliveryDate        time.Time
 	UpdatedDeliveryDate time.Time
+	Code                string
 }
 
 type EditedPropositionOptions struct {
@@ -69,6 +70,7 @@ type EditedPropositionOptions struct {
 	Successful          bool
 	DeliveryDate        time.Time
 	UpdatedDeliveryDate time.Time
+	Code                string
 }
 
 type EditedPropositionOption func(*EditedPropositionOptions)
@@ -100,6 +102,12 @@ func OptDeliveryDate(v time.Time) EditedPropositionOption {
 func OptUpdatedDeliveryDate(v time.Time) EditedPropositionOption {
 	return func(opts *EditedPropositionOptions) {
 		opts.UpdatedDeliveryDate = v
+	}
+}
+
+func OptCode(v string) EditedPropositionOption {
+	return func(opts *EditedPropositionOptions) {
+		opts.Code = v
 	}
 }
 
