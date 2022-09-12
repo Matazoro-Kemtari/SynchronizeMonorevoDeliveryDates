@@ -1,1 +1,1 @@
-go build -ldflags "-X main.version=v1.1.1 -X main.revision=$(git rev-parse --short HEAD)" .
+go build -ldflags "-X main.version=v1.1.2 -X main.revision=$(git rev-parse --short HEAD)" .
