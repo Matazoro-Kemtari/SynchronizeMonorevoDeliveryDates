@@ -4,6 +4,7 @@ import (
 	"SynchronizeMonorevoDeliveryDates/domain/monorevo"
 	"SynchronizeMonorevoDeliveryDates/infrastructure/proposition"
 	"SynchronizeMonorevoDeliveryDates/usecase/appsetting_obtain_case"
+	"fmt"
 	"os"
 	"reflect"
 	"testing"
@@ -24,8 +25,8 @@ func TestPropositionTable_PostRange(t *testing.T) {
 	nonexisitentCase := monorevo.DifferentProposition{
 		WorkedNumber:        "99A-9999",
 		DET:                 "1",
-		DeliveryDate:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
-		UpdatedDeliveryDate: time.Date(2020, 1, 10, 0, 0, 0, 0, time.UTC),
+		DeliveryDate:        time.Date(2050, 1, 1, 0, 0, 0, 0, time.UTC),
+		UpdatedDeliveryDate: time.Date(2050, 1, 10, 0, 0, 0, 0, time.UTC),
 		Code:                "22B-1",
 	}
 	pastCase := monorevo.DifferentProposition{
@@ -35,6 +36,11 @@ func TestPropositionTable_PostRange(t *testing.T) {
 		UpdatedDeliveryDate: time.Date(2020, 1, 10, 0, 0, 0, 0, time.UTC),
 		Code:                "22C-1",
 	}
+	d := time.Date(
+		time.Now().Year(),
+		time.Now().Month(),
+		time.Now().Day(),
+		0, 0, 0, 0, time.UTC)
 	updatableCases := []monorevo.DifferentProposition{
 		{
 			WorkedNumber:        "99仮-1",
@@ -80,6 +86,7 @@ func TestPropositionTable_PostRange(t *testing.T) {
 					WorkedNumber:        nonexisitentCase.WorkedNumber,
 					DET:                 nonexisitentCase.DET,
 					Successful:          false,
+					Reason:              "ものレボ上で案件検索で失敗した",
 					DeliveryDate:        nonexisitentCase.DeliveryDate,
 					UpdatedDeliveryDate: nonexisitentCase.UpdatedDeliveryDate,
 					Code:                nonexisitentCase.Code,
@@ -104,6 +111,7 @@ func TestPropositionTable_PostRange(t *testing.T) {
 					WorkedNumber:        pastCase.WorkedNumber,
 					DET:                 pastCase.DET,
 					Successful:          false,
+					Reason:              fmt.Sprintf("現在日(%v)より過去の納期(%v)は受付できない", d.Format("2006/01/02"), pastCase.UpdatedDeliveryDate.Format("2006/01/02")),
 					DeliveryDate:        pastCase.DeliveryDate,
 					UpdatedDeliveryDate: pastCase.UpdatedDeliveryDate,
 					Code:                pastCase.Code,
@@ -128,6 +136,7 @@ func TestPropositionTable_PostRange(t *testing.T) {
 					WorkedNumber:        updatableCases[0].WorkedNumber,
 					DET:                 updatableCases[0].DET,
 					Successful:          true,
+					Reason:              "",
 					DeliveryDate:        updatableCases[0].DeliveryDate,
 					UpdatedDeliveryDate: updatableCases[0].UpdatedDeliveryDate,
 					Code:                updatableCases[0].Code,
