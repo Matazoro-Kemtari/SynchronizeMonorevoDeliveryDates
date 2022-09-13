@@ -116,6 +116,7 @@ func convertToEditedPropositionPrams(p []proposition_post_case.PostedProposition
 			Successful:          v.Successful,
 			DeliveryDate:        v.DeliveryDate,
 			UpdatedDeliveryDate: v.UpdatedDeliveryDate,
+			Code:                v.Code,
 		})
 	}
 	return params
