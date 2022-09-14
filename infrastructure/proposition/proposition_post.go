@@ -119,7 +119,7 @@ func (p *PropositionTable) PostRange(postablePropositions []monorevo.DifferentPr
 			p.sugar.Errorf(
 				"%v 作業NO: %v, DET番号: %v error: %v",
 				reason,
-				v.DeliveryDate,
+				v.WorkedNumber,
 				v.DET,
 				err)
 			continue
