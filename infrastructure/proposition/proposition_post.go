@@ -39,74 +39,86 @@ func (p *PropositionTable) PostRange(postablePropositions []monorevo.DifferentPr
 	for _, v := range postablePropositions {
 		if v.UpdatedDeliveryDate.Before(d) {
 			// 現在日より過去日は処理しない ものレボが受け付けない
+			reason := fmt.Sprintf(
+				"現在日(%v)より過去の納期(%v)は受付できない",
+				d.Format("2006/01/02"),
+				v.UpdatedDeliveryDate.Format("2006/01/02"))
 			editedPropositions = append(
 				editedPropositions,
 				*monorevo.NewUpdatedProposition(
 					v.WorkedNumber,
 					v.DET,
 					false,
+					reason,
 					v.DeliveryDate,
 					v.UpdatedDeliveryDate,
 					v.Code,
 				))
-			p.sugar.Errorf(
-				"現在日(%v)より過去の納期(%v)は受付できない",
-				d,
-				v.UpdatedDeliveryDate)
+			p.sugar.Errorf(reason)
 			continue
 		}
 
 		// 案件検索をする
 		if r, err := p.searchPropositionTable(page, v); err != nil {
+			reason := "ものレボ上で案件検索で失敗した"
 			editedPropositions = append(
 				editedPropositions,
 				*monorevo.NewUpdatedProposition(
 					v.WorkedNumber,
 					v.DET,
 					false,
-					v.DeliveryDate,
-					v.UpdatedDeliveryDate,
-					v.Code,
-				))
-			p.sugar.Error(
-				"案件検索ができなかった",
-				v.WorkedNumber,
-				v.DET,
-				err)
-			continue
-		} else if !r {
-			editedPropositions = append(
-				editedPropositions,
-				*monorevo.NewUpdatedProposition(
-					v.WorkedNumber,
-					v.DET,
-					false,
+					reason,
 					v.DeliveryDate,
 					v.UpdatedDeliveryDate,
 					v.Code,
 				))
 			p.sugar.Errorf(
-				"作業No(%v),DET番号(%v)の該当がなかった",
+				"%v 作業NO: %v, DET番号: %v error: %v",
+				reason,
 				v.WorkedNumber,
-				v.DET)
+				v.DET,
+				err)
+			continue
+		} else if !r {
+			reason := "ものレボ上で案件検索で該当がなかった"
+			editedPropositions = append(
+				editedPropositions,
+				*monorevo.NewUpdatedProposition(
+					v.WorkedNumber,
+					v.DET,
+					false,
+					reason,
+					v.DeliveryDate,
+					v.UpdatedDeliveryDate,
+					v.Code,
+				))
+			p.sugar.Errorf(
+				"%v 作業NO: %v, DET番号: %v error: %v",
+				reason,
+				v.WorkedNumber,
+				v.DET,
+				err)
 			continue
 		}
 
 		// 納期を更新する
 		successful, err := p.updatedDeliveryDate(page, v)
 		if successful == unspecified && err != nil {
+			reason := "納期の編集処理ができませんでした"
 			editedPropositions = append(
 				editedPropositions,
 				*monorevo.NewUpdatedProposition(
 					v.WorkedNumber,
 					v.DET,
 					false,
+					reason,
 					v.DeliveryDate,
 					v.UpdatedDeliveryDate,
 					v.Code,
 				))
-			p.sugar.Error(
-				"納期の更新ができませんでした",
+			p.sugar.Errorf(
+				"%v 作業NO: %v, DET番号: %v error: %v",
+				reason,
 				v.DeliveryDate,
 				v.DET,
 				err)
@@ -118,6 +130,7 @@ func (p *PropositionTable) PostRange(postablePropositions []monorevo.DifferentPr
 				v.WorkedNumber,
 				v.DET,
 				(successful == success),
+				"",
 				v.DeliveryDate,
 				v.UpdatedDeliveryDate,
 				v.Code,
@@ -139,7 +152,7 @@ func (p *PropositionTable) searchPropositionTable(page *agouti.Page, proposition
 	workNoFld := page.FindByXPath(`//*[@id="searchContent"]/div[2]/div[1]/input`)
 	workNoFld.Clear()
 	if err := workNoFld.Fill(proposition.WorkedNumber); err != nil {
-		p.sugar.Debug("作業Noの入力に失敗しました", err)
+		p.sugar.Debug("作業Noの入力に失敗しました error:", err)
 		return false, fmt.Errorf("作業Noの入力に失敗しました error: %v", err)
 	}
 	// DET番号を入力する
@@ -147,12 +160,12 @@ func (p *PropositionTable) searchPropositionTable(page *agouti.Page, proposition
 	detFld.Clear()
 	if len(proposition.DET) > 0 {
 		if err := detFld.Fill(proposition.DET); err != nil {
-			p.sugar.Debug("DET番号の入力に失敗した", err)
+			p.sugar.Debug("DET番号の入力に失敗した error:", err)
 			return false, fmt.Errorf("DET番号の入力に失敗した error: %v", err)
 		}
 	} else {
 		if err := detFld.Fill(" "); err != nil {
-			p.sugar.Debug("DET番号の入力に失敗した", err)
+			p.sugar.Debug("DET番号の入力に失敗した error:", err)
 			return false, fmt.Errorf("DET番号の入力に失敗した error: %v", err)
 		}
 	}
@@ -172,7 +185,7 @@ func (p *PropositionTable) searchPropositionTable(page *agouti.Page, proposition
 		time.Sleep(time.Millisecond * 100)
 
 		if i >= 60 {
-			p.sugar.Error("検索タイムアウト", i)
+			p.sugar.Error("検索タイムアウト ", i)
 			return false, fmt.Errorf("検索タイムアウト count: %v", i)
 		}
 	}

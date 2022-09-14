@@ -19,6 +19,7 @@ type PostedPropositionDto struct {
 	WorkedNumber        string
 	DET                 string
 	Successful          bool
+	Reason              string
 	DeliveryDate        time.Time
 	UpdatedDeliveryDate time.Time
 	Code                string
@@ -71,6 +72,7 @@ func (m *PropositionPostingUseCase) Execute(p []PostingPropositionPram) ([]Poste
 				WorkedNumber:        v.WorkedNumber,
 				DET:                 v.DET,
 				Successful:          v.Successful,
+				Reason:              v.Reason,
 				DeliveryDate:        v.DeliveryDate,
 				UpdatedDeliveryDate: v.UpdatedDeliveryDate,
 				Code:                v.Code,

@@ -59,6 +59,7 @@ type EditedPropositionPram struct {
 	WorkedNumber        string
 	DET                 string
 	Successful          bool
+	Reason              string
 	DeliveryDate        time.Time
 	UpdatedDeliveryDate time.Time
 	Code                string
@@ -68,6 +69,7 @@ type EditedPropositionOptions struct {
 	WorkedNumber        string
 	DET                 string
 	Successful          bool
+	Reason              string
 	DeliveryDate        time.Time
 	UpdatedDeliveryDate time.Time
 	Code                string
@@ -90,6 +92,12 @@ func OptDET(v string) EditedPropositionOption {
 func OptSuccessful(v bool) EditedPropositionOption {
 	return func(opts *EditedPropositionOptions) {
 		opts.Successful = v
+	}
+}
+
+func OptReason(v string) EditedPropositionOption {
+	return func(opts *EditedPropositionOptions) {
+		opts.Reason = v
 	}
 }
 
@@ -116,8 +124,10 @@ func (e *EditedPropositionPram) ConvertToEditedProposition() *report.EditedPropo
 		WorkedNumber:        e.WorkedNumber,
 		DET:                 e.DET,
 		Successful:          e.Successful,
+		Reason:              e.Reason,
 		DeliveryDate:        e.DeliveryDate,
 		UpdatedDeliveryDate: e.UpdatedDeliveryDate,
+		Code:                e.Code,
 	}
 }
 
@@ -127,8 +137,10 @@ func TestEditedPropositionPramCreate(options ...EditedPropositionOption) *Edited
 		WorkedNumber:        "99A-1234",
 		DET:                 "99",
 		Successful:          false,
+		Reason:              "",
 		DeliveryDate:        time.Date(2099, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedDeliveryDate: time.Date(2099, 1, 25, 0, 0, 0, 0, time.UTC),
+		Code:                "",
 	}
 
 	for _, option := range options {
@@ -139,8 +151,10 @@ func TestEditedPropositionPramCreate(options ...EditedPropositionOption) *Edited
 		WorkedNumber:        opts.WorkedNumber,
 		DET:                 opts.DET,
 		Successful:          opts.Successful,
+		Reason:              opts.Reason,
 		DeliveryDate:        opts.DeliveryDate,
 		UpdatedDeliveryDate: opts.UpdatedDeliveryDate,
+		Code:                opts.Code,
 	}
 }
 
@@ -223,6 +237,12 @@ func OptPrefixReport(v string) ReportOption {
 func OptSuffixReport(v string) ReportOption {
 	return func(opts *ReportOptions) {
 		opts.suffixReport = v
+	}
+}
+
+func OptReplacements(v map[string]string) ReportOption {
+	return func(opts *ReportOptions) {
+		opts.replacements = v
 	}
 }
 

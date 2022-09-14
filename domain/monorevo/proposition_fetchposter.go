@@ -55,6 +55,7 @@ type UpdatedProposition struct {
 	WorkedNumber        string
 	DET                 string
 	Successful          bool
+	Reason              string
 	DeliveryDate        time.Time
 	UpdatedDeliveryDate time.Time
 	Code                string
@@ -64,6 +65,7 @@ func NewUpdatedProposition(
 	workedNumber string,
 	det string,
 	successful bool,
+	reason string,
 	deliveryDate time.Time,
 	updatedDeliveryDate time.Time,
 	code string,
@@ -72,6 +74,7 @@ func NewUpdatedProposition(
 		WorkedNumber:        workedNumber,
 		DET:                 det,
 		Successful:          successful,
+		Reason:              reason,
 		DeliveryDate:        deliveryDate,
 		UpdatedDeliveryDate: updatedDeliveryDate,
 		Code:                code,
@@ -133,6 +136,7 @@ type UpdatedPropositionOptions struct {
 	WorkedNumber        string
 	DET                 string
 	Successful          bool
+	Reason              string
 	DeliveryDate        time.Time
 	UpdatedDeliveryDate time.Time
 	Code                string
@@ -146,6 +150,7 @@ func TestUpdatedPropositionCreate(options ...UpdatedPropositionOption) *UpdatedP
 		WorkedNumber:        "99A-1234",
 		DET:                 "1",
 		Successful:          true,
+		Reason:              "",
 		DeliveryDate:        time.Now(),
 		UpdatedDeliveryDate: time.Now(),
 		Code:                "99A-1",
@@ -159,6 +164,7 @@ func TestUpdatedPropositionCreate(options ...UpdatedPropositionOption) *UpdatedP
 		opts.WorkedNumber,
 		opts.DET,
 		opts.Successful,
+		opts.Reason,
 		opts.DeliveryDate,
 		opts.UpdatedDeliveryDate,
 		opts.Code,

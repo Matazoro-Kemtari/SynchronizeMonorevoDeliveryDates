@@ -22,6 +22,7 @@ type EditedProposition struct {
 	WorkedNumber        string
 	DET                 string
 	Successful          bool
+	Reason              string
 	DeliveryDate        time.Time
 	UpdatedDeliveryDate time.Time
 	Code                string

@@ -36,6 +36,7 @@ func TestPropositionFetchingUseCase_Execute(t *testing.T) {
 			WorkedNumber: v.WorkedNumber,
 			DET:          v.DET,
 			DeliveryDate: v.DeliveryDate,
+			Code:         v.Code,
 		})
 	}
 
