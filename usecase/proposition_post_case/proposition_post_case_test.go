@@ -38,8 +38,10 @@ func TestPropositionPostingUseCase_Execute(t *testing.T) {
 				WorkedNumber:        v.WorkedNumber,
 				DET:                 v.DET,
 				Successful:          v.Successful,
+				Reason:              v.Reason,
 				DeliveryDate:        v.DeliveryDate,
 				UpdatedDeliveryDate: v.UpdatedDeliveryDate,
+				Code:                v.Code,
 			},
 		)
 	}
