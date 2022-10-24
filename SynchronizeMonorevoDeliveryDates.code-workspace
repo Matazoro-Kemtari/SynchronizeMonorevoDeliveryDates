@@ -39,6 +39,9 @@
 			"twiliosendmail",
 			"wireinject"
 		],
-		"go.testTimeout": "120s"
+		"go.testTimeout": "120s",
+		"markdownlint.config": {
+			"MD033": false
+		}
 	}
 }
